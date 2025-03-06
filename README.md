@@ -16,6 +16,11 @@ Before starting, ensure the required technologies are installed.
 ## Database Setup
 The database schema is provided in the `db/db.sql` file. Run the SQL commands in your MySQL database to set up the required tables.
 
+## Docker
+```bash
+docker-compose --env-file .envDev up -d
+```
+
 ## How to Run the Solution
 1. Clone this repository and move to the project directory.
    ```bash
