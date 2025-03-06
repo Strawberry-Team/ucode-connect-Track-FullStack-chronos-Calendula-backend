@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: calendula
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: Calendula
+    ports:
+      - "3306:3306"
+    networks:
+      - mynetwork
+networks:
+  mynetwork:
+    driver: bridge
