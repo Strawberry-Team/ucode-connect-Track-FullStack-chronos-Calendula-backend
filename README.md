@@ -1,4 +1,4 @@
-# Calendula API
+# 🌼 Calendula API
 
 ## Short Description
 
