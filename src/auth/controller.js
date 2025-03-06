@@ -126,7 +126,7 @@ class AuthController extends UserController {
             const validationErrors = [];
             const fields = this._prepareFields(req);
 
-            const user = await this._model.getByEmail(fields.login);
+            const user = await this._model.getByEmail(fields.email);
             let passwordIsValid = false;
             if (user) {
                 passwordIsValid = await argon2.verify(user.password, fields.password ?? '');
