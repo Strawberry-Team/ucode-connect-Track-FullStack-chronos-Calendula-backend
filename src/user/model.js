@@ -2,6 +2,7 @@ import Model from "../model.js";
 import UserEntity from "./entity.js";
 import Where from "../sql/where.js";
 import * as argon2 from "argon2";
+import jwt from 'jsonwebtoken';
 
 class UserModel extends Model {
     constructor() {
@@ -16,6 +17,8 @@ class UserModel extends Model {
                 'country',
                 'role',
                 'isVerified',
+                'confirmToken',
+                'passwordResetToken',
                 'creationAt'
             ],
             UserEntity
@@ -45,6 +48,19 @@ class UserModel extends Model {
      */
     async createPassword(password) {
         return await argon2.hash(password, { salt: Buffer.from(process.env.APP_SECRET) });
+    }
+
+    /**
+     * @param {Object} data
+     * @param {string} expiresIn
+     * @return {string}
+     */
+    async createConfirmToken(data, expiresIn = '30d') {
+        return jwt.sign(
+            data,
+            process.env.APP_SECRET,
+            { expiresIn }
+        );
     }
 }
 export default UserModel;

@@ -12,6 +12,7 @@ class UserEntity extends Entity {
     toJSON(allowedAllFields = false) {
         const result = super.toJSON(allowedAllFields);
         delete result?.password;
+        delete result?.confirmToken;
         return result;
     }
 }

@@ -45,7 +45,7 @@ docker-compose --env-file .envDev up -d
    ```bash
    npm run start
    ```
-
+   
 ## Mailing Service
 [Ethereal](https://ethereal.email/) is a fake SMTP service, mostly aimed at Nodemailer and EmailEngine users (but not limited to). It's a completely free anti-transactional email service where messages never get delivered.
 To view the letter that the user will receive, you need to log in to this service using a test login and password.
@@ -59,6 +59,32 @@ password: 4e1zbM2nxsMu2d823E
 The documentation of all available endpoints can be found [http://localhost:8080/api-docs/](http://localhost:8080/api-docs/). The [Swagger](https://swagger.io/) library is used.
 
 ![](docs/swagger.png)
+
+## API Testing
+Get started by installing Playwright using:
+```bash
+npx playwright install
+```
+Create an `.envDev` file and add the variables for the test environment to it. To do this, copy `.env` to `.envDev`. 
+Then edit `.envDev` if necessary (e.g. add a test database).
+
+Start the server with the command:
+```bash
+npm run start:dev
+```
+Once the dependencies are installed and the backend is running, you can run the tests. To do this, use the command:
+Running all tests:
+```bash
+npm run test
+```
+Run all tests and create a report on the results:
+```bash
+npm run test:report
+```
+Run tests for a specific component:
+```bash
+env-cmd -f .envDev npx playwright test tests/api/<file_name>.test.js --project=chromium
+```
 
 ## Additional Features
 - ...

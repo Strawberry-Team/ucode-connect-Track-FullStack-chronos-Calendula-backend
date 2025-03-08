@@ -104,9 +104,14 @@ class UserController extends Controller {
                 fields.password = await this._model.createPassword(fields.password);
             }
 
+            if (fields.email) {
+                fields.confirmToken = await this._model.createConfirmToken({ userEmail: fields.email });
+            }
+
             const newUser = this._model.createEntity(fields);
             await newUser.save();
 
+            req.confirmToken = newUser?.confirmToken;
             req.newUser = newUser.toJSON();
 
             return res.status(201).json({
@@ -141,7 +146,6 @@ class UserController extends Controller {
         if (req?.body?.password) {
             req.body.password = await this._model.createPassword(req.body.password);
         }
-
 
         return super.update(req, res, next);
     }

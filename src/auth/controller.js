@@ -67,7 +67,7 @@ class AuthController extends UserController {
             await mailer.sendConfirm(
                 newUser.email, {
                     fullName: newUser.fullName,
-                    token: this.createAccessToken({ userEmail: newUser.email })
+                    token: parentResponse.req?.confirmToken
                 }
             )
         }
@@ -94,9 +94,9 @@ class AuthController extends UserController {
                 user.isVerified = true;
                 await user.save();
 
-                return this._returnResponse(res, 200, {}, 'Email is confirmed')
+                return this._returnResponse(res, 200, {}, 'Successful email confirmation')
             } catch (e) {
-                return this._returnResponse(res, 400, {}, "Invalid token");
+                return this._returnResponse(res, 400, {}, "Invalid token. Please try to receive the email again!");
             }
         } catch (error) {
             next(error);
@@ -128,16 +128,17 @@ class AuthController extends UserController {
 
             const user = await this._model.getByEmail(fields.email);
             let passwordIsValid = false;
+
             if (user) {
                 passwordIsValid = await argon2.verify(user.password, fields.password ?? '');
             }
 
             if (!passwordIsValid || !user) {
-                validationErrors.push({ path: 'email', msg: 'User is not exist or incorrect password.' });
+                validationErrors.push({ path: 'email', msg: 'Invalid user data entered. Please check that the data entered is correct.' });
             }
 
-            if (user && !user.isVerified) {
-                validationErrors.push({ path: 'email', msg: 'Please verify your email.' });
+            if (user && passwordIsValid && !user.isVerified) {
+                validationErrors.push({ path: 'email', msg: 'Please confirm your email.' });
             }
 
             if (validationErrors.length > 0) {
@@ -158,7 +159,7 @@ class AuthController extends UserController {
                 role: user.role
             });
 
-            return this._returnResponse(res, 200, { accessToken, data: user.toJSON() }, 'Login success')
+            return this._returnResponse(res, 200, { accessToken, data: user.toJSON() }, 'Successful login')
 
         } catch (e) {
             next(e);
@@ -178,6 +179,19 @@ class AuthController extends UserController {
     }
 
     /**
+     * @param {Object} data
+     * @param {string} expiresIn
+     * @return {string}
+     */
+    createPasswordResetToken(data, expiresIn = '30d') {
+        return jwt.sign(
+            data,
+            process.env.APP_SECRET,
+            { expiresIn }
+        );
+    }
+
+    /**
      * @param {e.Request} req
      * @param {e.Response} res
      * @param {e.NextFunction} next
@@ -191,15 +205,18 @@ class AuthController extends UserController {
                 return this._returnNotFound(res);
             }
 
+            user.passwordResetToken = this.createPasswordResetToken({ userEmail: user.email });
+            await user.save();
+
             await mailer.sendPasswordReset(
                 user.email,
                 {
                     fullName: user.fullName,
-                    token: this.createAccessToken({ userEmail: user.email })
+                    token: user.passwordResetToken
                 }
             )
 
-            return this._returnResponse(res, 200, {}, 'Password reset.')
+            return this._returnResponse(res, 200, {}, 'Successful send an email')
         } catch (e) {
             next(e);
         }
@@ -238,7 +255,7 @@ class AuthController extends UserController {
                 user.password = await this._model.createPassword(req.body.password);
                 await user.save();
 
-                return this._returnResponse(res, 200, {}, "Password has been changed")
+                return this._returnResponse(res, 200, {}, "Successful password update")
             } catch (e) {
                 console.log(e.message);
                 return this._returnResponse(res, 400, {}, "Invalid token");
@@ -256,7 +273,7 @@ class AuthController extends UserController {
      */
     async logout(req, res, next) {
         try {
-            return this._returnResponse(res, 200, {}, "You've logged out of your account")
+            return this._returnResponse(res, 200, {}, "Successful logout")
         } catch (e) {
             next(e);
         }

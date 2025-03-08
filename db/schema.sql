@@ -19,6 +19,8 @@ CREATE TABLE IF NOT EXISTS `users` (
    `country` ENUM ('Ukraine', 'Poland', 'Spain') DEFAULT 'Ukraine' NOT NULL,
    `role` ENUM ('user', 'admin') DEFAULT 'user' NOT NULL,
    `isVerified` BOOLEAN NOT NULL DEFAULT FALSE,
+   `confirmToken` VARCHAR(200),
+   `passwordResetToken` VARCHAR(200),
    `creationAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
    PRIMARY KEY (`id`),
    UNIQUE KEY `email` (`email`)

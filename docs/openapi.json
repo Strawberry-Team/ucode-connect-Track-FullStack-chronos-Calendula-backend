@@ -14,7 +14,7 @@
   "paths": {
     "/api/auth/register": {
       "post": {
-        "summary": "Register a new user",
+        "summary": "User registration",
         "tags": ["Authentication"],
         "requestBody": {
           "required": true,
@@ -28,7 +28,7 @@
         },
         "responses": {
           "201": {
-            "description": "User successfully registered",
+            "description": "Successful registration",
             "content": {
               "application/json": {
                 "schema": {
@@ -37,43 +37,43 @@
               }
             }
           },
-          "401": {
-            "description": "Access denied"
-          },
           "400": {
             "description": "Validation error"
+          },
+          "401": {
+            "description": "Access denied"
           }
         }
       }
     },
     "/api/auth/confirm-email/{confirm_token}": {
       "get": {
-        "summary": "Confirm email of new user by token",
+        "summary": "Confirm the user's email by token",
         "tags": ["Authentication"],
         "parameters": [
           {
             "name": "confirm_token",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": { "type": "string", "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyRW1haWwiOiJ0ZXN0dXNlckBleGFtcGxlLmNvbSIsImlhdCI6MTc0MTQyOTc5MywiZXhwIjoxNzQ0MDIxNzkzfQ.7keuLkomsLANnmIDkq5v7vb6c77kyiWqEpdz_NhHSIA" }
           }
         ],
         "responses": {
           "200": {
-            "description": "Email is confirmed"
-          },
-          "401": {
-            "description": "Access denied"
+            "description": "Successful email confirmation"
           },
           "400": {
             "description": "Invalid token"
+          },
+          "401": {
+            "description": "Access denied"
           }
         }
       }
     },
     "/api/auth/login": {
       "post": {
-        "summary": "User login.  Only users with a confirmed email can sign in.",
+        "summary": "User login",
         "tags": ["Authentication"],
         "requestBody": {
           "required": true,
@@ -107,7 +107,7 @@
     },
     "/api/auth/logout": {
       "post": {
-        "summary": "Logout authenticated user",
+        "summary": "User logout",
         "tags": ["Authentication"],
         "security": [
           {
@@ -116,14 +116,14 @@
         ],
         "responses": {
           "200": {
-            "description": "User successfully logged out"
+            "description": "Successful logout"
           }
         }
       }
     },
     "/api/auth/password-reset": {
       "post": {
-        "summary": "Send password reset link",
+        "summary": "Send a password recovery email",
         "tags": ["Authentication"],
         "requestBody": {
           "required": true,
@@ -132,7 +132,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "email": { "type": "string", "format": "email" }
+                  "email": { "type": "string", "format": "email", "example": "testuser@example.com" }
                 },
                 "required": ["email"]
               }
@@ -141,24 +141,24 @@
         },
         "responses": {
           "200": {
-            "description": "Password reset link sent"
+            "description": "Successful send an email"
           },
           "404": {
-            "description": "User with this email not found"
+            "description": "User not found by email"
           }
         }
       }
     },
     "/api/auth/password-reset/{confirm_token}": {
       "post": {
-        "summary": "Confirm new password using token",
+        "summary": "Confirm password recovery by token",
         "tags": ["Authentication"],
         "parameters": [
           {
             "name": "confirm_token",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": { "type": "string", "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyRW1haWwiOiJ0ZXN0dXNlckBleGFtcGxlLmNvbSIsImlhdCI6MTc0MTQyOTk0MywiZXhwIjoxNzQ0MDIxOTQzfQ.mw_370315ltNNueStm_j2HqyHDJJDP1BjBHNR2GQiVo" }
           }
         ],
         "requestBody": {
@@ -168,8 +168,8 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "password": { "type": "string" },
-                  "password_confirm": { "type": "string" }
+                  "password": { "type": "string", "example": "NewStrongPassword123!$" },
+                  "password_confirm": { "type": "string", "example": "NewStrongPassword123!$" }
                 },
                 "required": ["password", "password_confirm"]
               }
@@ -178,7 +178,7 @@
         },
         "responses": {
           "200": {
-            "description": "Password successfully updated"
+            "description": "Successful password update"
           },
           "400": {
             "description": "Invalid token"
@@ -229,7 +229,7 @@
         },
         "responses": {
           "201": {
-            "description": "User successfully created",
+            "description": "Successful user creation",
             "content": {
               "application/json": {
                 "schema": {
@@ -246,7 +246,7 @@
     },
     "/api/users/{user_id}": {
       "get": {
-        "summary": "Get specific user data",
+        "summary": "Retrieval of user data",
         "tags": ["Users"],
         "security": [
           {
@@ -263,7 +263,7 @@
         ],
         "responses": {
           "200": {
-            "description": "User data",
+            "description": "Successfully retrieve",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/User" }
@@ -301,7 +301,7 @@
         },
         "responses": {
           "200": {
-            "description": "User data updated",
+            "description": "Successful update",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/User" }
@@ -314,7 +314,7 @@
         }
       },
       "delete": {
-        "summary": "Delete user (admin only)",
+        "summary": "Delete a user (admin only)",
         "tags": ["Users"],
         "security": [
           {
@@ -331,7 +331,7 @@
         ],
         "responses": {
           "200": {
-            "description": "User successfully deleted"
+            "description": "Successful deletion"
           },
           "403": {
             "description": "Access denied"
@@ -341,7 +341,7 @@
     },
     "/api/users/avatar": {
       "patch": {
-        "summary": "Upload user avatar",
+        "summary": "Upload a user avatar",
         "tags": ["Users"],
         "security": [
           {
@@ -367,7 +367,7 @@
         },
         "responses": {
           "200": {
-            "description": "Avatar successfully uploaded",
+            "description": "Successful upload",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/User" }
@@ -383,33 +383,28 @@
       "User": {
         "type": "object",
         "properties": {
-          "id": { "type": "integer" },
-          "login": { "type": "string" },
-          "fullName": { "type": "string" },
-          "email": { "type": "string", "format": "email" },
-          "isVerified": { "type": "boolean", "example": false },
-          "profilePicture": { "type": "string", "example": "default.png"  },
-          "rating": { "type": "integer" },
-          "role": { "type": "string", "enum": ["user", "admin"] },
-          "creationAt": { "type": "string", "format": "date-time" }
+          "id": {"type": "integer"},
+          "fullName": { "type": "string", "example": "Test User" },
+          "email": { "type": "string", "format": "email", "example": "testuser@example.com" },
+          "country": { "type": "string", "enum": ["Ukraine", "Poland", "Spain"], "example": "Ukraine" }
         }
       },
       "RegisterUser": {
         "type": "object",
         "properties": {
-          "email": { "type": "string", "format": "email" },
-          "fullName": { "type": "string" },
-          "country": { "type": "string", "enum": ["Ukraine", "Poland", "Spain"] },
-          "password": { "type": "string" },
-          "password_confirmation": { "type": "string" }
+          "email": { "type": "string", "format": "email", "example": "testuser@example.com" },
+          "fullName": { "type": "string", "example": "Test User" },
+          "country": { "type": "string", "enum": ["Ukraine", "Poland", "Spain"], "example": "Ukraine" },
+          "password": { "type": "string", "example": "StrongPassword123!$" },
+          "password_confirm": { "type": "string", "example": "StrongPassword123!$" }
         },
-        "required": ["login", "password", "password_confirmation", "email", "country", "fullName"]
+        "required": ["email", "fullName", "country", "password", "password_confirm"]
       },
       "LoginUser": {
         "type": "object",
         "properties": {
-          "email": { "type": "string" },
-          "password": { "type": "string" }
+          "email": { "type": "string", "format": "email", "example": "testuser@example.com" },
+          "password": { "type": "string", "example": "StrongPassword123!$" }
         },
         "required": ["email", "password"]
       },
@@ -417,27 +412,40 @@
         "type": "object",
         "properties": {
           "message": { "type": "string", "example": "Login success."},
-          "accessToken": { "type": "string" }
+          "accessToken": { "type": "string", "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJ0ZXN0dXNlckBleGFtcGxlLmNvbSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQxNDM1NDYzLCJleHAiOjE3NDIwNDAyNjN9.9a7VC-fDBv5KhUP4D6HkywVuz4sxRuQWUyk7SD_mKQ8" },
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "integer" },
+              "fullName": { "type": "string", "example": "Test User" },
+              "email": { "type": "string", "format": "email", "example": "testuser@example.com" },
+              "profilePicture": { "type": "string", "example": "default.png" },
+              "country": { "type": "string", "enum": ["Ukraine", "Poland", "Spain"], "example": "Ukraine" },
+              "role": { "type": "string", "enum": [ "user", "admin" ], "example": "user" },
+              "isVerified": { "type": "integer", "example": 1 },
+              "creationAt": { "type": "string", "format": "date-time", "example": "2025-03-08T09:05:13.000Z" }
+            }
+          }
         }
       },
       "CreateUser": {
         "type": "object",
         "properties": {
-          "email": { "type": "string", "format": "email" },
-          "fullName": { "type": "string" },
-          "role": { "type": "string", "enum": ["user", "admin"] },
-          "country": { "type": "string", "enum": ["Ukraine", "Poland", "Spain"] },
-          "password": { "type": "string" },
-          "password_confirmation": { "type": "string" }
+          "email": { "type": "string", "format": "email", "example": "testuser@example.com" },
+          "fullName": { "type": "string", "example": "Test User" },
+          "role": { "type": "string", "enum": ["user", "admin"], "example": "user" },
+          "country": { "type": "string", "enum": ["Ukraine", "Poland", "Spain"], "example": "Ukraine" },
+          "password": { "type": "string", "example": "StrongPassword123!$" },
+          "password_confirm": { "type": "string", "example": "StrongPassword123!$" }
         },
-        "required": ["login", "password", "password_confirmation", "email", "country", "fullName"]
+        "required": ["email", "fullName", "role", "country", "password", "password_confirm"]
       },
       "UpdateUser": {
         "type": "object",
         "properties": {
-          "fullName": { "type": "string" },
-          "password": { "type": "string", "format": "email" },
-          "password_confirmation": { "type": "string" }
+          "fullName": { "type": "string", "example": "Test User" },
+          "password": { "type": "string", "example": "StrongPassword123!$" },
+          "password_confirm": { "type": "string", "example": "StrongPassword123!$" }
         }
       }
     },

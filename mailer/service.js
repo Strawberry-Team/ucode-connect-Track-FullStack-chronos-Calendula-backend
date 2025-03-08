@@ -33,7 +33,7 @@ async function send(email, subject, htmlTemplate, dataForTemplate) {
         );
         const result = await airplane.sendMail(
             {
-                from: "\"Tech_Cloud\" info@calendula.com",
+                from: "\"Calendula\" info@calendula.com",
                 to: email,
                 subject,
                 html
