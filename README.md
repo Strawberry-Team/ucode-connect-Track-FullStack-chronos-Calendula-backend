@@ -18,7 +18,7 @@ The database schema is provided in the `db/db.sql` file. Run the SQL commands in
 
 ## Docker
 ```bash
-docker-compose --env-file .envDev up -d
+docker-compose --env-file .env.development up -d
 ```
 
 ## How to Run the Solution
@@ -30,18 +30,18 @@ docker-compose --env-file .envDev up -d
    ```bash
    npm install
    ```
-5. Configure the database connection by updating the `.env` file with your MySQL database credentials. Example:
+3. Configure the database connection by updating the `.env` file with your MySQL database credentials. Example:
    ```
    DATABASE_HOST=localhost
    DATABASE_PORT=3306
    DATABASE_USER=root
    DATABASE_PASSWORD=root
    ```
-
-5. Log in to your MySQL. 
-6. Copy the contents of the [db/schema.sql](db/schema.sql) file and execute it in MySQL. You can also execute the SQL query through the MySQL CLI. To do this, run the command `mysql -u {USER_NAME} -p < db/db.sql`. You need to provide your MySQL login and password.
-7. Apply similar steps as in **step 6**, but use the data file [db/data.sql](db/data.sql).
-8. Start the server.
+3.1. For developers, you need to create `.env.development` and `.env.test` based on the `.env.*.example` files
+4. Log in to your MySQL. 
+5. Copy the contents of the [db/schema.sql](db/schema.sql) file and execute it in MySQL. You can also execute the SQL query through the MySQL CLI. To do this, run the command `mysql -u {USER_NAME} -p < db/db.sql`. You need to provide your MySQL login and password.
+6. Apply similar steps as in **step 6**, but use the data file [db/data.sql](db/data.sql).
+7. Start the server.
    ```bash
    npm run start
    ```
@@ -61,16 +61,12 @@ The documentation of all available endpoints can be found [http://localhost:8080
 ![](docs/swagger.png)
 
 ## API Testing
-Get started by installing Playwright using:
-```bash
-npx playwright install
-```
-Create an `.envDev` file and add the variables for the test environment to it. To do this, copy `.env` to `.envDev`. 
-Then edit `.envDev` if necessary (e.g. add a test database).
+Create an `.env.test` file and add the variables for the test environment to it. To do this, copy `.env` to `.env.test`. 
+Then edit `.env.test` if necessary (e.g. add a test database).
 
 Start the server with the command:
 ```bash
-npm run start:dev
+npm run start:test
 ```
 Once the dependencies are installed and the backend is running, you can run the tests. To do this, use the command:
 Running all tests:
@@ -83,7 +79,7 @@ npm run test:report
 ```
 Run tests for a specific component:
 ```bash
-env-cmd -f .envDev npx playwright test tests/api/<file_name>.test.js --project=chromium
+npx playwright test tests/api/<file_name>.test.js --project=chromium
 ```
 
 ## Additional Features

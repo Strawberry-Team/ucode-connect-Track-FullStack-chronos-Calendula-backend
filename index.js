@@ -45,6 +45,7 @@ const __dirname = path.dirname(__filename);
 import * as jwtMiddleware from './src/auth/middlewares/jwt.js';
 import userRouter from './src/user/routes.js';
 import authRoutes from './src/auth/routes.js';
+import calendarRoutes from './src/calendar/routes.js';
 
 const app = express();
 const PORT = 8080;
@@ -57,6 +58,7 @@ app.use(express.json());
 app.use(cors());
 app.use('/api/auth/', jwtMiddleware.setUserByJWT, authRoutes);
 app.use('/api/users/', jwtMiddleware.setUserByJWT, userRouter);
+app.use('/api/calendars/', jwtMiddleware.setUserByJWT, calendarRoutes);
 
 app.all('*', (req, res) => {
     return res.status(404).json({

@@ -1,8 +1,8 @@
 import mysql from 'mysql2/promise';
 const connection = mysql.createPool({
-    host: process.env.DATABASE_HOST || 'localhost',
-    port: process.env.DATABASE_PORT || 3306,
-    database: process.env.DATABASE_NAME || 'Calendula',
+    host: process.env.DATABASE_HOST,
+    port: process.env.DATABASE_PORT,
+    database: process.env.DATABASE_NAME,
     user: process.env.DATABASE_USER,
     password: process.env.DATABASE_PASSWORD,
     connectionLimit: 10,

@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "start": "node --env-file=.env index.js",
-    "start:dev": "nodemon --env-file=.envDev index.js",
-    "test": "env-cmd -f .envDev npx playwright test tests/api/*.test.js --project=chromium",
-    "test:report": "env-cmd -f .envDev npx playwright test tests/api/*.test.js --project=chromium; npx playwright show-report"
+    "start:dev": "nodemon --env-file=.env.development index.js",
+    "start:test": "nodemon --env-file=.env.test index.js",
+    "test": "npx playwright test tests/api/*.test.js --project=chromium",
+    "test:report": "npx playwright test tests/api/*.test.js --project=chromium; npx playwright show-report"
   },
   "dependencies": {
     "argon2": "^0.41.1",
