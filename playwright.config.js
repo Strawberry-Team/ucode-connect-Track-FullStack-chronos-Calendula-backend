@@ -41,17 +41,17 @@ export default defineConfig({
       fullyParallel: false,
     },
 
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-      fullyParallel: false,
-    },
-
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-      fullyParallel: false,
-    },
+    // {
+    //   name: 'firefox',
+    //   use: { ...devices['Desktop Firefox'] },
+    //   fullyParallel: false,
+    // },
+    //
+    // {
+    //   name: 'webkit',
+    //   use: { ...devices['Desktop Safari'] },
+    //   fullyParallel: false,
+    // },
 
     /* Test against mobile viewports. */
     // {

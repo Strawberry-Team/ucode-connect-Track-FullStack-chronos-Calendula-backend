@@ -138,7 +138,7 @@ class AuthController extends UserController {
             }
 
             if (user && passwordIsValid && !user.isVerified) {
-                validationErrors.push({ path: 'email', msg: 'Please confirm your email.' });
+                validationErrors.push({ path: 'email', msg: 'Please confirm your email' });
             }
 
             if (validationErrors.length > 0) {
