@@ -1,4 +1,7 @@
 import mysql from 'mysql2/promise';
+
+const padZero = num => num.toString().padStart(2, '0');
+
 const connection = mysql.createPool({
     host: process.env.DATABASE_HOST,
     port: process.env.DATABASE_PORT,
@@ -7,7 +10,18 @@ const connection = mysql.createPool({
     password: process.env.DATABASE_PASSWORD,
     connectionLimit: 10,
     waitForConnections: true,
-    queueLimit: 0
+    queueLimit: 0,
+    typeCast: function (field, next) {
+        if (field.type === 'DATETIME' || field.type === 'TIMESTAMP') {
+            const val = field.string();
+            if (val === null) return null;
+
+            const d = new Date(val);
+
+            return `${d.getFullYear()}-${padZero(d.getMonth() + 1)}-${padZero(d.getDate())} ${padZero(d.getHours())}:${padZero(d.getMinutes())}:${padZero(d.getSeconds())}`;
+        }
+        return next();
+    }
 });
 
 const originalQuery = connection.query;
