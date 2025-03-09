@@ -376,6 +376,159 @@
           }
         }
       }
+    },
+    "/api/calendars": {
+      "get": {
+        "summary": "Get all calendars",
+        "tags": ["Calendars"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of calendars",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Calendar" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new calendar",
+        "tags": ["Calendars"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCalendar"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful calendar creation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Calendar"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/api/calendars/{calendar_id}": {
+      "get": {
+        "summary": "Return calendar data",
+        "tags": ["Calendars"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "calendar_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieve",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Calendar" }
+              }
+            }
+          },
+          "404": {
+            "description": "Calendar not found"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update calendar data",
+        "tags": ["Calendars"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "calendar_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateCalendar" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful update",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Calendar" }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a calendar",
+        "tags": ["Calendars"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "calendar_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful deletion"
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -447,6 +600,23 @@
           "password": { "type": "string", "example": "StrongPassword123!$" },
           "password_confirm": { "type": "string", "example": "StrongPassword123!$" }
         }
+      },
+      "Calendar": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "title": { "type": "string", "example": "Database Modeling" },
+          "description": { "type": "string", "example": "Discussion of requirements, business logic, clarification of team composition" },
+          "creationAt": { "type": "string", "format": "date-time", "example": "2025-03-08T10:05:13.000Z" }
+        }
+      },
+      "CreateCalendar": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string", "example": "Database Modeling" },
+          "description": { "type": "string", "example": "Discussion of requirements, business logic, clarification of team composition" }
+        },
+        "required": ["title"]
       }
     },
     "securitySchemes": {
