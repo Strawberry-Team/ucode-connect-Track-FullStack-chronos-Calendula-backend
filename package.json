@@ -7,7 +7,7 @@
     "start": "node --env-file=.env index.js",
     "start:dev": "nodemon --env-file=.env.development index.js",
     "start:test": "nodemon --env-file=.env.test index.js",
-    "test": "npx playwright test tests/api/*.test.js --project=chromium",
+    "test": "npx playwright test tests/api/*.test.js --project=chromium --debug",
     "test:report": "npx playwright test tests/api/*.test.js --project=chromium; npx playwright show-report"
   },
   "dependencies": {

@@ -1,74 +1,69 @@
 import Controller from "../controller.js";
 import UserModel from "./model.js";
-import { body } from "express-validator";
+import {body} from "express-validator";
 
 /**
  * @property {UserModel} _model
  */
 class UserController extends Controller {
     constructor() {
-        super(new UserModel(),
-            [
-                body('email')
-                    .notEmpty().withMessage('Email address is required.')
-                    .isEmail().withMessage('Please enter a valid email address.'),
+        super(new UserModel(), [
+            body('email')
+                .notEmpty().withMessage('Email address is required.')
+                .isEmail().withMessage('Please enter a valid email address.')
+                .isLength({min: 3, max: 50}).withMessage('Email must be between 3 and 50 characters long.'),
 
-                body('fullName')
-                    .isLength({ min: 3 }).withMessage('Full name should be at least 3 characters long.'),
-
-                body('country')
-                    .notEmpty().withMessage('Please provide a country.')
-                    .isIn(['Ukraine', 'Poland', 'Spain']).withMessage('Countries: Ukraine, Poland, Spain'),
-
-                body('password')
-                    .isStrongPassword({ minLength: 5 })
-                    .withMessage("Password should be at least 5 characters long and include an uppercase letter, a symbol, and a number."),
-
-                body('password_confirm')
-                    .notEmpty().withMessage('Please confirm your password.')
-                    .custom((value, { req }) => {
-                        if (value !== req.body.password) {
-                            throw new Error('Password confirmation does not match the password.');
-                        }
-                        return true;
-                    })
-            ]
-        );
-
-        this._validationRulesForUpdate = [
             body('fullName')
                 .optional()
-                .isLength({ min: 3 }).withMessage('Full name should be at least 3 characters long.'),
+                .isLength({min: 3, max: 50}).withMessage('Full name must be between 3 and 30 characters long.'),
+
+            body('country')
+                .notEmpty().withMessage('Please provide a country.')
+                .isIn(['Ukraine', 'Poland', 'Spain']).withMessage('Countries: Ukraine, Poland, Spain.'),
 
             body('password')
                 .optional()
-                .isStrongPassword({ minLength: 5 })
-                .withMessage("Password should be at least 5 characters long and include an uppercase letter, a symbol, and a number."),
+                .isStrongPassword({minLength: 5}).withMessage("Password should be at least 5 characters long and include an uppercase letter, a symbol, and a number."),
 
             body('password_confirm')
-                .optional()
-                .custom((value, { req }) => {
+                .custom((value, {req}) => {
+                    if (req.body.password && !value) {
+                        throw new Error('Please confirm your password.');
+                    }
                     if (value !== req.body.password) {
                         throw new Error('Password confirmation does not match the password.');
                     }
                     return true;
-                })
-        ];
+                })]);
+
+        this._validationRulesForUpdate = [body('fullName')
+            .optional()
+            .isLength({min: 3, max: 50}).withMessage('Email must be between 3 and 50 characters long.'),
+
+            body('password')
+                .optional()
+                .isStrongPassword({minLength: 5}).withMessage("Password should be at least 5 characters long and include an uppercase letter, a symbol, and a number."),
+
+            body('password_confirm')
+                .optional()
+                .custom((value, {req}) => {
+                    if (req.body.password && !value) {
+                        throw new Error('Please confirm your password.');
+                    }
+                    if (value !== req.body.password) {
+                        throw new Error('Password confirmation does not match the password.');
+                    }
+                    return true;
+                })];
 
         this._accessPolicies.admin.setUpdate(this._model._fields.filter(field => !['email'].includes(field)));
 
         this._accessPolicies.user
             .removeCreate()
             .setRead([], [])
-            .setUpdate(
-                this._model._fields.filter(field => !['email',  'isVerified', 'role', 'creationAt'].includes(field)), [
-                    {
-                        field: 'id',
-                        operator: '=',
-                        value: null
-                    }
-                ]
-            )
+            .setUpdate(this._model._fields.filter(field => !['email', 'isVerified', 'role', 'creationAt'].includes(field)), [{
+                field: 'id', operator: '=', value: null
+            }])
             .removeDelete();
 
         this._accessPolicies.guest
@@ -84,19 +79,13 @@ class UserController extends Controller {
 
             let user = await this._model.getByEmail(req?.body?.email);
             if (user) {
-                validationErrors.push({ path: 'email', msg: 'Email is exist.' });
+                validationErrors.push({path: 'email', msg: 'Email is exist.'});
             }
 
             if (validationErrors.length > 0) {
-                return this._returnResponse(
-                    res,
-                    400,
-                    {
-                        validationErrors,
-                        validationSuccesses: req.validationSuccesses
-                    },
-                    "Validation failed"
-                );
+                return this._returnResponse(res, 400, {
+                    validationErrors, validationSuccesses: req.validationSuccesses
+                }, "Validation failed");
             }
 
             const fields = this._prepareFields(req);
@@ -105,7 +94,7 @@ class UserController extends Controller {
             }
 
             if (fields.email) {
-                fields.confirmToken = await this._model.createConfirmToken({ userEmail: fields.email });
+                fields.confirmToken = await this._model.createConfirmToken({userEmail: fields.email});
             }
 
             const newUser = this._model.createEntity(fields);
@@ -129,9 +118,7 @@ class UserController extends Controller {
      * @return {Promise<e.Response>}
      */
     async validateUpdate(req, res, next) {
-        return await this.validateBody(req, res, next,
-            this._validationRulesForUpdate
-        );
+        return await this.validateBody(req, res, next, this._validationRulesForUpdate);
     }
 
     async update(req, res, next) {
