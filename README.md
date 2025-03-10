@@ -79,7 +79,7 @@ npm run test:report
 ```
 Run tests for a specific component:
 ```bash
-npx playwright test tests/api/<file_name>.test.js --project=chromium
+npx playwright test tests/api/<file_name>.test.js --project=chromium --debug
 ```
 
 ## Additional Features

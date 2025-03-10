@@ -392,8 +392,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/Calendar" }
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Calendar" }
+                    }
+                  }
                 }
               }
             }
@@ -424,7 +429,10 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Calendar"
+                  "type": "object",
+                  "properties": {
+                    "data": { "$ref": "#/components/schemas/Calendar" }
+                  }
                 }
               }
             }
@@ -457,7 +465,12 @@
             "description": "Successfully retrieve",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Calendar" }
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": { "$ref": "#/components/schemas/Calendar" }
+                  }
+                }
               }
             }
           },
@@ -550,8 +563,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/Event" }
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Event" }
+                    }
+                  }
                 }
               }
             }
@@ -582,7 +600,10 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Event"
+                  "type": "object",
+                  "properties": {
+                    "data": { "$ref": "#/components/schemas/Event" }
+                  }
                 }
               }
             }
@@ -615,7 +636,12 @@
             "description": "Successfully retrieve",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Event" }
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": { "$ref": "#/components/schemas/Event" }
+                  }
+                }
               }
             }
           },
@@ -653,7 +679,7 @@
             "description": "Successful update",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Event" }
+                "schema": { "$ref": "#/components/schemas/UpdatedEvent" }
               }
             }
           },
@@ -775,6 +801,7 @@
           "id": {"type": "integer", "example": "1"},
           "title": { "type": "string", "example": "Calendula Dev Team" },
           "description": { "type": "string", "example": "Stand-ups, retrospectives, planning sprints and product demos" },
+          "creationByUserId": {"type": "integer", "example": "1"},
           "creationAt": { "type": "string", "format": "date-time", "example": "2025-03-08 10:05:13" }
         }
       },
@@ -797,29 +824,30 @@
       "UpdatedCalendar": {
         "type": "object",
         "properties": {
-          "id": {"type": "integer", "example": "1"},
-          "title": { "type": "string", "example": "Sports activities" },
-          "description": { "type": "string", "example": "Schedule of gym classes and bike rides" },
-          "creationAt": { "type": "string", "format": "date-time", "example": "2025-03-08 10:05:13" }
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {"type": "integer", "example": "1"},
+              "title": { "type": "string", "example": "Sports activities" },
+              "description": { "type": "string", "example": "Schedule of gym classes and bike rides" },
+              "creationByUserId": {"type": "integer", "example": "1"},
+              "creationAt": { "type": "string", "format": "date-time", "example": "2025-03-08 10:05:13" }
+            }
+          }
         }
       },
       "Event": {
         "type": "object",
         "properties": {
-          "data": {
-            "type": "object",
-            "properties": {
-              "id": {"type": "integer", "example": "1"},
-              "creationByUserId": {"type": "integer", "example": "1"},
-              "title": { "type": "string", "example": "Database Modeling" },
-              "description": { "type": "string", "example": "Discussion of requirements, business logic, clarification of team composition" },
-              "category": { "type": "string", "enum": ["work", "home", "hobby"], "example": "work" },
-              "type": { "type": "string", "enum": ["meeting", "reminder", "task"], "example": "meeting" },
-              "startAt": { "type": "string", "format": "date-time", "example": "2023-03-09 14:00:00" },
-              "endAt": { "type": "string", "format": "date-time", "example": "2023-03-09 15:00:00" },
-              "creationAt": { "type": "string", "format": "date-time", "example": "2023-03-09 10:00:00" }
-            }
-          }
+          "id": {"type": "integer", "example": "1"},
+          "creationByUserId": {"type": "integer", "example": "1"},
+          "title": { "type": "string", "example": "Database Modeling" },
+          "description": { "type": "string", "example": "Discussion of requirements, business logic, clarification of team composition" },
+          "category": { "type": "string", "enum": ["work", "home", "hobby"], "example": "work" },
+          "type": { "type": "string", "enum": ["meeting", "reminder", "task"], "example": "meeting" },
+          "startAt": { "type": "string", "format": "date-time", "example": "2023-03-09 14:00:00" },
+          "endAt": { "type": "string", "format": "date-time", "example": "2023-03-09 15:00:00" },
+          "creationAt": { "type": "string", "format": "date-time", "example": "2023-03-09 10:00:00" }
         }
       },
       "CreateEvent": {
