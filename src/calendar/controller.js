@@ -1,6 +1,6 @@
 import Controller from "../controller.js";
 import CalendarModel from "./model.js";
-import {body} from "express-validator";
+import { body } from "express-validator";
 
 
 class CalendarController extends Controller {
@@ -8,11 +8,11 @@ class CalendarController extends Controller {
         super(new CalendarModel(), [
             body('title')
                 .notEmpty().withMessage('Title is required.')
-                .isLength({min: 1, max: 50}).withMessage('Title should be at most 50 characters long.'),
+                .isLength({ min: 1, max: 50 }).withMessage('Title should be at most 50 characters long.'),
 
             body('description')
                 .optional()
-                .isLength({min: 1, max: 250}).withMessage('Description should be at most 250 characters long.'),]);
+                .isLength({ max: 250 }).withMessage('Description should be at most 250 characters long.'),]);
 
         const allowedFields = ['title', 'description'];
 
@@ -25,6 +25,9 @@ class CalendarController extends Controller {
             .setDelete(allowedFields, [{
                 field: this._model._creationByRelationFieldName, operator: '=', value: null
             }]);
+
+        this._accessPolicies.guest
+            .removeAll();
     }
 }
 

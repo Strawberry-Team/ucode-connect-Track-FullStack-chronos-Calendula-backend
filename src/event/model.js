@@ -17,7 +17,8 @@ class EventModel extends Model {
                 'endAt',
                 'creationAt'
             ],
-            EventEntity);
+            EventEntity
+        );
     }
 }
 

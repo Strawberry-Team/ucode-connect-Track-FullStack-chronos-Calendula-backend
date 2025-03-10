@@ -1,6 +1,6 @@
 import Controller from "../controller.js";
 import UserModel from "./model.js";
-import {body} from "express-validator";
+import { body } from "express-validator";
 
 /**
  * @property {UserModel} _model
@@ -11,19 +11,19 @@ class UserController extends Controller {
             body('email')
                 .notEmpty().withMessage('Email address is required.')
                 .isEmail().withMessage('Please enter a valid email address.')
-                .isLength({min: 3, max: 50}).withMessage('Email must be between 3 and 50 characters long.'),
+                .isLength({ min: 3, max: 50 }).withMessage('Email must be between 3 and 50 characters long.'),
 
             body('fullName')
-                .optional()
-                .isLength({min: 3, max: 50}).withMessage('Full name must be between 3 and 30 characters long.'),
+                .notEmpty().withMessage('Full name is required.')
+                .isLength({ min: 1, max: 50 }).withMessage('Full name must be between 3 and 30 characters long.'),
 
             body('country')
-                .notEmpty().withMessage('Please provide a country.')
+                .notEmpty().withMessage('Country is required.')
                 .isIn(['Ukraine', 'Poland', 'Spain']).withMessage('Countries: Ukraine, Poland, Spain.'),
 
             body('password')
                 .optional()
-                .isStrongPassword({minLength: 5}).withMessage("Password should be at least 5 characters long and include an uppercase letter, a symbol, and a number."),
+                .isStrongPassword({ minLength: 5 }).withMessage("Password should be at least 5 characters long and include an uppercase letter, a symbol, and a number."),
 
             body('password_confirm')
                 .custom((value, {req}) => {
@@ -36,13 +36,14 @@ class UserController extends Controller {
                     return true;
                 })]);
 
-        this._validationRulesForUpdate = [body('fullName')
-            .optional()
-            .isLength({min: 3, max: 50}).withMessage('Email must be between 3 and 50 characters long.'),
+        this._validationRulesForUpdate = [
+            body('fullName')
+                .optional()
+                .isLength({ max: 50 }).withMessage('Email must be between 3 and 50 characters long.'),
 
             body('password')
                 .optional()
-                .isStrongPassword({minLength: 5}).withMessage("Password should be at least 5 characters long and include an uppercase letter, a symbol, and a number."),
+                .isStrongPassword({ minLength: 5 }).withMessage("Password should be at least 5 characters long and include an uppercase letter, a symbol, and a number."),
 
             body('password_confirm')
                 .optional()
@@ -67,7 +68,7 @@ class UserController extends Controller {
             .removeDelete();
 
         this._accessPolicies.guest
-            .setRead();
+            .removeAll();
     }
 
     /**
