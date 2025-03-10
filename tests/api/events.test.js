@@ -1,26 +1,16 @@
 import { test, expect, request } from '@playwright/test';
 import dotenv from 'dotenv';
-// import { registerUser, loginUser, confirmUserEmail } from "./auth.helpers.js";
 import UserModel from "./../../src/user/model.js";
-import CalendarModel from "./../../src/calendar/model.js";
+import EventModel from "./../../src/event/model.js";
 
 dotenv.config({ path: '.env.test', debug: true });
 
 const baseUrl = 'http://localhost:8080/api';
 const userModel = new UserModel();
-const calendarModel = new CalendarModel();
+const eventModel = new EventModel();
 
-test.describe('Calendars', () => {
+test.describe('Events', () => {
     test.describe.configure({mode: 'serial', timeout: 2000});
-
-    // let accessToken;
-    //
-    // test.beforeAll(async ({ request }) => {
-    //     await registerUser(request);
-    //     await confirmUserEmail(request);
-    //     const loginResponse = await loginUser(request);
-    //     accessToken = loginResponse.accessToken;
-    // });
 
     const testUserData = {
         email: `ann.nichols${Date.now()}@example.com`,
@@ -136,21 +126,29 @@ test.describe('Calendars', () => {
         accessToken = responseBody.accessToken;
     });
 
-    const testCalendarData = {
-        title: 'Test Calendar',
-        description: 'Test Calendar Description'
+    const testEventData = {
+        title: 'Database Modeling',
+        description: 'Discussion of requirements, business logic, clarification of team composition',
+        category: 'work',
+        type: 'meeting',
+        startAt: '2023-03-09 14:00:00',
+        endAt: '2023-03-09 15:00:00',
     };
-    let currentCalendar = {};
+    let currentEvent = {};
 
-    test("Create Calendar", async ({request}) => {
-        const response = await request.post(`${baseUrl}/calendars/`, {
+    test("Create Event", async ({request}) => {
+        const response = await request.post(`${baseUrl}/events/`, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${accessToken}`
             },
             data: {
-                title: testCalendarData.title,
-                description: testCalendarData.description
+                title: testEventData.title,
+                description: testEventData.description,
+                category: testEventData.category,
+                type: testEventData.type,
+                startAt: testEventData.startAt,
+                endAt: testEventData.endAt
             }
         });
 
@@ -163,21 +161,28 @@ test.describe('Calendars', () => {
         const responseBody = await response.json();
         expect(responseBody).toHaveProperty('data');
         expect(responseBody).toHaveProperty('data.id');
+        expect(responseBody).toHaveProperty('data.creationByUserId');
         expect(responseBody).toHaveProperty('data.title');
         expect(responseBody).toHaveProperty('data.description');
-        expect(responseBody).toHaveProperty('data.creationByUserId');
+        expect(responseBody).toHaveProperty('data.category');
+        expect(responseBody).toHaveProperty('data.type');
+        expect(responseBody).toHaveProperty('data.startAt');
+        expect(responseBody).toHaveProperty('data.endAt');
         expect(responseBody).toHaveProperty('data.creationAt');
         expect(responseBody.data.id).toBeTruthy();
-        expect(responseBody.data.title).toBe(testCalendarData.title);
-        expect(responseBody.data.description).toBe(testCalendarData.description);
         expect(responseBody.data.creationByUserId).toBe(confirmedUser.id);
+        expect(responseBody.data.title).toBe(testEventData.title);
+        expect(responseBody.data.description).toBe(testEventData.description);
+        expect(responseBody.data.category).toBe(testEventData.category);
+        expect(responseBody.data.type).toBe(testEventData.type);
+        expect(responseBody.data.startAt).toBe(testEventData.startAt);
+        expect(responseBody.data.endAt).toBe(testEventData.endAt);
         expect(responseBody.data.creationAt).toBeTruthy();
-
-        currentCalendar.id = responseBody.data.id;
+        currentEvent.id = responseBody.data.id;
     });
 
-    test("Get Calendar", async ({request}) => {
-        const response = await request.get(`${baseUrl}/calendars/${currentCalendar.id}`, {
+    test("Get Event", async ({request}) => {
+        const response = await request.get(`${baseUrl}/events/${currentEvent.id}`, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${accessToken}`
@@ -193,29 +198,45 @@ test.describe('Calendars', () => {
         const responseBody = await response.json();
         expect(responseBody).toHaveProperty('data');
         expect(responseBody).toHaveProperty('data.id');
+        expect(responseBody).toHaveProperty('data.creationByUserId');
         expect(responseBody).toHaveProperty('data.title');
         expect(responseBody).toHaveProperty('data.description');
-        expect(responseBody).toHaveProperty('data.creationByUserId');
+        expect(responseBody).toHaveProperty('data.category');
+        expect(responseBody).toHaveProperty('data.type');
+        expect(responseBody).toHaveProperty('data.startAt');
+        expect(responseBody).toHaveProperty('data.endAt');
         expect(responseBody).toHaveProperty('data.creationAt');
-        expect(responseBody.data.id).toBe(currentCalendar.id);
-        expect(responseBody.data.title).toBe(testCalendarData.title);
-        expect(responseBody.data.description).toBe(testCalendarData.description);
+        expect(responseBody.data.id).toBeTruthy();
         expect(responseBody.data.creationByUserId).toBe(confirmedUser.id);
+        expect(responseBody.data.title).toBe(testEventData.title);
+        expect(responseBody.data.description).toBe(testEventData.description);
+        expect(responseBody.data.category).toBe(testEventData.category);
+        expect(responseBody.data.type).toBe(testEventData.type);
+        expect(responseBody.data.startAt).toBe(testEventData.startAt);
+        expect(responseBody.data.endAt).toBe(testEventData.endAt);
         expect(responseBody.data.creationAt).toBeTruthy();
     });
 
-    test("Update Calendar", async ({request}) => {
-        testCalendarData.title = testCalendarData.title + " Updated";
-        testCalendarData.description = testCalendarData.description + " Updated";
+    testEventData.title = "Frontend: Auth"
+    testEventData.description = "Creating user flow for authorisation";
+    testEventData.category = "work";
+    testEventData.type = "task";
+    testEventData.startAt ='2023-03-11 10:00:00';
+    testEventData.endAt = '2023-03-11 13:00:00';
 
-        const response = await request.patch(`${baseUrl}/calendars/${currentCalendar.id}`, {
+    test("Update Event", async ({request}) => {
+        const response = await request.patch(`${baseUrl}/events/${currentEvent.id}`, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${accessToken}`
             },
             data: {
-                title: testCalendarData.title,
-                description: testCalendarData.description
+                title: testEventData.title,
+                description: testEventData.description,
+                category: testEventData.category,
+                type: testEventData.type,
+                startAt: testEventData.startAt,
+                endAt: testEventData.endAt
             }
         });
 
@@ -228,19 +249,27 @@ test.describe('Calendars', () => {
         const responseBody = await response.json();
         expect(responseBody).toHaveProperty('data');
         expect(responseBody).toHaveProperty('data.id');
+        expect(responseBody).toHaveProperty('data.creationByUserId');
         expect(responseBody).toHaveProperty('data.title');
         expect(responseBody).toHaveProperty('data.description');
-        expect(responseBody).toHaveProperty('data.creationByUserId');
+        expect(responseBody).toHaveProperty('data.category');
+        expect(responseBody).toHaveProperty('data.type');
+        expect(responseBody).toHaveProperty('data.startAt');
+        expect(responseBody).toHaveProperty('data.endAt');
         expect(responseBody).toHaveProperty('data.creationAt');
-        expect(responseBody.data.id).toBe(currentCalendar.id);
-        expect(responseBody.data.title).toBe(testCalendarData.title);
-        expect(responseBody.data.description).toBe(testCalendarData.description);
+        expect(responseBody.data.id).toBeTruthy();
         expect(responseBody.data.creationByUserId).toBe(confirmedUser.id);
+        expect(responseBody.data.title).toBe(testEventData.title);
+        expect(responseBody.data.description).toBe(testEventData.description);
+        expect(responseBody.data.category).toBe(testEventData.category);
+        expect(responseBody.data.type).toBe(testEventData.type);
+        expect(responseBody.data.startAt).toBe(testEventData.startAt);
+        expect(responseBody.data.endAt).toBe(testEventData.endAt);
         expect(responseBody.data.creationAt).toBeTruthy();
     });
 
-    test("Delete Calendar", async ({request}) => {
-        const response = await request.delete(`${baseUrl}/calendars/${currentCalendar.id}`, {
+    test("Delete Event", async ({request}) => {
+        const response = await request.delete(`${baseUrl}/events/${currentEvent.id}`, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${accessToken}`
@@ -256,14 +285,22 @@ test.describe('Calendars', () => {
         const responseBody = await response.json();
         expect(responseBody).toHaveProperty('data');
         expect(responseBody).toHaveProperty('data.id');
+        expect(responseBody).toHaveProperty('data.creationByUserId');
         expect(responseBody).toHaveProperty('data.title');
         expect(responseBody).toHaveProperty('data.description');
-        expect(responseBody).toHaveProperty('data.creationByUserId');
+        expect(responseBody).toHaveProperty('data.category');
+        expect(responseBody).toHaveProperty('data.type');
+        expect(responseBody).toHaveProperty('data.startAt');
+        expect(responseBody).toHaveProperty('data.endAt');
         expect(responseBody).toHaveProperty('data.creationAt');
-        expect(responseBody.data.id).toBe(currentCalendar.id);
-        expect(responseBody.data.title).toBe(testCalendarData.title);
-        expect(responseBody.data.description).toBe(testCalendarData.description);
+        expect(responseBody.data.id).toBeTruthy();
         expect(responseBody.data.creationByUserId).toBe(confirmedUser.id);
+        expect(responseBody.data.title).toBe(testEventData.title);
+        expect(responseBody.data.description).toBe(testEventData.description);
+        expect(responseBody.data.category).toBe(testEventData.category);
+        expect(responseBody.data.type).toBe(testEventData.type);
+        expect(responseBody.data.startAt).toBe(testEventData.startAt);
+        expect(responseBody.data.endAt).toBe(testEventData.endAt);
         expect(responseBody.data.creationAt).toBeTruthy();
     });
 

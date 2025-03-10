@@ -11,8 +11,8 @@ test.describe('Authentication', () => {
     test.describe.configure({ mode: 'serial', timeout: 2000 });
 
     const testUserData = {
-        email: `testuser${Date.now()}@example.com`,
-        fullName: 'Test User',
+        email: `ann.nichols${Date.now()}@example.com`,
+        fullName: 'Ann Nichols',
         country: 'Ukraine',
         password: 'StrongPassword123!$',
         new_password: 'NewStrongPassword123!$'
@@ -226,7 +226,7 @@ test.describe('Authentication', () => {
         expect(responseBody.data.country).toBe(confirmedUser.country);
         expect(responseBody.data.profilePicture).toBe(confirmedUser.profilePicture);
         expect(responseBody.data.role).toBe(confirmedUser.role);
-        // expect(responseBody.data.creationAt).toBe(confirmedUser.creationAt);
+        expect(responseBody.data.creationAt).toBeTruthy();
 
         accessToken = responseBody.accessToken;
     });

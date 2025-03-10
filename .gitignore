@@ -3,6 +3,7 @@
 node_modules
 .env.development
 .env.test
+.envDev
 
 # Playwright
 /test-results/
