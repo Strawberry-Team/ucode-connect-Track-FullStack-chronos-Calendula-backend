@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS `events` (
     `title` VARCHAR(50) NOT NULL,
     `description` VARCHAR(250) DEFAULT NULL,
     `category` ENUM ('work', 'home', 'hobby') DEFAULT 'work' NOT NULL,
-    `type` ENUM ('meeting', 'reminder', 'task') NOT NULL,
+    `type` ENUM ('meeting', 'reminder', 'task') DEFAULT 'meeting' NOT NULL,
     `startAt` DATETIME,
     `endAt` DATETIME DEFAULT NULL,
     `creationAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

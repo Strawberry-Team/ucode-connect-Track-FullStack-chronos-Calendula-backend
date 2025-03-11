@@ -7,12 +7,25 @@
     "start": "node --env-file=.env index.js",
     "start:dev": "nodemon --env-file=.env.development index.js",
     "start:test": "nodemon --env-file=.env.test index.js",
-    "test": "npx playwright test tests/api/*.test.js --project=chromium --debug",
-    "test:report": "npx playwright test tests/api/*.test.js --project=chromium --debug; npx playwright show-report"
+
+    "test": "npx playwright test tests/api/*.test.js",
+    "test:debug": "npx playwright test tests/api/*.test.js --debug",
+    "test:report": "npx playwright test tests/api/*.test.js; npx playwright show-report",
+
+    "migrate:create:dev": "db-migrate create --sql-file --env dev",
+    "migrate:create:test": "db-migrate create --sql-file --env test",
+    "migrate:up:dev": "db-migrate up --env dev",
+    "migrate:up:test": "db-migrate up --env test",
+    "migrate:down:dev": "db-migrate down -c 1 --env dev",
+    "migrate:down:test": "db-migrate down -c 1 --env test",
+    "migrate:reset:dev": "db-migrate reset --env dev",
+    "migrate:reset:test": "db-migrate reset --env test"
   },
   "dependencies": {
     "argon2": "^0.41.1",
     "cors": "^2.8.5",
+    "db-migrate": "^0.11.14",
+    "db-migrate-mysql": "^3.0.0",
     "dotenv": "^16.4.7",
     "ejs": "^3.1.10",
     "express": "^4.21.0",

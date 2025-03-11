@@ -4,6 +4,7 @@ node_modules
 .env.development
 .env.test
 .envDev
+db/migration_config.json
 
 # Playwright
 /test-results/

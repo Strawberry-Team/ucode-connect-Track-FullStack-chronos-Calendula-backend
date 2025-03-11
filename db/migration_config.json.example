@@ -1,0 +1,29 @@
+{
+  "dev": {
+    "driver": "mysql",
+    "host": "localhost",
+    "database": "Calendula",
+    "user": "root",
+    "password": "root",
+    "port": 3307,
+    "multipleStatements": true
+  },
+  "test": {
+    "driver": "mysql",
+    "host": "localhost",
+    "database": "Calendula_Test",
+    "user": "root",
+    "password": "root",
+    "port": 3307,
+    "multipleStatements": true
+  },
+  "prod": {
+    "driver": "mysql",
+    "host": "localhost",
+    "database": "Calendula",
+    "user": "root",
+    "password": "root",
+    "port": 3307,
+    "multipleStatements": true
+  }
+}
