@@ -40,7 +40,7 @@ docker-compose --env-file .env.development up -d
 3.1. For developers, you need to create `.env.development` and `.env.test` based on the `.env.*.example` files
 4. Log in to your MySQL. 
 5. Copy the contents of the [db/schema.sql](db/schema.sql) file and execute it in MySQL. You can also execute the SQL query through the MySQL CLI. To do this, run the command `mysql -u {USER_NAME} -p < db/db.sql`. You need to provide your MySQL login and password.
-6. Apply similar steps as in **step 6**, but use the data file [db/data.sql](db/data.sql).
+6. Apply similar steps as in **step 5**, but use the data file [db/data.sql](db/data.sql).
 7. Start the server.
    ```bash
    npm run start
@@ -60,9 +60,40 @@ The documentation of all available endpoints can be found [http://localhost:8080
 
 ![](docs/swagger.png)
 
+## Database Migration
+
+Migrations are possible on such environments: dev, test, and prod. Environment settings are loaded from a `./db/migration_config.json` file.
+Create your `./db/migration_config.json` file and add the properties for the environments to it. To do this, copy `./db/migration_config.json.example` or to `./db/migration_config.json`. Then edit `./db/migration_config.json` if necessary (e.g. add a test database).
+
+Note that migrations are only possible on **existing databases**. Therefore, create your database first. Example of a database creation query to be executed in the database console:
+```sql
+CREATE DATABASE Calendula_Test;
+USE Calendula_Test;
+```
+In the examples of all commands below in the text `<env>` is the name of the environment to perform the migration, e.g. `dev`, `test` or `prod`.
+
+The `create` command creates a migration that loads sql file with the name <migration-name> in configured migrations directory `./db/migrations`.
+```bash
+npm run migrate:create:<env> -- <migration-name>
+```
+Where `<migration-name>` is the name of the migration you are creating, e.g., `update-events-categories`.
+
+The `up` command executes the migrations of your currently configured migrations directory. More specific the up migrations are being called.
+```bash
+npm run migrate:up:<env>
+```
+The `down` command executes the migrations of your currently configured migrations directory. More specific the down migrations are being called.
+```bash
+npm run migrate:down:<env>
+```
+The reset command is a shortcut to execute all down migrations and literally reset all migrations which where currently done. The reset command also executes by default only the first scope.
+```bash
+npm run migrate:reset:<env>
+```
+Answers to other questions can be found in the official [db-migrate](https://db-migrate.readthedocs.io/en/latest/) documentation.
+
 ## API Testing
-Create an `.env.test` file and add the variables for the test environment to it. To do this, copy `.env` to `.env.test`. 
-Then edit `.env.test` if necessary (e.g. add a test database).
+Create an `.env.test` file and add the variables for the test environment to it. To do this, copy `.env.test.example` or to `.env.test`. Then edit `.env.test` if necessary (e.g. add a test database).
 
 Start the server with the command:
 ```bash
