@@ -201,8 +201,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/User" }
+                  "type": "object",
+                  "properties": {
+                    "data":{
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/User" }
+                    }
+                  }
                 }
               }
             }
@@ -725,15 +730,10 @@
       "User": {
         "type": "object",
         "properties": {
-          "data": {
-            "type": "object",
-            "properties": {
-              "id": {"type": "integer", "example": "1"},
-              "fullName": { "type": "string", "example": "Ann Nichols" },
-              "email": { "type": "string", "format": "email", "example": "ann.nichols@example.com" },
-              "country": { "type": "string", "enum": ["Ukraine", "Poland", "Spain"], "example": "Ukraine" }
-            }
-          }
+          "id": {"type": "integer", "example": "1"},
+          "fullName": { "type": "string", "example": "Ann Nichols" },
+          "email": { "type": "string", "format": "email", "example": "ann.nichols@example.com" },
+          "country": { "type": "string", "enum": ["Ukraine", "Poland", "Spain"], "example": "Ukraine" }
         }
       },
       "RegisterUser": {
@@ -802,6 +802,25 @@
           "title": { "type": "string", "example": "Calendula Dev Team" },
           "description": { "type": "string", "example": "Stand-ups, retrospectives, planning sprints and product demos" },
           "creationByUserId": {"type": "integer", "example": "1"},
+          "creator": { "$ref": "#/components/schemas/User" },
+          "participants": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CalendarUser" }
+          },
+          "creationAt": { "type": "string", "format": "date-time", "example": "2025-03-08 10:05:13" }
+        }
+      },
+      "CalendarUser": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer", "example": "1"},
+          "calendarId": {"type": "integer", "example": "15"},
+          "userId": {"type": "integer", "example": "9"},
+          "user": { "$ref": "#/components/schemas/User" },
+          "color": {"type": "string"},
+          "role": {"type": "string", "enum": ["owner", "editor", "viewer"], "example": "owner"},
+          "isMain": { "type": "boolean", "example": 0 },
+          "isConfirmed": { "type": "boolean", "example": 0 },
           "creationAt": { "type": "string", "format": "date-time", "example": "2025-03-08 10:05:13" }
         }
       },
@@ -809,7 +828,16 @@
         "type": "object",
         "properties": {
           "title": { "type": "string", "example": "Calendula Dev Team" },
-          "description": { "type": "string", "example": "Stand-ups, retrospectives, planning sprints and product demos" }
+          "description": { "type": "string", "example": "Stand-ups, retrospectives, planning sprints and product demos" },
+          "participants": {
+            "type": "array",
+            "items": {
+              "properties": {
+                "userId": {"type": "integer", "example": "1"},
+                "role": {"type": "string", "enum": ["owner", "editor", "viewer"], "example": "editor"}
+              }
+            }
+          }
         },
         "required": ["title"]
       },
@@ -817,7 +845,16 @@
         "type": "object",
         "properties": {
           "title": { "type": "string", "example": "Sports activities" },
-          "description": { "type": "string", "example": "Schedule of gym classes and bike rides" }
+          "description": { "type": "string", "example": "Schedule of gym classes and bike rides" },
+          "participants": {
+            "type": "array",
+            "items": {
+              "properties": {
+                "userId": {"type": "integer", "example": "1"},
+                "role": {"type": "string", "enum": ["owner", "editor", "viewer"], "example": "editor"}
+              }
+            }
+          }
         },
         "required": ["title"]
       },
