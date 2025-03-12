@@ -20,6 +20,12 @@ const connection = mysql.createPool({
 
             return `${d.getFullYear()}-${padZero(d.getMonth() + 1)}-${padZero(d.getDate())} ${padZero(d.getHours())}:${padZero(d.getMinutes())}:${padZero(d.getSeconds())}`;
         }
+
+        if (field.type === 'TINY' && field.length === 1) {
+            const val = field.string();
+            return val === null ? null : val === '1';
+        }
+
         return next();
     }
 });

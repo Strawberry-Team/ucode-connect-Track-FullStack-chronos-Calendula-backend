@@ -130,6 +130,84 @@ class CalendarController extends Controller {
             next(e);
         }
     }
+
+    /**
+     * @param {e.Request} req
+     * @param {e.Response} res
+     * @param {e.NextFunction} next
+     * @return {Promise<e.Response>}
+     */
+    async delete(req, res, next) {
+        try {
+            const entity = await this._getEntityByIdAndAccessFilter(req);
+
+            if (!entity) {
+                return this._returnNotFound(res);
+            }
+
+            await entity.prepareRelationFields();
+            if (entity.participants.find(p => p.role === 'owner' && p.userId === entity[this._model._creationByRelationFieldName] && p.isMain)) {
+                return this._returnAccessDenied(res, 403, {}, "You cannot delete the your main calendar.");
+            }
+
+            await entity.delete();
+
+            return this._returnResponse(res, 200, {
+                data: entity.toJSON()
+            });
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    /**
+     * Manages the join or leave actions for a calendar based on the user's request.
+     *
+     * @param {e.Request} req - The request object containing the user's command and parameters (e.g., command and calendar ID).
+     * @param {e.Response} res - The response object to send the response to the client.
+     * @param {e.NextFunction} next - The next middleware function to handle errors or further requests.
+     * @return {Promise<e.Response>} A promise that resolves without a value after processing the join or leave request.
+     */
+    async joinOrLeave(req, res, next) {
+        try {
+            const command = req.params.command;
+            if (!['join', 'leave'].includes(command)) {
+                return this._returnResponse(res, 400, {}, "Invalid command.");
+            }
+
+            const calendar = await this._model.getEntityById(req.params.id);
+            if (!calendar) {
+                return this._returnNotFound(res);
+            }
+
+            await calendar.prepareRelationFields();
+
+            const participant = calendar.participants.find(p => p.userId === req.user.id);
+            if (!participant) {
+                return this._returnAccessDenied(res, 403, {}, "You are not participating in this calendar.");
+            }
+
+            if (command === 'join') {
+                if (participant.isConfirmed) {
+                    return this._returnAccessDenied(res, 400, {}, "You are already participating in this calendar.");
+                }
+
+                participant.isConfirmed = true;
+                await participant.save();
+            } else if (command === 'leave') {
+                if (participant.role === 'owner') {
+                    return this._returnAccessDenied(res, 400, {}, "You cannot leave your calendar. Only delete it.");
+                }
+
+                await participant.delete();
+            }
+
+            return this._returnResponse(res, 200);
+
+        } catch (e) {
+            next(e);
+        }
+    }
 }
 
 export default new CalendarController;
