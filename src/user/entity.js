@@ -9,10 +9,11 @@ class UserEntity extends Entity {
         super(model, data);
     }
 
-    toJSON(allowedAllFields = false) {
-        const result = super.toJSON(allowedAllFields);
+    toJSON() {
+        const result = super.toJSON();
         delete result?.password;
         delete result?.confirmToken;
+        delete result?.passwordResetToken;
         return result;
     }
 }

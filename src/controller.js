@@ -222,7 +222,7 @@ class Controller {
      * @param {e.Request} req
      * @param {e.Response} res
      * @param {e.NextFunction} next
-     * @return {Promise<express.Response>}
+     * @return {Promise<e.Response>}
      */
     async delete(req, res, next) {
         try {
