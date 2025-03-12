@@ -7,11 +7,9 @@
     "start": "node --env-file=.env index.js",
     "start:dev": "nodemon --env-file=.env.development index.js",
     "start:test": "nodemon --env-file=.env.test index.js",
-
     "test": "npx playwright test tests/api/*.test.js",
     "test:debug": "npx playwright test tests/api/*.test.js --debug",
     "test:report": "npx playwright test tests/api/*.test.js; npx playwright show-report",
-
     "migrate:create:dev": "db-migrate create --sql-file --env dev",
     "migrate:create:test": "db-migrate create --sql-file --env test",
     "migrate:up:dev": "db-migrate up --env dev",
@@ -40,7 +38,7 @@
     "uuid": "^10.0.0"
   },
   "devDependencies": {
-    "@faker-js/faker": "^9.0.3",
+    "@faker-js/faker": "^9.6.0",
     "@playwright/test": "^1.51.0",
     "@types/node": "^22.13.9"
   }
