@@ -1,11 +1,11 @@
 import { test, expect } from '@playwright/test';
-import { BASE_URL, registerUser, confirmUserEmail, loginUser, generateUserData, expectResponseHeaders } from "./helpers/auth.helpers.js";
 import dotenv from 'dotenv';
+import { BASE_URL, HEADERS, expectResponseHeaders } from "./helpers/general.helpers.js";
+import { registerUser, confirmUserEmail, loginUser, generateUserData } from "./helpers/users.helpers.js";
 import UserModel from "./../../src/user/model.js";
 
 dotenv.config({ path: '.env.test', debug: true });
 
-const HEADERS = { 'Content-Type': 'application/json' };
 const userModel = new UserModel();
 
 test.describe('Authentication', () => {

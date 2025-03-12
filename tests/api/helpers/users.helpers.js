@@ -1,36 +1,50 @@
 import { expect } from '@playwright/test';
+import { faker } from "@faker-js/faker/locale/en";
+import { BASE_URL, HEADERS, expectResponseHeaders } from "./general.helpers.js";
 import UserModel from "../../../src/user/model.js";
 
-export const BASE_URL = 'http://localhost:8080/api';
-const HEADERS = { 'Content-Type': 'application/json' };
 const userModel = new UserModel();
 
-function getDefaultUserFields() {
-    return {
-        id: undefined,
-        email: `ann.nichols${Date.now()}@example.com`,
-        fullName: 'Ann Nichols',
-        country: 'Ukraine',
-        password: 'StrongPassword123!$',
-        password_confirm: 'StrongPassword123!$',
-        confirmToken: undefined,
-        accessToken: undefined,
-    }
+export function generateEmail(firstName, lastName) {
+    return faker.internet.exampleEmail({
+        firstName: firstName,
+        lastName: lastName,
+        allowSpecialCharacters: false
+    }).toLowerCase();
 }
-export function generateUserData(base = {}, overrides = {}) {
-    const defaults = getDefaultUserFields();
+
+export function generateFullName() {
+    const firstName = faker.person.firstName();
+    const lastName = faker.person.lastName();
     return {
-        ...defaults,
-        ...base,
-        ...overrides
+        firstName,
+        lastName,
+        fullName: `${firstName} ${lastName}`
     };
 }
 
-export function expectResponseHeaders(response, statusCode = 200) {
-    expect(response.status()).toBe(statusCode);
-    const headers = response.headers();
-    expect(headers).toHaveProperty('content-type');
-    expect(headers['content-type']).toContain('application/json');
+export function generateCountry() {
+    return faker.helpers.arrayElement(['Ukraine', 'Poland', 'Spain']);
+}
+
+export function generatePassword() {
+    return 'Password123!$';
+}
+
+export function generateUserData(base = {}, overrides = {}) {
+    const name = generateFullName();
+    return {
+        id: undefined,
+        email: generateEmail(name.firstName, name.lastName),
+        fullName: name.fullName,
+        country: generateCountry(),
+        password: generatePassword(),
+        password_confirm: generatePassword(),
+        confirmToken: undefined,
+        accessToken: undefined,
+        ...base,
+        ...overrides
+    };
 }
 
 export async function registerUser(request, userData) {
@@ -132,11 +146,4 @@ export async function createAndLoginUser(request, overrideUserData = {}) {
     await confirmUserEmail(request, user);
     const { userData } = await loginUser(request, user);
     return userData;
-}
-
-export function generateHeaders(accessToken) {
-    return {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`
-    };
 }
