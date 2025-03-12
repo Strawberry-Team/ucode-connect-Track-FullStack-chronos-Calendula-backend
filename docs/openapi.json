@@ -553,6 +553,66 @@
         }
       }
     },
+    "/api/calendars/{calendar_id}/join/": {
+      "patch": {
+        "summary": "Join calendar",
+        "tags": ["Calendars"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "calendar_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "example": "1" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful join."
+          },
+          "400": {
+            "description": "You are already participating in this calendar."
+          },
+          "403": {
+            "description": "You are not participating in this calendar."
+          }
+        }
+      }
+    },
+    "/api/calendars/{calendar_id}/leave/": {
+      "patch": {
+        "summary": "Leave calendar",
+        "tags": ["Calendars"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "calendar_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "example": "1" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful leave."
+          },
+          "400": {
+            "description": "You cannot leave your calendar. Only delete it."
+          },
+          "403": {
+            "description": "You are not participating in this calendar."
+          }
+        }
+      }
+    },
     "/api/events": {
       "get": {
         "summary": "Get all events by user",
@@ -769,7 +829,7 @@
               "profilePicture": { "type": "string", "example": "default.png" },
               "country": { "type": "string", "enum": ["Ukraine", "Poland", "Spain"], "example": "Ukraine" },
               "role": { "type": "string", "enum": [ "user", "admin" ], "example": "user" },
-              "isVerified": { "type": "integer", "example": 1 },
+              "isVerified": { "type": "boolean", "example": true },
               "creationAt": { "type": "string", "format": "date-time", "example": "2025-03-08 09:05:13" }
             }
           }
@@ -819,8 +879,8 @@
           "user": { "$ref": "#/components/schemas/User" },
           "color": {"type": "string"},
           "role": {"type": "string", "enum": ["owner", "editor", "viewer"], "example": "owner"},
-          "isMain": { "type": "boolean", "example": 0 },
-          "isConfirmed": { "type": "boolean", "example": 0 },
+          "isMain": { "type": "boolean", "example": true },
+          "isConfirmed": { "type": "boolean", "example": false },
           "creationAt": { "type": "string", "format": "date-time", "example": "2025-03-08 10:05:13" }
         }
       },

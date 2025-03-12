@@ -60,9 +60,6 @@ class CalendarUserModel extends Model {
 
         participants = this._getUniqueLowestRoles(participants);
 
-        console.log(participants, 'UNIQUE PARTICIPANTS');
-
-
         const calendarUsers = await this.getEntities([], [
             new Where('calendarId', '=', calendarId)
         ]);
@@ -78,8 +75,6 @@ class CalendarUserModel extends Model {
             participants = participants.filter(participant => participant.userId !== calendarUser.userId);
         }
 
-        console.log(participants, 'AFTER DELETE PARTICIPANTS');
-
         const calendarUserModel = new CalendarUserModel();
         const userModel = new UserModel();
         for (const participant of participants) {
@@ -93,11 +88,17 @@ class CalendarUserModel extends Model {
                 userId: participant.userId,
                 role: participant.role,
                 isMain: false,
-                isConfirmed: false
+                isConfirmed: participant.role === 'owner'
             });
 
             await calendarUser.save();
         }
+    }
+
+    async getCalendarsByUserId(userId) {
+        return await this.getEntities([], [
+            new Where('userId', '=', userId)
+        ]);
     }
 }
 

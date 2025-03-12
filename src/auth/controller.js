@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import * as argon2 from "argon2";
 import UserController from "../user/controller.js";
 import * as mailer from "../../mailer/service.js";
+import CalendarModel from "../calendar/model.js";
 
 class AuthController extends UserController {
     constructor() {
@@ -64,6 +65,9 @@ class AuthController extends UserController {
             && parentResponse?.statusCode === 201
         ) {
             const newUser = parentResponse.req?.newUser;
+
+            await (new CalendarModel()).createMainCalendar(newUser.id);
+
             await mailer.sendConfirm(
                 newUser.email, {
                     fullName: newUser.fullName,
