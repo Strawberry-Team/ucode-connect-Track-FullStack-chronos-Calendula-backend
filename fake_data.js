@@ -143,8 +143,6 @@ import CalendarUserModel from "./src/calendar/user/model.js";
         user.country = faker.helpers.arrayElement(USER_COUNTRIES);
         user.role = USER_ROLE;
         user.isVerified = 1;
-        user.confirmToken = await model.createConfirmToken({ userEmail: user.email });
-        user.passwordResetToken = await model.createConfirmToken({ userEmail: user.email });
         user.creationAt = generateCreationAt('2025-04-01T00:00:00.000Z', '2025-04-02T00:00:00.000Z');
 
         await user.save();
