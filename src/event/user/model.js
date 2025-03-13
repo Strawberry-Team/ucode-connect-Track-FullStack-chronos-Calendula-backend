@@ -25,7 +25,7 @@ class EventUserModel extends Model {
      * @param {[{userId: number, color: string, attendanceStatus: string}]} participants
      * @return {Promise<void>}
      */
-    async syncParticipants(eventId, participants) {
+    async syncEventParticipants(eventId, participants) {
         if (participants.length === 0) {
             throw new Error('There must be at least one participant.');
         }

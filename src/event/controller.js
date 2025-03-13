@@ -3,56 +3,65 @@ import EventModel from "./model.js";
 import { body } from "express-validator";
 import EventUserModel from "./user/model.js";
 import * as mailer from "../../mailer/service.js";
-import {th} from "@faker-js/faker";
-import EventUserEntity from "./user/entity.js";
-import UserModel from "../user/model.js";
 
 /**
  * @property {EventModel} _model
  */
 class EventController extends Controller {
     constructor() {
-        super(new EventModel(), [
-            body('title')
-                .notEmpty().withMessage('Title is required.')
-                .isLength({ min: 1, max: 50 }).withMessage('Title should be at most 50 characters long.'),
+        super(new EventModel(),
+            [
+                body('title')
+                    .notEmpty().withMessage('Title is required.')
+                    .isLength({ min: 1, max: 50 }).withMessage('Title should be at most 50 characters long.'),
 
-            body('description')
-                .optional()
-                .isLength({ max: 250 }).withMessage('Description should be at most 250 characters long.'),
+                body('description')
+                    .optional()
+                    .isLength({ max: 250 }).withMessage('Description should be at most 250 characters long.'),
 
-            body('category')
-                .notEmpty().withMessage('Please provide a category.')
-                .isIn(['work', 'home', 'hobby']).withMessage('Categories: work, home, hobby.'),
+                body('category')
+                    .notEmpty().withMessage('Please provide a category.')
+                    .isIn(['work', 'home', 'hobby']).withMessage('Categories: work, home, hobby.'),
 
-            body('type')
-                .notEmpty().withMessage('Please provide a type.')
-                .isIn(['meeting', 'reminder', 'task']).withMessage('Types: meeting, reminder, task.'),
+                body('type')
+                    .notEmpty().withMessage('Please provide a type.')
+                    .isIn(['meeting', 'reminder', 'task']).withMessage('Types: meeting, reminder, task.'),
 
-            body('startAt')
-                .notEmpty().withMessage('Please provide a start date and time.')
-                // todo create a custom validator for date and time
-                .custom((value, {req}) => {
-                    if (value > req.body.endAt) {
-                        throw new Error('Start date and time should be less than the end date and time.');
-                    }
-                    return true;
-                }),
+                body('startAt')
+                    .notEmpty().withMessage('Please provide a start date and time.')
+                    // todo create a custom validator for date and time
+                    .custom((value, {req}) => {
+                        if (value > req.body.endAt) {
+                            throw new Error('Start date and time should be less than the end date and time.');
+                        }
+                        return true;
+                    }),
 
-            body('endAt')
-                .custom((value, {req}) => {
-                    if (!value && req.body.type !== "reminder") {
-                        throw new Error('Please provide an end date and time.');
-                    }
-                    return true;
-                })
-                // todo create a custom validator for date and time
-                .custom((value, {req}) => {
-                    if (value < req.body.startAt) {
-                        throw new Error('End date and time should be greater than the start date and time.');
-                    }
-                    return true;
-                })]);
+                body('endAt')
+                    .custom((value, {req}) => {
+                        if (!value && req.body.type !== "reminder") {
+                            throw new Error('Please provide an end date and time.');
+                        }
+                        return true;
+                    })
+                    // todo create a custom validator for date and time
+                    .custom((value, {req}) => {
+                        if (value < req.body.startAt) {
+                            throw new Error('End date and time should be greater than the start date and time.');
+                        }
+                        return true;
+                    }),
+
+                    body('participants')
+                        .optional()
+                        .isArray({ min: 1 }).withMessage('Participants must be an array with at least one item.'),
+
+                    body('participants.*.userId')
+                        .if(body('participants').exists())
+                        .exists().withMessage('User id is required.')
+                        .isInt({ gt: 0 }).withMessage('User id must be a positive integer.')
+            ]
+        );
 
         const allowedFields = ['title', 'description', 'category', 'type', 'startAt', 'endAt'];
 
@@ -82,15 +91,11 @@ class EventController extends Controller {
         if (participants && Array.isArray(participants)) {
             participants.push({
                 userId: req?.user.id,
-                color: req?.user.color,
-                attendanceStatus: req?.user.attendanceStatus
             });
         } else {
             participants = [
                 {
                     userId: req?.user.id,
-                    color: req?.user.color,
-                    attendanceStatus: req?.user.attendanceStatus
                 }
             ];
         }
@@ -112,35 +117,39 @@ class EventController extends Controller {
                 fields[this._model._creationByRelationFieldName] = req.user.id;
             }
 
-            let newEntity = this._model.createEntity(fields);
-            await newEntity.save();
+            let entity = this._model.createEntity(fields);
+            await entity.save();
 
             const eventUserModel = new EventUserModel();
-            await eventUserModel.syncParticipants(newEntity.id, this._prepareParticipants(req));
+            await eventUserModel.syncEventParticipants(entity.id, this._prepareParticipants(req));
 
-            newEntity = await this._model.getEntityById(newEntity.id);
-            const participants = await eventUserModel.getEventsByEventId(newEntity.id);
+            const event = await this._model.getEntityById(entity.id);
+            const participants = await eventUserModel.getEventsByEventId(event.id);
 
             for (const participant of participants) {
+                if (participant.userId === event.creationByUserId) {
+                    continue;
+                }
+
                 const userModel = new UserModel();
                 const user = await userModel.getEntityById(participant.userId);
 
                 await mailer.sendEventInvitation(
                     user.email,
                     {
-                        userFullName: participant.fullName,
-                        eventId: newEntity.id,
-                        title: newEntity.title,
-                        description: newEntity.description,
-                        type: newEntity.type,
-                        startAt: newEntity.startAt,
-                        endAt: newEntity.endAt,
+                        userFullName: user.fullName,
+                        eventId: event.id,
+                        title: event.title,
+                        description: event.description,
+                        type: event.type,
+                        startAt: event.startAt,
+                        endAt: event.endAt,
                     }
                 );
             }
 
             return res.status(201).json({
-                data: newEntity.toJSON(),
+                data: event.toJSON(),
             });
         } catch (e) {
             next(e);
@@ -165,37 +174,35 @@ class EventController extends Controller {
             await entity.save();
 
             const eventUserModel = new EventUserModel();
-            await eventUserModel.syncParticipants(entity.id, this._prepareParticipants(req));
+            await eventUserModel.syncEventParticipants(entity.id, this._prepareParticipants(req));
 
             const event = await this._model.getEntityById(entity.id);
+            const participants = await eventUserModel.getEventsByEventId(event.id);
+
+            for (const participant of participants) {
+                if (participant.userId === event.creationByUserId) {
+                    continue;
+                }
+
+                const userModel = new UserModel();
+                const user = await userModel.getEntityById(participant.userId);
+
+                await mailer.sendEventInvitation(
+                    user.email,
+                    {
+                        userFullName: user.fullName,
+                        eventId: event.id,
+                        title: event.title,
+                        description: event.description,
+                        type: event.type,
+                        startAt: event.startAt,
+                        endAt: event.endAt,
+                    }
+                );
+            }
 
             return this._returnResponse(res, 200, {
                 data: event.toJSON()
-            });
-        } catch (e) {
-            next(e);
-        }
-    }
-
-    /**
-     * @param {e.Request} req
-     * @param {e.Response} res
-     * @param {e.NextFunction} next
-     * @return {Promise<e.Response>}
-     */
-    async delete(req, res, next) {
-        try {
-            const entity = await this._getEntityByIdAndAccessFilter(req);
-
-            if (!entity) {
-                return this._returnNotFound(res);
-            }
-
-            await entity.prepareRelationFields();
-            await entity.delete();
-
-            return this._returnResponse(res, 200, {
-                data: entity.toJSON()
             });
         } catch (e) {
             next(e);
@@ -230,7 +237,7 @@ class EventController extends Controller {
             if (!participant) {
                 return this._returnAccessDenied(
                     res, 403, {},
-                    "You are not participating in this event."
+                    "Unable to participate an event without an invitation."
                 );
             }
 
@@ -238,7 +245,7 @@ class EventController extends Controller {
                 if (participant.attendanceStatus === 'yes') {
                     return this._returnAccessDenied(
                         res, 400, {},
-                        "You are already participating in this event."
+                        "Unable to join an event already joined."
                     );
                 }
 
@@ -248,7 +255,7 @@ class EventController extends Controller {
                 if (participant.id === event.creationByUserId) {
                     return this._returnAccessDenied(
                         res, 400, {},
-                        "You cannot leave your event. Only delete it."
+                        "Unable to leave an event for an owner, only delete it."
                     );
                 }
 

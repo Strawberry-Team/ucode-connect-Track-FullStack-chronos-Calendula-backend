@@ -54,7 +54,8 @@ class Controller {
     /**
      * @param {e.Request} req
      * @param {number} totalEntitiesCount
-     * @return {{entitiesPerPage: number, totalEntitiesCount: number, nextPage: (number|null), totalPages: number, prevPage: (number|null), currentPage: number}}
+     * @return {{entitiesPerPage: number, totalEntitiesCount: number, nextPage: (number|null),
+     * totalPages: number, prevPage: (number|null), currentPage: number}}
      */
     _preparePagination(req, totalEntitiesCount = 0) {
         const entitiesPerPage = this._totalEntitiesPerPage;
@@ -105,7 +106,8 @@ class Controller {
      * @param {string} message
      * @return {Promise<e.Response>}
      */
-    async _returnAccessDenied(res, statusCode = 401, additionalData = {}, message = "Access denied") {
+    async _returnAccessDenied(res, statusCode = 401, additionalData = {},
+                              message = "Access denied") {
         return this._returnResponse(res, statusCode, additionalData, message);
     }
 
@@ -156,6 +158,7 @@ class Controller {
     async getById(req, res, next) {
         try {
             const entity = await this._getEntityByIdAndAccessFilter(req);
+
             if (!entity) {
                 return this._returnNotFound(res);
             }
@@ -177,6 +180,7 @@ class Controller {
     async create(req, res, next) {
         try {
             const fields = this._prepareFields(req);
+
             if (this._model._fields.includes(this._model._creationByRelationFieldName)) {
                 fields[this._model._creationByRelationFieldName] = req.user.id;
             }
@@ -203,6 +207,7 @@ class Controller {
     async update(req, res, next) {
         try {
             const entity = await this._getEntityByIdAndAccessFilter(req);
+
             if (!entity) {
                 return this._returnNotFound(res);
             }
@@ -227,6 +232,7 @@ class Controller {
     async delete(req, res, next) {
         try {
             const entity = await this._getEntityByIdAndAccessFilter(req);
+
             if (!entity) {
                 return this._returnNotFound(res);
             }

@@ -47,10 +47,10 @@ class CalendarUserModel extends Model {
     /**
      *
      * @param {number} calendarId
-     * @param {[{userId: number, color: string, role: string, isConfirmed: boolean}]} participants
+     * @param {[{userId: number, role: string}]} participants
      * @return {Promise<void>}
      */
-    async syncParticipants(calendarId, participants) {
+    async syncCalendarParticipants(calendarId, participants) {
         if (participants.length === 0) {
             throw new Error('There must be at least one participant.');
         }
@@ -70,14 +70,10 @@ class CalendarUserModel extends Model {
                 await calendarUser.delete();
             } else if (
                 participants.find(p => p.userId === calendarUser.userId
-                    && (p.role !== calendarUser.role
-                        || p.color !== calendarUser.color
-                        || p.isConfirmed !== calendarUser.isConfirmed))
+                    && p.role !== calendarUser.role)
             ) {
                 const participantToUpdate = participants.find(p => p.userId === calendarUser.userId);
                 calendarUser.role = participantToUpdate.role;
-                calendarUser.color = participantToUpdate.color;
-                calendarUser.isConfirmed = participantToUpdate.isConfirmed;
                 await calendarUser.save();
             }
 
@@ -97,10 +93,9 @@ class CalendarUserModel extends Model {
             const calendarUser = calendarUserModel.createEntity({
                 calendarId: calendarId,
                 userId: participant.userId,
-                color: participant.color,
                 role: participant.role,
                 isMain: false,
-                isConfirmed: participant.isConfirmed ?? participant.role === 'owner'
+                isConfirmed: participant.role === 'owner'
             });
 
             await calendarUser.save();
