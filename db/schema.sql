@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `calendars_users` (
     `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
     `calendarId` INT(10) UNSIGNED NOT NULL,
     `userId` INT(10) UNSIGNED NOT NULL,
-    `color` VARCHAR(10) DEFAULT '',
+    `color` VARCHAR(10) DEFAULT '#F4511E',
     `role` ENUM ('owner', 'editor', 'viewer') DEFAULT 'viewer' NOT NULL,
     `isMain` BOOLEAN DEFAULT FALSE,
     `isConfirmed` BOOLEAN DEFAULT FALSE,

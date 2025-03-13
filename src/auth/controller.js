@@ -69,11 +69,12 @@ class AuthController extends UserController {
             await (new CalendarModel()).createMainCalendar(newUser.id);
 
             await mailer.sendConfirm(
-                newUser.email, {
+                newUser.email,
+                {
                     fullName: newUser.fullName,
                     token: parentResponse.req?.confirmToken
                 }
-            )
+            );
         }
 
         return parentResponse;

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="UTF-8">
+    <title>Join calendar</title>
+</head>
+<body>
+<h1>Join calendar</h1>
+<p>Hi, <%= userFullName %>!</p>
+<p>
+    You were invited to the following calendar:<br>
+    <ul>
+        <li>Title: <%= title %></li>
+        <li>Description: <%= description %></li>
+    </ul>
+</p>
+<p>
+    Calendar subscription link: <a href="http://localhost:3000/confirm-email/<%= token %>/">http://localhost:3000/api/calendars/<%= calendarId %>/join/</a>
+</p>
+</body>
+</html>

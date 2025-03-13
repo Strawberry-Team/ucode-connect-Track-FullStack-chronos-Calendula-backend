@@ -555,7 +555,7 @@
     },
     "/api/calendars/{calendar_id}/join/": {
       "patch": {
-        "summary": "Join calendar",
+        "summary": "Join a calendar",
         "tags": ["Calendars"],
         "security": [
           {
@@ -575,17 +575,17 @@
             "description": "Successful join."
           },
           "400": {
-            "description": "You are already participating in this calendar."
+            "description": "Unable to join a calendar already joined."
           },
           "403": {
-            "description": "You are not participating in this calendar."
+            "description": "Unable to join a calendar without an invitation."
           }
         }
       }
     },
     "/api/calendars/{calendar_id}/leave/": {
       "patch": {
-        "summary": "Leave calendar",
+        "summary": "Leave a calendar",
         "tags": ["Calendars"],
         "security": [
           {
@@ -602,13 +602,13 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful leave."
+            "description": "Successful left."
           },
           "400": {
-            "description": "You cannot leave your calendar. Only delete it."
+            "description": "Unable to leave a calendar for an owner, only delete it."
           },
           "403": {
-            "description": "You are not participating in this calendar."
+            "description": "Unable to leave a calendar not invited to."
           }
         }
       }
@@ -783,6 +783,96 @@
           }
         }
       }
+    },
+    "/api/events/{event_id}/join/": {
+      "patch": {
+        "summary": "Join an event",
+        "tags": ["Events"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "example": "2" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful join."
+          },
+          "400": {
+            "description": "Unable to join an event already joined."
+          },
+          "403": {
+            "description": "Unable to join an event without an invitation."
+          }
+        }
+      }
+    },
+    "/api/events/{event_id}/leave/": {
+      "patch": {
+        "summary": "Leave an event",
+        "tags": ["Events"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "example": "2" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful left."
+          },
+          "400": {
+            "description": "Unable to leave an event for an owner, only delete it."
+          },
+          "403": {
+            "description": "Unable to leave an event not invited to."
+          }
+        }
+      }
+    },
+    "/api/events/{event_id}/tentative/": {
+      "patch": {
+        "summary": "Tentative attendance at an event",
+        "tags": ["Events"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "example": "2" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful set the status of tentative participation."
+          },
+          "400": {
+            "description": "Unable to participate tentatively in an event for an owner, only delete it."
+          },
+          "403": {
+            "description": "Unable to join an event not invited to."
+          }
+        }
+      }
     }
   },
   "components": {
@@ -873,12 +963,12 @@
       "CalendarUser": {
         "type": "object",
         "properties": {
-          "id": {"type": "integer", "example": "1"},
-          "calendarId": {"type": "integer", "example": "15"},
-          "userId": {"type": "integer", "example": "9"},
+          "id": { "type": "integer", "example": "1" },
+          "calendarId": { "type": "integer", "example": "15" },
+          "userId": { "type": "integer", "example": "9" },
           "user": { "$ref": "#/components/schemas/User" },
-          "color": {"type": "string"},
-          "role": {"type": "string", "enum": ["owner", "editor", "viewer"], "example": "owner"},
+          "color": {"type": "string", "example": "#F4511E" },
+          "role": { "type": "string", "enum": ["owner", "editor", "viewer"], "example": "owner" },
           "isMain": { "type": "boolean", "example": true },
           "isConfirmed": { "type": "boolean", "example": false },
           "creationAt": { "type": "string", "format": "date-time", "example": "2025-03-08 10:05:13" }
@@ -893,8 +983,11 @@
             "type": "array",
             "items": {
               "properties": {
-                "userId": {"type": "integer", "example": "1"},
-                "role": {"type": "string", "enum": ["owner", "editor", "viewer"], "example": "editor"}
+                "userId": {"type": "integer", "example": "2"},
+                "color": { "type": "string", "example": "#F4511E" },
+                "role": { "type": "string", "enum": ["owner", "editor", "viewer"], "example": "editor" },
+                "isMain": { "type": "boolean", "example": true },
+                "isConfirmed": { "type": "boolean", "example": false }
               }
             }
           }
@@ -910,8 +1003,11 @@
             "type": "array",
             "items": {
               "properties": {
-                "userId": {"type": "integer", "example": "1"},
-                "role": {"type": "string", "enum": ["owner", "editor", "viewer"], "example": "editor"}
+                "userId": { "type": "integer", "example": "2" },
+                "color": { "type": "string", "example": "#F4511E" },
+                "role": { "type": "string", "enum": ["owner", "editor", "viewer"], "example": "editor" },
+                "isMain": { "type": "boolean", "example": true },
+                "isConfirmed": { "type": "boolean", "example": false }
               }
             }
           }
@@ -928,6 +1024,11 @@
               "title": { "type": "string", "example": "Sports activities" },
               "description": { "type": "string", "example": "Schedule of gym classes and bike rides" },
               "creationByUserId": {"type": "integer", "example": "1"},
+              "creator": { "$ref": "#/components/schemas/User" },
+              "participants": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/CalendarUser" }
+              },
               "creationAt": { "type": "string", "format": "date-time", "example": "2025-03-08 10:05:13" }
             }
           }
@@ -937,14 +1038,31 @@
         "type": "object",
         "properties": {
           "id": {"type": "integer", "example": "1"},
-          "creationByUserId": {"type": "integer", "example": "1"},
           "title": { "type": "string", "example": "Database Modeling" },
           "description": { "type": "string", "example": "Discussion of requirements, business logic, clarification of team composition" },
           "category": { "type": "string", "enum": ["work", "home", "hobby"], "example": "work" },
           "type": { "type": "string", "enum": ["meeting", "reminder", "task"], "example": "meeting" },
           "startAt": { "type": "string", "format": "date-time", "example": "2023-03-09 14:00:00" },
           "endAt": { "type": "string", "format": "date-time", "example": "2023-03-09 15:00:00" },
+          "creationByUserId": {"type": "integer", "example": "1"},
+          "creator": { "$ref": "#/components/schemas/User" },
+          "participants": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/EventUser" }
+          },
           "creationAt": { "type": "string", "format": "date-time", "example": "2023-03-09 10:00:00" }
+        }
+      },
+      "EventUser": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "example": "1" },
+          "eventId": { "type": "integer", "example": "10" },
+          "userId": { "type": "integer", "example": "2" },
+          "user": { "$ref": "#/components/schemas/User" },
+          "color": { "type": "string", "example": "#F4511E" },
+          "attendanceStatus": { "type": "string", "enum": ["yes", "no", "maybe"], "example": "yes" },
+          "creationAt": { "type": "string", "format": "date-time", "example": "2025-03-08 10:05:13" }
         }
       },
       "CreateEvent": {
@@ -955,7 +1073,17 @@
           "category": { "type": "string", "enum": ["work", "home", "hobby"], "example": "work" },
           "type": { "type": "string", "enum": ["meeting", "reminder", "task"], "example": "meeting" },
           "startAt": { "type": "string", "format": "date-time", "example": "2023-03-09 14:00:00" },
-          "endAt": { "type": "string", "format": "date-time", "example": "2023-03-09 15:00:00"}
+          "endAt": { "type": "string", "format": "date-time", "example": "2023-03-09 15:00:00" },
+          "participants": {
+            "type": "array",
+            "items": {
+              "properties": {
+                "userId": {"type": "integer", "example": "2"},
+                "color": { "type": "string", "example": "#F4511E" },
+                "attendanceStatus": { "type": "string", "enum": ["yes", "no", "maybe"], "example": "yes" }
+              }
+            }
+          }
         },
         "required": ["title", "category", "type", "startAt", "endAt"]
       },
@@ -967,7 +1095,17 @@
           "category": { "type": "string", "enum": ["work", "home", "hobby"], "example": "work" },
           "type": { "type": "string", "enum": ["meeting", "reminder", "task"], "example": "task" },
           "startAt": { "type": "string", "format": "date-time", "example": "2023-03-11 10:00:00" },
-          "endAt": { "type": "string", "format": "date-time", "example": "2023-03-11 13:00:00"}
+          "endAt": { "type": "string", "format": "date-time", "example": "2023-03-11 13:00:00" },
+          "participants": {
+            "type": "array",
+            "items": {
+              "properties": {
+                "userId": {"type": "integer", "example": "2"},
+                "color": { "type": "string", "example": "#F4511E" },
+                "attendanceStatus": { "type": "string", "enum": ["yes", "no", "maybe"], "example": "yes" }
+              }
+            }
+          }
         },
         "required": ["title", "category", "type", "startAt", "endAt"]
       },
@@ -978,13 +1116,18 @@
             "type": "object",
             "properties": {
               "id": {"type": "integer", "example": "1"},
-              "creationByUserId": {"type": "integer", "example": "1"},
               "title": { "type": "string", "example": "Frontend: Auth" },
               "description": { "type": "string", "example": "Creating user flow for authorisation" },
               "category": { "type": "string", "enum": ["work", "home", "hobby"], "example": "work" },
               "type": { "type": "string", "enum": ["meeting", "reminder", "task"], "example": "task" },
               "startAt": { "type": "string", "format": "date-time", "example": "2023-03-11 10:00:00" },
               "endAt": { "type": "string", "format": "date-time", "example": "2023-03-11 13:00:00" },
+              "creationByUserId": {"type": "integer", "example": "1"},
+              "creator": { "$ref": "#/components/schemas/User" },
+              "participants": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/EventUser" }
+              },
               "creationAt": { "type": "string", "format": "date-time", "example": "2023-03-09 10:00:00" }
             }
           }

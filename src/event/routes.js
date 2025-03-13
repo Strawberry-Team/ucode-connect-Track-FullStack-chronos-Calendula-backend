@@ -11,6 +11,7 @@ router.get('/:id/',
     controller.setAccessPolicy.bind(controller),
     controller.getById.bind(controller)
 );
+
 router.post('/',
     controller.setAccessPolicy.bind(controller),
     controller.validateBody.bind(controller),
@@ -26,6 +27,11 @@ router.patch('/:id/',
 router.delete('/:id/',
     controller.setAccessPolicy.bind(controller),
     controller.delete.bind(controller)
+);
+
+router.patch('/:id/:command/',
+    controller.setAccessPolicy.bind(controller),
+    controller.joinOrLeaveOrTentative.bind(controller)
 );
 
 export default router;
