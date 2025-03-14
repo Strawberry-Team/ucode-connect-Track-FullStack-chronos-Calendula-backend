@@ -1078,9 +1078,7 @@
             "type": "array",
             "items": {
               "properties": {
-                "userId": {"type": "integer", "example": "2"},
-                "color": { "type": "string", "example": "#F4511E" },
-                "attendanceStatus": { "type": "string", "enum": ["yes", "no", "maybe"], "example": "yes" }
+                "userId": {"type": "integer", "example": "2"}
               }
             }
           }
