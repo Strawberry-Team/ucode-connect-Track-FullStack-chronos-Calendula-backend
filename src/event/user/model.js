@@ -30,8 +30,8 @@ class EventUserModel extends Model {
             throw new Error('There must be at least one participant.');
         }
 
-        if (participants.filter(p => p.attendanceStatus === 'yes').length !== 1) {
-            throw new Error('The event must be attended by at least one participant (event owner).');
+        if (!participants.find(p => p.isOrganizer)) {
+            throw new Error('The event must be attended by organizer.');
         }
 
         const eventUsers = await this.getEntities([], [
@@ -41,16 +41,6 @@ class EventUserModel extends Model {
         for (const eventUser of eventUsers) {
             if (!participants.find(p => p.userId === eventUser.userId)) {
                 await eventUser.delete();
-            } else if (
-                participants.find(p => p.userId === eventUser.userId
-                    && (p.attendanceStatus !== eventUser.attendanceStatus
-                        || p.color !== eventUser.color))
-            ) {
-                const participantToUpdate = participants
-                    .find(p => p.userId === eventUser.userId);
-                eventUser.attendanceStatus = participantToUpdate.attendanceStatus;
-                eventUser.color = participantToUpdate.color;
-                await eventUser.save();
             }
 
             participants = participants.filter(p => p.userId !== eventUser.userId);
@@ -61,7 +51,6 @@ class EventUserModel extends Model {
 
         for (const participant of participants) {
             const user = await userModel.getEntityById(participant.userId);
-
             if (!user) {
                 continue;
             }
@@ -69,8 +58,7 @@ class EventUserModel extends Model {
             const eventUser = eventUserModel.createEntity( {
                 eventId: eventId,
                 userId: participant.userId,
-                color: participant.color,
-                attendanceStatus: participant.attendanceStatus
+                attendanceStatus: participant.isOrganizer ? 'yes' : null,
             });
 
             await eventUser.save();

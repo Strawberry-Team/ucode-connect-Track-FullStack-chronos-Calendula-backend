@@ -2,6 +2,7 @@ import Controller from "../controller.js";
 import EventModel from "./model.js";
 import { body } from "express-validator";
 import EventUserModel from "./user/model.js";
+import UserModel from "./../user/model.js";
 import * as mailer from "../../mailer/service.js";
 
 /**
@@ -91,11 +92,13 @@ class EventController extends Controller {
         if (participants && Array.isArray(participants)) {
             participants.push({
                 userId: req?.user.id,
+                isOrganizer: true,
             });
         } else {
             participants = [
                 {
                     userId: req?.user.id,
+                    isOrganizer: true,
                 }
             ];
         }
