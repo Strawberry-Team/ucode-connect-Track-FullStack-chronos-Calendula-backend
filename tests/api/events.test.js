@@ -2,7 +2,7 @@ import { test } from '@playwright/test';
 import dotenv from 'dotenv';
 import { BASE_URL, generateHeaders } from "./helpers/general.helpers.js";
 import { createAndLoginUser, generateUserData } from "./helpers/users.helpers.js";
-import { generateEventData, expectEventResponse } from "./helpers/events.helpers.js"
+import { generateEventData, expectEventResponse, getMainCalendarByUserId } from "./helpers/events.helpers.js"
 
 dotenv.config({ path: '.env.test', debug: true });
 
@@ -15,8 +15,10 @@ test.describe('Events', () => {
 
     test.beforeAll('Create and login user', async ({ request }) => {
         const user = await createAndLoginUser(request);
+        const userCalendar = await getMainCalendarByUserId(user.id);
+        //console.log(userCalendar, 'USER_CALENDAR_HELLO');
         userData = generateUserData(user);
-        eventData = generateEventData({}, { creationByUserId: userData.id });
+        eventData = generateEventData({}, { creationByUserId: userData.id, calendarId: userCalendar.id });
         headers = generateHeaders(userData.accessToken);
     });
 
@@ -29,7 +31,8 @@ test.describe('Events', () => {
                 category: eventData.category,
                 type: eventData.type,
                 startAt: eventData.startAt,
-                endAt: eventData.endAt
+                endAt: eventData.endAt,
+                calendarId: eventData.calendarId
             }
         });
         const responseBody = await expectEventResponse(response, eventData, 201);

@@ -14,6 +14,12 @@ const __dirname = path.dirname(__filename);
  * @return {Promise<void>}
  */
 async function send(email, subject, htmlTemplate, dataForTemplate) {
+    //TODO: потрібно розуміти, яке це оточення.
+    if (process.env.ETHEREAL_MAILER_LOGIN === '') {
+        return;
+    }
+    console.log('Sending email to ' + email, process.env.ETHEREAL_MAILER_LOGIN);
+
     try {
         const airplane = nodemailer.createTransport(
             {

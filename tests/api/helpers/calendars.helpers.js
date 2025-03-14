@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import { faker } from "@faker-js/faker/locale/en";
 import { expectResponseHeaders } from "./general.helpers.js";
-import { generateEmail, generateFullName, generateCountry, generatePassword } from "./user.helpers.js";
+import { generateEmail, generateFullName, generateCountry, generatePassword } from "./users.helpers.js";
 import UserModel from "../../../src/user/model.js";
 
 const userModel = new UserModel();
@@ -30,7 +30,7 @@ export async function createUser() {
     const newUser = userModel.createEntity(
         {
             email: generateEmail(),
-            fullName: generateFullName(),
+            fullName: generateFullName().fullName,
             country: generateCountry(),
             password: generatePassword(),
         }

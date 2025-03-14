@@ -12,6 +12,13 @@ class CalendarEntity extends Entity {
         this._publicFields.push('creator', 'participants');
     }
 
+    /**
+     * @return {boolean} Returns true if the type is 'main', otherwise false.
+     */
+    isMain() {
+        return this.type === 'main';
+    }
+
     _getRelationFields() {
         return {
             creator: async () => await (new UserModel()).getEntityById(this[this._model._creationByRelationFieldName]),

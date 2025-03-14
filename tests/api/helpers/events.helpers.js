@@ -1,6 +1,7 @@
 import {faker} from "@faker-js/faker/locale/en";
 import {expect} from "@playwright/test";
 import { expectResponseHeaders } from "./general.helpers.js";
+import CalendarModel from "../../../src/calendar/model.js";
 
 export function generateEventTitle() {
     return faker.lorem.sentence({ min: 1, max: 5 });
@@ -19,12 +20,16 @@ export function generateType() {
 }
 
 export function generateDateTime() {
-    const startAt = faker.date.between({
+    const fakerDateTime = faker.date.between({
         from: '2020-04-07T00:00:00.000Z',
         to: '2025-04-14T00:00:00.000Z'
-    }).toISOString().replace("T", " ").split(".")[0];
-    const endAt = new Date(startAt.setHours(startAt.getHours() + 1))
+    });
+
+    const startAt = fakerDateTime.toISOString().replace("T", " ").split(".")[0];
+
+    const endAt = new Date(fakerDateTime.setHours(fakerDateTime.getHours() + 1))
         .toISOString().replace("T", " ").split(".")[0];
+
     return {
         startAt,
         endAt,
@@ -67,4 +72,8 @@ export async function expectEventResponse(response, expectedData, statusCode = 2
     const responseBody = await response.json();
     expectEventDataToMatch(expectedData, responseBody.data);
     return responseBody;
+}
+
+export async function getMainCalendarByUserId(userId) {
+    return (new CalendarModel()).getMainCalendar(userId);
 }

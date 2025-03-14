@@ -48,7 +48,7 @@ test.describe('Authentication', () => {
         expectResponseHeaders(response);
         const responseBody = await response.json();
         expect(responseBody).toMatchObject({
-            message: 'Successful send an email'
+            message: 'Successful send an email.'
         });
 
         const user = await userModel.getEntityById(testUser.id);
@@ -74,7 +74,7 @@ test.describe('Authentication', () => {
         expectResponseHeaders(response);
         const responseBody = await response.json();
         expect(responseBody).toMatchObject({
-            message: 'Successful password update'
+            message: 'Successful password update.'
         });
 
         const user = await userModel.getEntityById(testUser.id);

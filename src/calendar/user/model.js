@@ -13,7 +13,6 @@ class CalendarUserModel extends Model {
                 'userId',
                 'color',
                 'role',
-                'isMain',
                 'isConfirmed',
                 'creationAt'
             ],
@@ -65,10 +64,6 @@ class CalendarUserModel extends Model {
             new Where('calendarId', '=', calendarId)
         ]);
 
-        if (calendarUsers.find(u => u.isMain === true)) {
-            return;
-        }
-
         for (const calendarUser of calendarUsers) {
             if (!participants.find(p => p.userId === calendarUser.userId)) {
                 await calendarUser.delete();
@@ -98,7 +93,6 @@ class CalendarUserModel extends Model {
                 calendarId: calendarId,
                 userId: participant.userId,
                 role: participant.role,
-                isMain: false,
                 isConfirmed: participant.role === 'owner'
             });
 

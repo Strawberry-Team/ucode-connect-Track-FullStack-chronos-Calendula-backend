@@ -4,6 +4,7 @@ import { body } from "express-validator";
 import EventUserModel from "./user/model.js";
 import UserModel from "./../user/model.js";
 import * as mailer from "../../mailer/service.js";
+import CalendarModel from "../calendar/model.js";
 
 /**
  * @property {EventModel} _model
@@ -64,7 +65,7 @@ class EventController extends Controller {
             ]
         );
 
-        const allowedFields = ['title', 'description', 'category', 'type', 'startAt', 'endAt'];
+        const allowedFields = ['title', 'description', 'category', 'type', 'startAt', 'endAt', 'calendarId'];
 
         this._accessPolicies.user
             .setCreate(allowedFields)
@@ -115,10 +116,25 @@ class EventController extends Controller {
     async create(req, res, next) {
         try {
             const fields = this._prepareFields(req);
+            /* TODO
+            Если добавляю в isMain = TRUE, то добляем в syncEventParticipants
+            только в аналогичные isMain календари
+
+            Если в isMain = FALSE, то только в общий.
+            * */
 
             if (this._model._fields.includes(this._model._creationByRelationFieldName)) {
                 fields[this._model._creationByRelationFieldName] = req.user.id;
             }
+
+            const calendar = await (new CalendarModel()).getEntityById(fields?.calendarId ?? 0);
+            if (!calendar) {
+                return this._returnNotFound(res, 404, {},
+                    "Calendar not found."
+                );
+            }
+
+            //TODO: додати перевірку чи можна створювати івенти у календарі Х
 
             let entity = this._model.createEntity(fields);
             await entity.save();
@@ -254,6 +270,7 @@ class EventController extends Controller {
 
                 participant.attendanceStatus = 'yes';
                 await participant.save();
+
             } else if (command === 'leave') {
                 if (participant.id === event.creationByUserId) {
                     return this._returnAccessDenied(
@@ -262,7 +279,9 @@ class EventController extends Controller {
                     );
                 }
 
-                await participant.delete();
+                participant.attendanceStatus = 'no';
+                await participant.save();
+
             } else if (command === 'tentative') {
                 participant.attendanceStatus = 'maybe';
                 await participant.save();

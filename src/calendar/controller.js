@@ -182,6 +182,12 @@ class CalendarController extends Controller {
             Object.assign(entity, this._prepareFields(req));
             await entity.save();
 
+            if (entity.isMain()) {
+                return this._returnResponse(res, 200, {
+                    data: entity.toJSON()
+                });
+            }
+
             const calendarUserModel = new CalendarUserModel();
             await calendarUserModel.syncCalendarParticipants(entity.id, this._prepareParticipants(req));
 
@@ -229,15 +235,9 @@ class CalendarController extends Controller {
                 return this._returnNotFound(res);
             }
 
-            await entity.prepareRelationFields();
-
-            if (
-                entity.participants.find(p => p.role === 'owner'
-                    && p.userId === entity[this._model._creationByRelationFieldName]
-                    && p.isMain)
-            ) {
-                return this._returnAccessDenied(
-                    res, 403, {},
+            if (entity.isMain()) {
+                return this._returnResponse(
+                    res, 400, {},
                     "Unable to delete a main calendar."
                 );
             }

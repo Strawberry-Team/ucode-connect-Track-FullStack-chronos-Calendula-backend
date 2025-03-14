@@ -103,7 +103,7 @@ export async function confirmUserEmail(request, userData) {
         fullName: userData.fullName,
         email: userData.email,
         country: userData.country,
-        isVerified: 1
+        isVerified: true
     });
     user.password = userData.password;
     Object.assign(userData, user);
@@ -132,7 +132,7 @@ export async function loginUser(request, userData) {
             profilePicture: expect.any(String),
             country: userData.country,
             role: 'user',
-            isVerified: 1,
+            isVerified: true,
         }
     });
     userData.accessToken = responseBody.accessToken;

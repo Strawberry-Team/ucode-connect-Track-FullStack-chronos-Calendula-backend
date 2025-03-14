@@ -13,6 +13,7 @@ class CalendarModel extends Model {
                 'id',
                 'title',
                 'description',
+                'type',
                 'creationByUserId',
                 'creationAt'
             ],
@@ -37,29 +38,38 @@ class CalendarModel extends Model {
             throw new Error('User not found');
         }
 
-        const calendarUserModel = new CalendarUserModel();
-        const userCalendars = await calendarUserModel.getCalendarsByUserId(userId);
-        if (userCalendars.find(calendar => calendar.isMain)) {
+        let calendar = await this.getMainCalendar(userId);
+        if (calendar) {
             throw new Error('User already has a main calendar');
         }
 
-        const calendar = this.createEntity({
+        calendar = this.createEntity({
             title: user.fullName,
             description: user.fullName + '\'s main calendar',
+            type: 'main',
             creationByUserId: user.id
         });
 
         await calendar.save();
 
-        const calendarUser = calendarUserModel.createEntity({
+        const calendarUser = (new CalendarUserModel()).createEntity({
             calendarId: calendar.id,
             userId: user.id,
             role: 'owner',
-            isMain: true,
             isConfirmed: true
         });
 
         await calendarUser.save();
+    }
+
+    async getMainCalendar(userId) {
+        return await this.getEntities([], [
+                new Where(this._creationByRelationFieldName, '=', userId),
+                new Where('type', '=', 'main')
+            ],
+            'id',
+            1
+        );
     }
 }
 

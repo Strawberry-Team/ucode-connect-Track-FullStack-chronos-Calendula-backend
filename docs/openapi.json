@@ -1068,6 +1068,7 @@
       "CreateEvent": {
         "type": "object",
         "properties": {
+          "calendarId": { "type": "integer", "example": "15" },
           "title": { "type": "string", "example": "Database Modeling" },
           "description": { "type": "string", "example": "Discussion of requirements, business logic, clarification of team composition" },
           "category": { "type": "string", "enum": ["work", "home", "hobby"], "example": "work" },
@@ -1083,7 +1084,7 @@
             }
           }
         },
-        "required": ["title", "category", "type", "startAt", "endAt"]
+        "required": ["calendarId", "title", "category", "type", "startAt", "endAt"]
       },
       "UpdateEvent": {
         "type": "object",
@@ -1098,9 +1099,7 @@
             "type": "array",
             "items": {
               "properties": {
-                "userId": {"type": "integer", "example": "2"},
-                "color": { "type": "string", "example": "#F4511E" },
-                "attendanceStatus": { "type": "string", "enum": ["yes", "no", "maybe"], "example": "yes" }
+                "userId": {"type": "integer", "example": "2"}
               }
             }
           }
