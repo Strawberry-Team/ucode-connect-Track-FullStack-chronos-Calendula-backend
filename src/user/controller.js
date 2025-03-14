@@ -19,14 +19,16 @@ class UserController extends Controller {
 
             body('country')
                 .notEmpty().withMessage('Country is required.')
-                .isIn(['Ukraine', 'Poland', 'Spain']).withMessage('Countries: Ukraine, Poland, Spain.'),
+                .isIn(['Ukraine', 'Poland', 'Spain'])
+                .withMessage('Allowed countries: Ukraine, Poland, Spain.'),
 
             body('password')
                 .optional()
-                .isStrongPassword({ minLength: 5 }).withMessage("Password should be at least 5 characters long and include an uppercase letter, a symbol, and a number."),
+                .isStrongPassword({ minLength: 5 })
+                .withMessage("Password should be at least 5 characters long and include an uppercase letter, a symbol, and a number."),
 
             body('password_confirm')
-                .custom((value, {req}) => {
+                .custom((value, { req }) => {
                     if (req.body.password && !value) {
                         throw new Error('Please confirm your password.');
                     }
@@ -43,11 +45,12 @@ class UserController extends Controller {
 
             body('password')
                 .optional()
-                .isStrongPassword({ minLength: 5 }).withMessage("Password should be at least 5 characters long and include an uppercase letter, a symbol, and a number."),
+                .isStrongPassword({ minLength: 5 })
+                .withMessage("Password should be at least 5 characters long and include an uppercase letter, a symbol, and a number."),
 
             body('password_confirm')
                 .optional()
-                .custom((value, {req}) => {
+                .custom((value, { req }) => {
                     if (req.body.password && !value) {
                         throw new Error('Please confirm your password.');
                     }
@@ -77,25 +80,26 @@ class UserController extends Controller {
     async create(req, res, next) {
         try {
             const validationErrors = [];
-
             let user = await this._model.getByEmail(req?.body?.email);
+
             if (user) {
-                validationErrors.push({path: 'email', msg: 'Email is exist.'});
+                validationErrors.push({ path: 'email', msg: 'Email belongs to another user.' });
             }
 
             if (validationErrors.length > 0) {
                 return this._returnResponse(res, 400, {
                     validationErrors, validationSuccesses: req.validationSuccesses
-                }, "Validation failed");
+                }, "Validation failed.");
             }
 
             const fields = this._prepareFields(req);
+
             if (fields.password) {
                 fields.password = await this._model.createPassword(fields.password);
             }
 
             if (fields.email) {
-                fields.confirmToken = await this._model.createConfirmToken({userEmail: fields.email});
+                fields.confirmToken = await this._model.createConfirmToken({ userEmail: fields.email });
             }
 
             const newUser = this._model.createEntity(fields);

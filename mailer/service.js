@@ -72,3 +72,31 @@ export async function sendPasswordReset(email, data) {
         data
     );
 }
+
+/**
+ * @param {string} email
+ * @param {Object} data
+ * @return {Promise<void>}
+ */
+export async function sendCalendarInvitation(email, data) {
+    await send(
+        email,
+        `Join "${data.title}" Calendar`,
+        'calendarInvitation.html',
+        data
+    );
+}
+
+/**
+ * @param {string} email
+ * @param {Object} data
+ * @return {Promise<void>}
+ */
+export async function sendEventInvitation(email, data) {
+    await send(
+        email,
+        `Join "${data.title}" Event`,
+        'eventInvitation.html',
+        data
+    );
+}

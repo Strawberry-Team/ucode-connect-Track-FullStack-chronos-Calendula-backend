@@ -10,7 +10,9 @@ class AuthController extends UserController {
 
         this._accessPolicies.admin.removeAll();
         this._accessPolicies.user.removeAll();
-        this._accessPolicies.guest.setCreate(this._model._fields.filter(field => !['isVerified', 'profilePicture', 'creationAt'].includes(field)));
+        this._accessPolicies.guest.setCreate(
+            this._model._fields.filter(field => !['isVerified', 'profilePicture', 'creationAt'].includes(field))
+        );
 
         this._validationRulesForLogin = this._validationRules.filter(rule => {
             return ['email', 'password'].includes(rule.builder.fields[0])
@@ -69,11 +71,12 @@ class AuthController extends UserController {
             await (new CalendarModel()).createMainCalendar(newUser.id);
 
             await mailer.sendConfirm(
-                newUser.email, {
+                newUser.email,
+                {
                     fullName: newUser.fullName,
                     token: parentResponse.req?.confirmToken
                 }
-            )
+            );
         }
 
         return parentResponse;
@@ -98,9 +101,15 @@ class AuthController extends UserController {
                 user.isVerified = true;
                 await user.save();
 
-                return this._returnResponse(res, 200, {}, 'Successful email confirmation')
+                return this._returnResponse(
+                    res, 200, {},
+                    'Successful email confirmation'
+                );
             } catch (e) {
-                return this._returnResponse(res, 400, {}, "Invalid token. Please try to receive the email again!");
+                return this._returnResponse(
+                    res, 400, {},
+                    "Invalid token. Please try to receive the email again!"
+                );
             }
         } catch (error) {
             next(error);
@@ -138,11 +147,17 @@ class AuthController extends UserController {
             }
 
             if (!passwordIsValid || !user) {
-                validationErrors.push({ path: 'email', msg: 'Invalid user data entered. Please check that the data entered is correct.' });
+                validationErrors.push({
+                    path: 'email',
+                    msg: 'Invalid user data entered. Please check that the data entered is correct.'
+                });
             }
 
             if (user && passwordIsValid && !user.isVerified) {
-                validationErrors.push({ path: 'email', msg: 'Please confirm your email' });
+                validationErrors.push({
+                    path: 'email',
+                    msg: 'Please confirm your email'
+                });
             }
 
             if (validationErrors.length > 0) {
@@ -153,7 +168,7 @@ class AuthController extends UserController {
                         validationErrors,
                         validationSuccesses: req.validationSuccesses
                     },
-                    "Validation failed"
+                    "Validation failed."
                 );
             }
 
@@ -163,8 +178,10 @@ class AuthController extends UserController {
                 role: user.role
             });
 
-            return this._returnResponse(res, 200, { accessToken, data: user.toJSON() }, 'Successful login')
-
+            return this._returnResponse(
+                res, 200, { accessToken, data: user.toJSON() },
+                'Successful login'
+            );
         } catch (e) {
             next(e);
         }
@@ -205,6 +222,7 @@ class AuthController extends UserController {
         try {
             const fields = this._prepareFields(req);
             const user = await this._model.getByEmail(fields.email);
+
             if (!user) {
                 return this._returnNotFound(res);
             }
@@ -220,7 +238,10 @@ class AuthController extends UserController {
                 }
             )
 
-            return this._returnResponse(res, 200, {}, 'Successful send an email')
+            return this._returnResponse(
+                res, 200, {},
+                'Successful send an email.'
+            );
         } catch (e) {
             next(e);
         }
@@ -233,7 +254,6 @@ class AuthController extends UserController {
      * @return {Promise<e.Response>}
      */
     async validatePasswordConfirm(req, res, next) {
-        console.log(this._validationRulesForPasswordResetConfirm);
         return await this.validateBody(req, res, next,
             this._validationRulesForPasswordResetConfirm
         );
@@ -249,20 +269,18 @@ class AuthController extends UserController {
         try {
             try {
                 const tokenData = jwt.verify(req.params.token, process.env.APP_SECRET);
-                console.log(tokenData);
                 const user = await this._model.getByEmail(tokenData.userEmail);
+
                 if (!user) {
                     return this._returnNotFound(res);
                 }
 
-                console.log(req.body);
                 user.password = await this._model.createPassword(req.body.password);
                 await user.save();
 
-                return this._returnResponse(res, 200, {}, "Successful password update")
+                return this._returnResponse(res, 200, {}, "Successful password update.");
             } catch (e) {
-                console.log(e.message);
-                return this._returnResponse(res, 400, {}, "Invalid token");
+                return this._returnResponse(res, 400, {}, "Invalid token.");
             }
         } catch (e) {
             next(e);
@@ -277,7 +295,7 @@ class AuthController extends UserController {
      */
     async logout(req, res, next) {
         try {
-            return this._returnResponse(res, 200, {}, "Successful logout")
+            return this._returnResponse(res, 200, {}, "Successful logout");
         } catch (e) {
             next(e);
         }

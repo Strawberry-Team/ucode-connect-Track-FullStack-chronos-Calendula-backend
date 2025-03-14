@@ -2,6 +2,8 @@ import Controller from "../controller.js";
 import CalendarModel from "./model.js";
 import { body } from "express-validator";
 import CalendarUserModel from "./user/model.js";
+import UserModel from "../user/model.js";
+import * as mailer from "../../mailer/service.js";
 
 
 class CalendarController extends Controller {
@@ -15,18 +17,20 @@ class CalendarController extends Controller {
                 body('description')
                     .optional()
                     .isLength({ max: 250 }).withMessage('Description should be at most 250 characters long.'),
+
                 body('participants')
                     .optional()
-                    .isArray({ min: 1 })
-                    .withMessage('Participants must be an array with at least one item.'),
+                    .isArray({ min: 1 }).withMessage('Participants must be an array with at least one item.'),
+
                 body('participants.*.userId')
                     .if(body('participants').exists())
-                    .exists().withMessage('userId is required.')
-                    .isInt({ gt: 0 }).withMessage('userId must be a positive integer.'),
+                    .exists().withMessage('User id is required.')
+                    .isInt({ gt: 0 }).withMessage('User id must be a positive integer.'),
+
                 body('participants.*.role')
                     .if(body('participants').exists())
-                    .exists().withMessage('role is required.')
-                    .isIn(['owner', 'editor', 'viewer']).withMessage('role must be either editor or viewer.'),
+                    .exists().withMessage('Role is required.')
+                    .isIn(['owner', 'editor', 'viewer']).withMessage('Role must be either editor or viewer.')
             ]
         );
 
@@ -55,17 +59,22 @@ class CalendarController extends Controller {
      */
     _prepareParticipants(req) {
         let participants = req?.body?.participants;
+
         if (participants && Array.isArray(participants)) {
             participants = participants.filter(participant => participant.role !== 'owner');
             participants.push({
                 userId: req?.user.id,
-                role: 'owner'
+                color: req?.user.color,
+                role: 'owner',
+                isConfirmed: req?.user.isConfirmed,
             });
         } else {
             participants = [
                 {
                     userId: req?.user.id,
-                    role: 'owner'
+                    color: req?.user.color,
+                    role: 'owner',
+                    isConfirmed: req?.user.isConfirmed,
                 }
             ];
         }
@@ -82,20 +91,41 @@ class CalendarController extends Controller {
     async create(req, res, next) {
         try {
             const fields = this._prepareFields(req);
+
             if (this._model._fields.includes(this._model._creationByRelationFieldName)) {
                 fields[this._model._creationByRelationFieldName] = req.user.id;
             }
 
-            let newEntity = this._model.createEntity(fields);
-            await newEntity.save();
+            let entity = this._model.createEntity(fields);
+            await entity.save();
 
             const calendarUserModel = new CalendarUserModel();
-            await calendarUserModel.syncParticipants(newEntity.id, this._prepareParticipants(req));
+            await calendarUserModel.syncCalendarParticipants(entity.id, this._prepareParticipants(req));
 
-            newEntity = await this._model.getEntityById(newEntity.id);
+            const calendar = await this._model.getEntityById(entity.id);
+            const participants = await calendarUserModel.getCalendarsByCalendarId(calendar.id);
+
+            for (const participant of participants) {
+                if (participant.userId === calendar.creationByUserId) {
+                    continue;
+                }
+
+                const userModel = new UserModel();
+                const user = await userModel.getEntityById(participant.userId);
+
+                await mailer.sendCalendarInvitation(
+                    user.email,
+                    {
+                        userFullName: user.fullName,
+                        calendarId: calendar.id,
+                        title: calendar.title,
+                        description: calendar.description,
+                    }
+                );
+            }
 
             return res.status(201).json({
-                data: newEntity.toJSON(),
+                data: calendar.toJSON(),
             });
         } catch (e) {
             next(e);
@@ -111,6 +141,7 @@ class CalendarController extends Controller {
     async update(req, res, next) {
         try {
             const entity = await this._getEntityByIdAndAccessFilter(req);
+
             if (!entity) {
                 return this._returnNotFound(res);
             }
@@ -119,9 +150,29 @@ class CalendarController extends Controller {
             await entity.save();
 
             const calendarUserModel = new CalendarUserModel();
-            await calendarUserModel.syncParticipants(entity.id, this._prepareParticipants(req));
+            await calendarUserModel.syncCalendarParticipants(entity.id, this._prepareParticipants(req));
 
             const calendar = await this._model.getEntityById(entity.id);
+            const participants = await calendarUserModel.getCalendarsByCalendarId(calendar.id);
+
+            for (const participant of participants) {
+                if (participant.userId === calendar.creationByUserId) {
+                    continue;
+                }
+
+                const userModel = new UserModel();
+                const user = await userModel.getEntityById(participant.userId);
+
+                await mailer.sendCalendarInvitation(
+                    user.email,
+                    {
+                        userFullName: user.fullName,
+                        calendarId: calendar.id,
+                        title: calendar.title,
+                        description: calendar.description,
+                    }
+                );
+            }
 
             return this._returnResponse(res, 200, {
                 data: calendar.toJSON()
@@ -146,8 +197,16 @@ class CalendarController extends Controller {
             }
 
             await entity.prepareRelationFields();
-            if (entity.participants.find(p => p.role === 'owner' && p.userId === entity[this._model._creationByRelationFieldName] && p.isMain)) {
-                return this._returnAccessDenied(res, 403, {}, "You cannot delete the your main calendar.");
+
+            if (
+                entity.participants.find(p => p.role === 'owner'
+                    && p.userId === entity[this._model._creationByRelationFieldName]
+                    && p.isMain)
+            ) {
+                return this._returnAccessDenied(
+                    res, 403, {},
+                    "Unable to delete a main calendar."
+                );
             }
 
             await entity.delete();
@@ -171,39 +230,52 @@ class CalendarController extends Controller {
     async joinOrLeave(req, res, next) {
         try {
             const command = req.params.command;
+
             if (!['join', 'leave'].includes(command)) {
-                return this._returnResponse(res, 400, {}, "Invalid command.");
+                return this._returnResponse(
+                    res, 400, {},
+                    "Unknown command for actions with calendars.."
+                );
             }
 
             const calendar = await this._model.getEntityById(req.params.id);
+
             if (!calendar) {
                 return this._returnNotFound(res);
             }
 
             await calendar.prepareRelationFields();
-
             const participant = calendar.participants.find(p => p.userId === req.user.id);
+
             if (!participant) {
-                return this._returnAccessDenied(res, 403, {}, "You are not participating in this calendar.");
+                return this._returnAccessDenied(
+                    res, 403, {},
+                    "Unable to participate a calendar without an invitation."
+                );
             }
 
             if (command === 'join') {
                 if (participant.isConfirmed) {
-                    return this._returnAccessDenied(res, 400, {}, "You are already participating in this calendar.");
+                    return this._returnAccessDenied(
+                        res, 400, {},
+                        "Unable to join a calendar already joined."
+                    );
                 }
 
                 participant.isConfirmed = true;
                 await participant.save();
             } else if (command === 'leave') {
                 if (participant.role === 'owner') {
-                    return this._returnAccessDenied(res, 400, {}, "You cannot leave your calendar. Only delete it.");
+                    return this._returnAccessDenied(
+                        res, 400, {},
+                        "Unable to leave a calendar for an owner, only delete it."
+                    );
                 }
 
                 await participant.delete();
             }
 
             return this._returnResponse(res, 200);
-
         } catch (e) {
             next(e);
         }

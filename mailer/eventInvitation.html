@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="UTF-8">
+    <title>Join event</title>
+</head>
+<body>
+<h1>Join event</h1>
+<p>Hi, <%= userFullName %>!</p>
+<p>
+    You were invited to the following event:<br>
+    <ul>
+        <li>Title: <%= title %></li>
+        <li>Description: <%= description %></li>
+        <li>Type: <%= type %></li>
+        <li>Start at: <%= startAt %></li>
+        <li>End at at: <%= endAt %></li>
+    </ul>
+</p>
+<p>
+    Link to join the event:
+    <a href="http://localhost:3000/events/<%= eventId %>/join/">
+             http://localhost:3000/events/<%= eventId %>/join/
+    </a>
+</p>
+<p>
+    Link to participate tentatively to the event:
+    <a href="http://localhost:3000/events/<%= eventId %>/tentative/">
+             http://localhost:3000/events/<%= eventId %>/tentative/
+    </a>
+</p>
+</body>
+</html>

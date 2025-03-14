@@ -40,7 +40,8 @@ class CalendarUserModel extends Model {
             }
         });
 
-        return Object.entries(uniqueParticipants).map(([userId, role]) => ({ userId: Number(userId), role }));
+        return Object.entries(uniqueParticipants)
+            .map(([userId, role]) => ({ userId: Number(userId), role }));
     }
 
     /**
@@ -49,13 +50,13 @@ class CalendarUserModel extends Model {
      * @param {[{userId: number, role: string}]} participants
      * @return {Promise<void>}
      */
-    async syncParticipants(calendarId, participants) {
+    async syncCalendarParticipants(calendarId, participants) {
         if (participants.length === 0) {
-            throw new Error('There must be at least one participant');
+            throw new Error('There must be at least one participant.');
         }
 
-        if (participants.filter(participant => participant.role === 'owner').length !== 1) {
-            throw new Error('There must be only one owner');
+        if (participants.filter(p => p.role === 'owner').length !== 1) {
+            throw new Error('There must be only one owner.');
         }
 
         participants = this._getUniqueLowestRoles(participants);
@@ -65,20 +66,26 @@ class CalendarUserModel extends Model {
         ]);
 
         for (const calendarUser of calendarUsers) {
-            if (!participants.find(participant => participant.userId === calendarUser.userId)) {
+            if (!participants.find(p => p.userId === calendarUser.userId)) {
                 await calendarUser.delete();
-            } else if(participants.find(participant => participant.userId === calendarUser.userId && participant.role !== calendarUser.role)) {
-                calendarUser.role = participants.find(participant => participant.userId === calendarUser.userId).role;
+            } else if (
+                participants.find(p => p.userId === calendarUser.userId
+                    && p.role !== calendarUser.role)
+            ) {
+                const participantToUpdate = participants.find(p => p.userId === calendarUser.userId);
+                calendarUser.role = participantToUpdate.role;
                 await calendarUser.save();
             }
 
-            participants = participants.filter(participant => participant.userId !== calendarUser.userId);
+            participants = participants.filter(p => p.userId !== calendarUser.userId);
         }
 
         const calendarUserModel = new CalendarUserModel();
         const userModel = new UserModel();
+
         for (const participant of participants) {
             const user = await userModel.getEntityById(participant.userId);
+
             if (!user) {
                 continue;
             }
@@ -98,6 +105,12 @@ class CalendarUserModel extends Model {
     async getCalendarsByUserId(userId) {
         return await this.getEntities([], [
             new Where('userId', '=', userId)
+        ]);
+    }
+
+    async getCalendarsByCalendarId(calendarId) {
+        return await this.getEntities([], [
+            new Where('calendarId', '=', calendarId)
         ]);
     }
 }
