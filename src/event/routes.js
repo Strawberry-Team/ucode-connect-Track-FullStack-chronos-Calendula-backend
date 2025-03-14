@@ -15,6 +15,7 @@ router.get('/:id/',
 router.post('/',
     controller.setAccessPolicy.bind(controller),
     controller.validateBody.bind(controller),
+    controller._canCreateEvents.bind(controller),
     controller.create.bind(controller)
 );
 

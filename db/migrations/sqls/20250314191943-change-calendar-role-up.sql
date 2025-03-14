@@ -1,0 +1,1 @@
+ALTER TABLE `calendars_users` MODIFY `role` ENUM ('owner', 'member', 'viewer') default 'viewer' NOT NULL;

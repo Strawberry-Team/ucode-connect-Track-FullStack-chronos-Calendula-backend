@@ -70,7 +70,7 @@ class EventController extends Controller {
         this._accessPolicies.user
             .setCreate(allowedFields)
             .setRead()
-            .setUpdate(allowedFields, [{
+            .setUpdate(allowedFields.filter(field => field !== 'calendarId'), [{
                 field: this._model._creationByRelationFieldName, operator: '=', value: null
             }])
             .setDelete(allowedFields, [{
@@ -126,15 +126,6 @@ class EventController extends Controller {
             if (this._model._fields.includes(this._model._creationByRelationFieldName)) {
                 fields[this._model._creationByRelationFieldName] = req.user.id;
             }
-
-            const calendar = await (new CalendarModel()).getEntityById(fields?.calendarId ?? 0);
-            if (!calendar) {
-                return this._returnNotFound(res, 404, {},
-                    "Calendar not found."
-                );
-            }
-
-            //TODO: додати перевірку чи можна створювати івенти у календарі Х
 
             let entity = this._model.createEntity(fields);
             await entity.save();
@@ -290,6 +281,31 @@ class EventController extends Controller {
             return this._returnResponse(res, 200);
         } catch (e) {
             next(e);
+        }
+    }
+
+    /**
+     * @param {e.Request} req
+     * @param {e.Response} res
+     * @param {e.NextFunction} next
+     * @return {Promise<*>}
+     */
+    async _canCreateEvents(req, res, next) {
+        const calendar = await (new CalendarModel()).getEntityById(req?.body?.calendarId ?? 0);
+        if (!calendar) {
+            return this._returnNotFound(res, 404, {},
+                "Calendar not found."
+            );
+        }
+
+        await calendar.prepareRelationFields();
+        if (calendar.participants.find(p => p.userId === req?.user.id && ['owner', 'member'].includes(p.role))) {
+            return next();
+        } else {
+            return this._returnAccessDenied(
+                res, 403, {},
+                "Unable to create events for a calendar without an invitation."
+            );
         }
     }
 }

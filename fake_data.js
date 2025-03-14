@@ -18,7 +18,7 @@ import CalendarUserModel from "./src/calendar/user/model.js";
     const USER_PASSWORD = 'Password123!$';
     const USER_COUNTRIES = ['Ukraine', 'Poland', 'Spain'];
     const USER_PROFILE_PICTURE = 'default.png';
-    const PARTICIPANT_ROLES = ['owner', 'editor', 'viewer'];
+    const PARTICIPANT_ROLES = ['owner', 'member', 'viewer'];
     const EVENT_CATEGORIES = ['work', 'home', 'hobby'];
     const EVENT_TYPES = ['meeting', 'reminder', 'task'];
     const EVENT_ATTENDANCE_STATUSES = ['yes', 'no', 'maybe'];

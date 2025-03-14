@@ -55,7 +55,7 @@ export function expectCalendarDataToMatch(expected, actual) {
             },
             {
                 userId: expected.participants[1].userId,
-                role: 'editor'
+                role: 'member'
             },
             {
                 userId: expected.participants[2].userId,

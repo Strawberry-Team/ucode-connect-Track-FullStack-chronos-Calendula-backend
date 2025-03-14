@@ -20,7 +20,7 @@ test.describe('Calendars', () => {
         },
         {
             userId: undefined,
-            role: 'editor'
+            role: 'member'
         },
         {
             userId: undefined,

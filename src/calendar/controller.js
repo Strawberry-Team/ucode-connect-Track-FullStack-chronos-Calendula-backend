@@ -31,7 +31,7 @@ class CalendarController extends Controller {
                 body('participants.*.role')
                     .if(body('participants').exists())
                     .exists().withMessage('Role is required.')
-                    .isIn(['owner', 'editor', 'viewer']).withMessage('Role must be either editor or viewer.')
+                    .isIn(['owner', 'member', 'viewer']).withMessage('Role must be either member or viewer.')
             ]
         );
 
