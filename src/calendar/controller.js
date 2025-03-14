@@ -4,6 +4,7 @@ import { body } from "express-validator";
 import CalendarUserModel from "./user/model.js";
 import UserModel from "../user/model.js";
 import * as mailer from "../../mailer/service.js";
+import Where from "../sql/where.js";
 
 
 class CalendarController extends Controller {
@@ -48,6 +49,38 @@ class CalendarController extends Controller {
 
         this._accessPolicies.guest
             .removeAll();
+    }
+
+    /**
+     * @param {e.Request} req
+     * @param {e.Response} res
+     * @param {e.NextFunction} next
+     * @return {Promise<e.Response>}
+     */
+    async getAll(req, res, next) {
+        try {
+            const calendarUserModel = new CalendarUserModel();
+            const currentUserAsParticipants = await calendarUserModel.getCalendarsByUserId(req?.user.id);
+
+            const filters = [
+                new Where(
+                    'id',
+                    'IN',
+                    currentUserAsParticipants.map(p => p.calendarId)
+                )
+            ];
+
+            const entities = await this._model.getEntities(
+                req?.accessOperation?.fields,
+                filters
+            );
+
+            return this._returnResponse(res, 200, {
+                data: entities.map(entity => entity.toJSON())
+            });
+        } catch (e) {
+            next(e);
+        }
     }
 
     /**
