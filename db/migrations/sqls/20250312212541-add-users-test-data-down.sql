@@ -1,13 +1,1 @@
-DELETE FROM `users`
-WHERE email IN (
-    'jaime_zulauf@example.org',
-    'garry_brekke@example.com',
-    'jeanne_gleason@example.com',
-    'randal_white@example.com',
-    'tracey_waelchi@example.org',
-    'gabriel.farrell@example.com',
-    'jan.pfannerstill60@example.net',
-    'marty_bergstrom@example.org',
-    'veronica_willms27@example.com',
-    'jermaine_mueller32@example.org'
-);
+DELETE FROM `users` WHERE `id` IN (1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
