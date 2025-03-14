@@ -957,6 +957,10 @@
             "type": "array",
             "items": { "$ref": "#/components/schemas/CalendarUser" }
           },
+          "events": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Event" }
+          },
           "creationAt": { "type": "string", "format": "date-time", "example": "2025-03-08 10:05:13" }
         }
       },

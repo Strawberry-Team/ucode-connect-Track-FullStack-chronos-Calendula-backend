@@ -1,5 +1,6 @@
 import Entity from "../entity.js";
 import UserModel from "../user/model.js";
+import CalendarEventModel from "./event/model.js";
 
 class CalendarEntity extends Entity {
     /**
@@ -9,7 +10,7 @@ class CalendarEntity extends Entity {
     constructor(model, data = {}) {
         super(model, data);
 
-        this._publicFields.push('creator', 'participants');
+        this._publicFields.push('creator', 'participants', 'events');
     }
 
     /**
@@ -23,8 +24,14 @@ class CalendarEntity extends Entity {
         return {
             creator: async () => await (new UserModel()).getEntityById(this[this._model._creationByRelationFieldName]),
             participants: async () => await this._model.getParticipantsByCalendarId(this.id),
+            events: async () => await this._model.getEventsByCalendarId(this.id)
         };
     }
+
+    async addEvent(eventId) {
+        await (new CalendarEventModel()).create(this.id, eventId);
+    }
+
 }
 
 export default CalendarEntity;

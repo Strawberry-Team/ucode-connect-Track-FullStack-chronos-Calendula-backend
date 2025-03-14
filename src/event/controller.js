@@ -1,8 +1,6 @@
 import Controller from "../controller.js";
 import EventModel from "./model.js";
 import { body } from "express-validator";
-import EventUserModel from "./user/model.js";
-import UserModel from "./../user/model.js";
 import * as mailer from "../../mailer/service.js";
 import CalendarModel from "../calendar/model.js";
 
@@ -107,6 +105,31 @@ class EventController extends Controller {
         return participants;
     }
 
+
+    async _notifyParticipants(event) {
+        for (const participant of event.participants) {
+            if (
+                participant.userId === event.creationByUserId
+                || ['yes', 'no', 'maybe'].includes(participant.attendanceStatus)
+            ) {
+                continue;
+            }
+
+            await mailer.sendEventInvitation(
+                participant.user.email,
+                {
+                    userFullName: participant.user.fullName,
+                    eventId: event.id,
+                    title: event.title,
+                    description: event.description,
+                    type: event.type,
+                    startAt: event.startAt,
+                    endAt: event.endAt
+                }
+            );
+        }
+    }
+
     /**
      * @param {e.Request} req
      * @param {e.Response} res
@@ -130,33 +153,16 @@ class EventController extends Controller {
             let entity = this._model.createEntity(fields);
             await entity.save();
 
-            const eventUserModel = new EventUserModel();
-            await eventUserModel.syncEventParticipants(entity.id, this._prepareParticipants(req));
+            await this._model.syncEventParticipants(entity.id, this._prepareParticipants(req));
 
             const event = await this._model.getEntityById(entity.id);
-            const participants = await eventUserModel.getEventsByEventId(event.id);
+            await event.prepareRelationFields();
 
-            for (const participant of participants) {
-                if (participant.userId === event.creationByUserId) {
-                    continue;
-                }
-
-                const userModel = new UserModel();
-                const user = await userModel.getEntityById(participant.userId);
-
-                await mailer.sendEventInvitation(
-                    user.email,
-                    {
-                        userFullName: user.fullName,
-                        eventId: event.id,
-                        title: event.title,
-                        description: event.description,
-                        type: event.type,
-                        startAt: event.startAt,
-                        endAt: event.endAt,
-                    }
-                );
+            if (req.calendar.isMain()) {
+                req.calendar.addEvent(event.id);
             }
+
+            await this._notifyParticipants(event);
 
             return res.status(201).json({
                 data: event.toJSON(),
@@ -183,33 +189,12 @@ class EventController extends Controller {
             Object.assign(entity, this._prepareFields(req));
             await entity.save();
 
-            const eventUserModel = new EventUserModel();
-            await eventUserModel.syncEventParticipants(entity.id, this._prepareParticipants(req));
+            await this._model.syncEventParticipants(entity.id, this._prepareParticipants(req));
 
             const event = await this._model.getEntityById(entity.id);
-            const participants = await eventUserModel.getEventsByEventId(event.id);
+            await event.prepareRelationFields();
 
-            for (const participant of participants) {
-                if (participant.userId === event.creationByUserId) {
-                    continue;
-                }
-
-                const userModel = new UserModel();
-                const user = await userModel.getEntityById(participant.userId);
-
-                await mailer.sendEventInvitation(
-                    user.email,
-                    {
-                        userFullName: user.fullName,
-                        eventId: event.id,
-                        title: event.title,
-                        description: event.description,
-                        type: event.type,
-                        startAt: event.startAt,
-                        endAt: event.endAt,
-                    }
-                );
-            }
+            await this._notifyParticipants(event);
 
             return this._returnResponse(res, 200, {
                 data: event.toJSON()
@@ -300,6 +285,7 @@ class EventController extends Controller {
 
         await calendar.prepareRelationFields();
         if (calendar.participants.find(p => p.userId === req?.user.id && ['owner', 'member'].includes(p.role))) {
+            req.calendar = calendar;
             return next();
         } else {
             return this._returnAccessDenied(

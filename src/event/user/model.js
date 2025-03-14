@@ -64,18 +64,6 @@ class EventUserModel extends Model {
             await eventUser.save();
         }
     }
-
-    async getEventsByUserId(userId) {
-        return await this.getEntities([], [
-            new Where('userId', '=', userId)
-        ]);
-    }
-
-    async getEventsByEventId(eventId) {
-        return await this.getEntities([], [
-            new Where('eventId', '=', eventId)
-        ]);
-    }
 }
 
 export default EventUserModel;

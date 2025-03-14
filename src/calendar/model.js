@@ -3,6 +3,8 @@ import CalendarEntity from "./entity.js";
 import UserModel from "../user/model.js";
 import CalendarUserModel from "./user/model.js";
 import Where from "../sql/where.js";
+import CalendarEventModel from "./event/model.js";
+import EventModel from "../event/model.js";
 
 
 class CalendarModel extends Model {
@@ -70,6 +72,19 @@ class CalendarModel extends Model {
             'id',
             1
         );
+    }
+
+    async getEventsByCalendarId(calendarId) {
+        const relatedEvents = await (new CalendarEventModel()).getEntities([], [
+            new Where('calendarId', '=', calendarId)
+        ]);
+        if (!relatedEvents.length) {
+            return [];
+        }
+
+        return await (new EventModel()).getEntities([], [
+            new Where('id', 'in', relatedEvents.map(event => event.eventId))
+        ]);
     }
 }
 
