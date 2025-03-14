@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS `users` (
-                                       `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
     `fullName` VARCHAR(30),
     `password` VARCHAR(100) NULL,
     `email` VARCHAR(50) NOT NULL,
@@ -12,10 +12,10 @@ CREATE TABLE IF NOT EXISTS `users` (
     `creationAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     UNIQUE KEY `email` (`email`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;
 
 CREATE TABLE IF NOT EXISTS `calendars` (
-                                           `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
     `title` VARCHAR(50) NOT NULL,
     `description` VARCHAR(250) DEFAULT NULL,
     `creationByUserId` INT(10) UNSIGNED NOT NULL,
@@ -25,10 +25,10 @@ CREATE TABLE IF NOT EXISTS `calendars` (
     CONSTRAINT `foreign_key_calendars_creationByUserId`
     FOREIGN KEY (`creationByUserId`) REFERENCES `users`(`id`)
     ON DELETE CASCADE
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;
 
 CREATE TABLE IF NOT EXISTS `calendars_users` (
-                                                 `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
     `calendarId` INT(10) UNSIGNED NOT NULL,
     `userId` INT(10) UNSIGNED NOT NULL,
     `color` VARCHAR(10) DEFAULT '',
@@ -46,10 +46,10 @@ CREATE TABLE IF NOT EXISTS `calendars_users` (
     CONSTRAINT `foreign_key_calendars_users_userId`
     FOREIGN KEY (`userId`) REFERENCES `users`(`id`)
     ON DELETE CASCADE
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;
 
 CREATE TABLE IF NOT EXISTS `events` (
-                                        `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
     `creationByUserId` INT(10) UNSIGNED NOT NULL,
     `title` VARCHAR(50) NOT NULL,
     `description` VARCHAR(250) DEFAULT NULL,
@@ -63,10 +63,10 @@ CREATE TABLE IF NOT EXISTS `events` (
     CONSTRAINT `foreign_key_comments_creationByUserId`
     FOREIGN KEY (`creationByUserId`) REFERENCES `users`(`id`)
     ON DELETE CASCADE
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;
 
 CREATE TABLE IF NOT EXISTS `events_users` (
-                                              `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
     `eventId` INT(10) UNSIGNED NOT NULL,
     `userId` INT(10) UNSIGNED NOT NULL,
     `color` VARCHAR(10) DEFAULT '',
@@ -82,10 +82,10 @@ CREATE TABLE IF NOT EXISTS `events_users` (
     CONSTRAINT `foreign_key_events_users_userId`
     FOREIGN KEY (`userId`) REFERENCES `users`(`id`)
     ON DELETE CASCADE
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;
 
 CREATE TABLE IF NOT EXISTS `calendars_events` (
-                                                  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
     `eventId` INT(10) UNSIGNED NOT NULL,
     `calendarId` INT(10) UNSIGNED NOT NULL,
     `creationAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -99,4 +99,4 @@ CREATE TABLE IF NOT EXISTS `calendars_events` (
     CONSTRAINT `foreign_key_calendars_events_calendarId`
     FOREIGN KEY (`calendarId`) REFERENCES `calendars`(`id`)
     ON DELETE CASCADE
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;
