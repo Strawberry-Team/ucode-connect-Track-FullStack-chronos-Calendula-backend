@@ -10,7 +10,7 @@ class Controller {
     /**
      * @type {Model}
      */
-    _model;
+    #model;
 
     /**
      * @type {[]}
@@ -27,11 +27,26 @@ class Controller {
      */
     _totalEntitiesPerPage;
 
+    /**
+     * Initializes a new instance of the class.
+     *
+     * @param {Model} model - The model object to be used for the instance.
+     * @param {Array} validationRules - An optional array of validation rules.
+     *                                   Defaults to an empty array.
+     * @return {void}
+     */
     constructor(model, validationRules = []) {
-        this._model = model;
+        this.#model = model;
         this._validationRules = validationRules;
 
         this._initAccessPolicies();
+    }
+
+    /**
+     * @return {Model}
+     */
+    get model() {
+        return this.#model;
     }
 
     /**
@@ -125,14 +140,14 @@ class Controller {
 
             filters = [...req?.accessOperation?.filter, ...filters];
 
-            const totalEntities = await this._model.getEntitiesCount(filters);
+            const totalEntities = await this.model.getEntitiesCount(filters);
 
             if (this._totalEntitiesPerPage) {
                 pagination = this._preparePagination(req, totalEntities);
                 offset = pagination.currentPage === 1 ? 0 : (pagination.currentPage - 1) * pagination.entitiesPerPage;
             }
 
-            const entities = await this._model.getEntities(
+            const entities = await this.model.getEntities(
                 req?.accessOperation?.fields,
                 filters,
                 sort,
@@ -181,14 +196,14 @@ class Controller {
         try {
             const fields = this._prepareFields(req);
 
-            if (this._model._fields.includes(this._model._creationByRelationFieldName)) {
-                fields[this._model._creationByRelationFieldName] = req.user.id;
+            if (this.model._fields.includes(this.model._creationByRelationFieldName)) {
+                fields[this.model._creationByRelationFieldName] = req.user.id;
             }
 
-            let newEntity = this._model.createEntity(fields);
+            let newEntity = this.model.createEntity(fields);
             await newEntity.save();
 
-            newEntity = await this._model.getEntityById(newEntity.id);
+            newEntity = await this.model.getEntityById(newEntity.id);
 
             return res.status(201).json({
                 data: newEntity.toJSON(),
@@ -263,7 +278,7 @@ class Controller {
 
         filters = [...req?.accessOperation?.filter, ...filters];
 
-        return await this._model.getEntities([], filters, 'id', 1);
+        return await this.model.getEntities([], filters, 'id', 1);
     }
 
     /**
@@ -303,17 +318,17 @@ class Controller {
 
     _initAccessPolicies() {
         this._accessPolicies = {
-            admin: (new AccessPolicy(this._model))
+            admin: (new AccessPolicy(this.model))
                 .setCreate()
                 .setRead()
                 .setUpdate()
                 .setDelete(),
-            user: (new AccessPolicy(this._model))
+            user: (new AccessPolicy(this.model))
                 .setCreate()
-                .setRead([], [ { field: this._model._creationByRelationFieldName, operator: '=', value: '' } ])
-                .setUpdate([], [ { field: this._model._creationByRelationFieldName, operator: '=', value: '' } ])
-                .setDelete([], [ { field: this._model._creationByRelationFieldName, operator: '=', value: '' } ]),
-            guest: new AccessPolicy(this._model)
+                .setRead([], [ { field: this.model._creationByRelationFieldName, operator: '=', value: '' } ])
+                .setUpdate([], [ { field: this.model._creationByRelationFieldName, operator: '=', value: '' } ])
+                .setDelete([], [ { field: this.model._creationByRelationFieldName, operator: '=', value: '' } ]),
+            guest: new AccessPolicy(this.model)
         }
     }
 

@@ -5,7 +5,7 @@ import Where from "../sql/where.js";
 import CalendarModel from "../calendar/model.js";
 
 /**
- * @property {UserModel} _model
+ * @property {UserModel} model
  */
 class UserController extends Controller {
     constructor() {
@@ -62,18 +62,25 @@ class UserController extends Controller {
                     return true;
                 })];
 
-        this._accessPolicies.admin.setUpdate(this._model._fields.filter(field => !['email'].includes(field)));
+        this._accessPolicies.admin.setUpdate(this.model._fields.filter(field => !['email'].includes(field)));
 
         this._accessPolicies.user
             .removeCreate()
             .setRead([], [])
-            .setUpdate(this._model._fields.filter(field => !['email', 'isVerified', 'role', 'creationAt'].includes(field)), [{
+            .setUpdate(this.model._fields.filter(field => !['email', 'isVerified', 'role', 'creationAt'].includes(field)), [{
                 field: 'id', operator: '=', value: null
             }])
             .removeDelete();
 
         this._accessPolicies.guest
             .removeAll();
+    }
+
+    /**
+     * @returns {UserModel}
+     */
+    get model() {
+        return super.model;
     }
 
     /**
@@ -112,7 +119,7 @@ class UserController extends Controller {
     async create(req, res, next) {
         try {
             const validationErrors = [];
-            let user = await this._model.getByEmail(req?.body?.email);
+            let user = await this.model.getByEmail(req?.body?.email);
 
             if (user) {
                 validationErrors.push({ path: 'email', msg: 'Email belongs to another user.' });
@@ -127,14 +134,14 @@ class UserController extends Controller {
             const fields = this._prepareFields(req);
 
             if (fields.password) {
-                fields.password = await this._model.createPassword(fields.password);
+                fields.password = await this.model.createPassword(fields.password);
             }
 
             if (fields.email) {
-                fields.confirmToken = await this._model.createToken({ userEmail: fields.email });
+                fields.confirmToken = await this.model.createToken({ userEmail: fields.email });
             }
 
-            const newUser = this._model.createEntity(fields);
+            const newUser = this.model.createEntity(fields);
             await newUser.save();
 
             await (new CalendarModel()).createMainCalendar(newUser.id);
@@ -177,7 +184,7 @@ class UserController extends Controller {
         }
 
         if (req?.body?.password) {
-            req.body.password = await this._model.createPassword(req.body.password);
+            req.body.password = await this.model.createPassword(req.body.password);
         }
 
         return super.update(req, res, next);

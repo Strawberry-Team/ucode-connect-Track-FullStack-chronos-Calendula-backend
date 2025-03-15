@@ -41,14 +41,21 @@ class CalendarController extends Controller {
             .setCreate(allowedFields)
             .setRead()
             .setUpdate(allowedFields, [{
-                field: this._model._creationByRelationFieldName, operator: '=', value: null
+                field: this.model._creationByRelationFieldName, operator: '=', value: null
             }])
             .setDelete(allowedFields, [{
-                field: this._model._creationByRelationFieldName, operator: '=', value: null
+                field: this.model._creationByRelationFieldName, operator: '=', value: null
             }]);
 
         this._accessPolicies.guest
             .removeAll();
+    }
+
+    /**
+     * @returns {CalendarModel}
+     */
+    get model() {
+        return super.model;
     }
 
     /**
@@ -70,7 +77,7 @@ class CalendarController extends Controller {
                 )
             ];
 
-            const entities = await this._model.getEntities(
+            const entities = await this.model.getEntities(
                 req?.accessOperation?.fields,
                 filters
             );
@@ -125,17 +132,17 @@ class CalendarController extends Controller {
         try {
             const fields = this._prepareFields(req);
 
-            if (this._model._fields.includes(this._model._creationByRelationFieldName)) {
-                fields[this._model._creationByRelationFieldName] = req.user.id;
+            if (this.model._fields.includes(this.model._creationByRelationFieldName)) {
+                fields[this.model._creationByRelationFieldName] = req.user.id;
             }
 
-            let entity = this._model.createEntity(fields);
+            let entity = this.model.createEntity(fields);
             await entity.save();
 
             const calendarUserModel = new CalendarUserModel();
             await calendarUserModel.syncCalendarParticipants(entity.id, this._prepareParticipants(req));
 
-            const calendar = await this._model.getEntityById(entity.id);
+            const calendar = await this.model.getEntityById(entity.id);
             const participants = await calendarUserModel.getCalendarsByCalendarId(calendar.id);
 
             for (const participant of participants) {
@@ -191,7 +198,7 @@ class CalendarController extends Controller {
             const calendarUserModel = new CalendarUserModel();
             await calendarUserModel.syncCalendarParticipants(entity.id, this._prepareParticipants(req));
 
-            const calendar = await this._model.getEntityById(entity.id);
+            const calendar = await this.model.getEntityById(entity.id);
             const participants = await calendarUserModel.getCalendarsByCalendarId(calendar.id);
 
             for (const participant of participants) {
@@ -271,7 +278,7 @@ class CalendarController extends Controller {
                 );
             }
 
-            const calendar = await this._model.getEntityById(req.params.id);
+            const calendar = await this.model.getEntityById(req.params.id);
 
             if (!calendar) {
                 return this._returnNotFound(res);

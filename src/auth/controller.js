@@ -11,7 +11,7 @@ class AuthController extends UserController {
         this._accessPolicies.admin.removeAll();
         this._accessPolicies.user.removeAll();
         this._accessPolicies.guest.setCreate(
-            this._model._fields.filter(field => !['isVerified', 'profilePicture', 'creationAt'].includes(field))
+            this.model._fields.filter(field => !['isVerified', 'profilePicture', 'creationAt'].includes(field))
         );
 
         this._validationRulesForLogin = this._validationRules.filter(rule => {
@@ -25,6 +25,13 @@ class AuthController extends UserController {
         this._validationRulesForPasswordResetConfirm = this._validationRules.filter(rule => {
             return ['password', 'password_confirm'].includes(rule.builder.fields[0])
         });
+    }
+
+    /**
+     * @returns {UserModel}
+     */
+    get model() {
+        return super.model;
     }
 
     /**
@@ -76,7 +83,7 @@ class AuthController extends UserController {
         try {
             try {
                 const decoded = jwt.verify(req.params.token, process.env.APP_SECRET);
-                const user = await this._model.getByEmail(decoded.userEmail);
+                const user = await this.model.getByEmail(decoded.userEmail);
 
                 if (!user) {
                     return this._returnNotFound(res);
@@ -124,7 +131,7 @@ class AuthController extends UserController {
             const validationErrors = [];
             const fields = this._prepareFields(req);
 
-            const user = await this._model.getByEmail(fields.email);
+            const user = await this.model.getByEmail(fields.email);
             let passwordIsValid = false;
 
             if (user) {
@@ -157,7 +164,7 @@ class AuthController extends UserController {
                 );
             }
 
-            const accessToken = await this._model.createToken({
+            const accessToken = await this.model.createToken({
                 id: user.id,
                 email: user.email,
                 role: user.role
@@ -193,13 +200,13 @@ class AuthController extends UserController {
     async passwordReset(req, res, next) {
         try {
             const fields = this._prepareFields(req);
-            const user = await this._model.getByEmail(fields.email);
+            const user = await this.model.getByEmail(fields.email);
 
             if (!user) {
                 return this._returnNotFound(res);
             }
 
-            user.passwordResetToken = await this._model.createToken({ userEmail: user.email });
+            user.passwordResetToken = await this.model.createToken({ userEmail: user.email });
             await user.save();
 
             await mailer.sendPasswordReset(
@@ -241,13 +248,13 @@ class AuthController extends UserController {
         try {
             try {
                 const tokenData = jwt.verify(req.params.token, process.env.APP_SECRET);
-                const user = await this._model.getByEmail(tokenData.userEmail);
+                const user = await this.model.getByEmail(tokenData.userEmail);
 
                 if (!user) {
                     return this._returnNotFound(res);
                 }
 
-                user.password = await this._model.createPassword(req.body.password);
+                user.password = await this.model.createPassword(req.body.password);
                 user.passwordResetToken = null;
                 await user.save();
 
