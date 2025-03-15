@@ -16,7 +16,7 @@ import CalendarUserModel from "./src/calendar/user/model.js";
 
     const USER_ROLE = 'user';
     const USER_PASSWORD = 'Password123!$';
-    const USER_COUNTRIES = ['Ukraine', 'Poland', 'Spain'];
+    const USER_COUNTRIES = ['Ukraine', 'Finland', 'Estonia'];
     const USER_PROFILE_PICTURE = 'default.png';
     const PARTICIPANT_ROLES = ['owner', 'member', 'viewer'];
     const EVENT_CATEGORIES = ['work', 'home', 'hobby'];
@@ -134,9 +134,10 @@ import CalendarUserModel from "./src/calendar/user/model.js";
 
         user.fullName = `${firstName} ${lastName}`;
         user.password = await model.createPassword(USER_PASSWORD);
-        user.email = faker.internet.exampleEmail({
-            firstName,
-            lastName,
+        user.email = faker.internet.email({
+            firstName: firstName,
+            lastName: lastName,
+            provider: 'calendula.ua',
             allowSpecialCharacters: false
         }).toLowerCase();
         user.profilePicture = USER_PROFILE_PICTURE;
