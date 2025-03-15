@@ -1,5 +1,3 @@
 DELETE FROM `users` WHERE `id` = 11;
-/**
-  DELETE FROM `calendars` WHERE `id` = 11;
-  DELETE FROM `calendars_users` WHERE `id` = 11;
-*/
+
+DELETE FROM `events` WHERE `type` = 'home' AND `category` = 'reminder' AND creationByUserId = 11;
