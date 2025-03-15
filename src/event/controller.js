@@ -69,14 +69,21 @@ class EventController extends Controller {
             .setCreate(allowedFields)
             .setRead()
             .setUpdate(allowedFields.filter(field => field !== 'calendarId'), [{
-                field: this._model._creationByRelationFieldName, operator: '=', value: null
+                field: this.model._creationByRelationFieldName, operator: '=', value: null
             }])
             .setDelete(allowedFields, [{
-                field: this._model._creationByRelationFieldName, operator: '=', value: null
+                field: this.model._creationByRelationFieldName, operator: '=', value: null
             }]);
 
         this._accessPolicies.guest
             .removeAll();
+    }
+
+    /**
+     * @returns {EventModel}
+     */
+    get model() {
+        return super.model;
     }
 
     /**
@@ -147,16 +154,16 @@ class EventController extends Controller {
             Если в isMain = FALSE, то только в общий.
             * */
 
-            if (this._model._fields.includes(this._model._creationByRelationFieldName)) {
-                fields[this._model._creationByRelationFieldName] = req.user.id;
+            if (this.model._fields.includes(this.model._creationByRelationFieldName)) {
+                fields[this.model._creationByRelationFieldName] = req.user.id;
             }
 
-            let entity = this._model.createEntity(fields);
+            let entity = this.model.createEntity(fields);
             await entity.save();
 
-            await this._model.syncEventParticipants(entity.id, this._prepareParticipants(req));
+            await this.model.syncEventParticipants(entity.id, this._prepareParticipants(req));
 
-            const event = await this._model.getEntityById(entity.id);
+            const event = await this.model.getEntityById(entity.id);
             await event.prepareRelationFields();
 
             if (req.calendar.isMain()) {
@@ -190,9 +197,9 @@ class EventController extends Controller {
             Object.assign(entity, this._prepareFields(req));
             await entity.save();
 
-            await this._model.syncEventParticipants(entity.id, this._prepareParticipants(req));
+            await this.model.syncEventParticipants(entity.id, this._prepareParticipants(req));
 
-            const event = await this._model.getEntityById(entity.id);
+            const event = await this.model.getEntityById(entity.id);
             await event.prepareRelationFields();
 
             await this._notifyParticipants(event);
@@ -221,7 +228,7 @@ class EventController extends Controller {
                 return this._returnResponse(res, 400, {}, "Invalid command.");
             }
 
-            const event = await this._model.getEntityById(req.params.id);
+            const event = await this.model.getEntityById(req.params.id);
 
             if (!event) {
                 return this._returnNotFound(res);
