@@ -22,7 +22,7 @@ class EventUserModel extends Model {
     /**
      *
      * @param {number} eventId
-     * @param {[{userId: number, color: string, attendanceStatus: string}]} participants
+     * @param {[{userId: number, color: string, isOrganizer: boolean}]} participants
      * @return {Promise<void>}
      */
     async syncEventParticipants(eventId, participants) {
@@ -33,6 +33,8 @@ class EventUserModel extends Model {
         if (!participants.find(p => p.isOrganizer)) {
             throw new Error('The event must be attended by organizer.');
         }
+
+        participants = this._deduplicateParticipants(participants);
 
         const eventUsers = await this.getEntities([], [
             new Where('eventId', '=', eventId)
@@ -63,6 +65,23 @@ class EventUserModel extends Model {
 
             await eventUser.save();
         }
+    }
+
+    /**
+     * @param {[{userId: number, color: string, isOrganizer: boolean}]} participants
+     * @return {[{userId: number, color: string, isOrganizer: boolean}]}
+     * @private
+     */
+    _deduplicateParticipants(participants) {
+        const uniqueParticipants = {};
+
+        for (const participant of participants) {
+            if (!uniqueParticipants[participant.userId]) {
+                uniqueParticipants[participant.userId] = participant;
+            }
+        }
+
+        return Object.values(uniqueParticipants);
     }
 }
 

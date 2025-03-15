@@ -168,6 +168,9 @@ class EventController extends Controller {
 
             if (req.calendar.isMain()) {
                 req.calendar.addEvent(event.id);
+            } else {
+                // TODO: временное решение. Пока нет идей, как сделать хорошо
+                req.calendar.addEvent(event.id);
             }
 
             await this._notifyParticipants(event);
