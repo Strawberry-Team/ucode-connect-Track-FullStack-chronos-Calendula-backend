@@ -1,6 +1,7 @@
 import Controller from "../controller.js";
 import UserModel from "./model.js";
 import { body } from "express-validator";
+import Where from "../sql/where.js";
 
 /**
  * @property {UserModel} _model
@@ -75,7 +76,37 @@ class UserController extends Controller {
     }
 
     /**
-     * @inheritDoc
+     * @param {e.Request} req
+     * @param {e.Response} res
+     * @param {e.NextFunction} next
+     * @return {Promise<e.Response>}
+     */
+    async getAll(req, res, next) {
+        try {
+            const filters = [
+                new Where('role', '=', 'user'),
+                new Where('isVerified', '=', 1)
+            ];
+
+            const userModel = new UserModel();
+            const entities = await userModel.getEntities(
+                req?.accessOperation?.fields,
+                filters
+            );
+
+            return this._returnResponse(res, 200, {
+                data: entities.map(entity => entity.toJSON())
+            });
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    /**
+     * @param {e.Request} req
+     * @param {e.Response} res
+     * @param {e.NextFunction} next
+     * @return {Promise<e.Response>}
      */
     async create(req, res, next) {
         try {
@@ -126,6 +157,12 @@ class UserController extends Controller {
         return await this.validateBody(req, res, next, this._validationRulesForUpdate);
     }
 
+    /**
+     * @param {e.Request} req
+     * @param {e.Response} res
+     * @param {e.NextFunction} next
+     * @return {Promise<e.Response>}
+     */
     async update(req, res, next) {
         if (req?.user?.role === 'user' && req?.accessOperation) {
             req.accessOperation.filter.forEach(item => {

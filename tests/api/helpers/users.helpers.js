@@ -6,9 +6,10 @@ import UserModel from "../../../src/user/model.js";
 const userModel = new UserModel();
 
 export function generateEmail(firstName, lastName) {
-    return faker.internet.exampleEmail({
+    return faker.internet.email({
         firstName: firstName,
         lastName: lastName,
+        provider: 'calendula.ua',
         allowSpecialCharacters: false
     }).toLowerCase();
 }
@@ -24,7 +25,7 @@ export function generateFullName() {
 }
 
 export function generateCountry() {
-    return faker.helpers.arrayElement(['Ukraine', 'Poland', 'Spain']);
+    return faker.helpers.arrayElement(['Ukraine', 'Finland', 'Estonia']);
 }
 
 export function generatePassword() {
