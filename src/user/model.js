@@ -55,7 +55,7 @@ class UserModel extends Model {
      * @param {string} expiresIn
      * @return {string}
      */
-    async createConfirmToken(data, expiresIn = '30d') {
+    async createToken(data, expiresIn = '30d') {
         return jwt.sign(
             data,
             process.env.APP_SECRET,
