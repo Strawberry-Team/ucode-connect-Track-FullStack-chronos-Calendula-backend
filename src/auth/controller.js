@@ -42,19 +42,6 @@ class AuthController extends UserController {
     }
 
     /**
-     * @param {Object} data
-     * @param {string} expiresIn
-     * @return {string}
-     */
-    createAccessToken(data, expiresIn = '7d') {
-        return jwt.sign(
-            data,
-            process.env.APP_SECRET,
-            { expiresIn }
-        );
-    }
-
-    /**
      * @param req
      * @param res
      * @param next
@@ -99,6 +86,7 @@ class AuthController extends UserController {
                 }
 
                 user.isVerified = true;
+                user.confirmToken = null;
                 await user.save();
 
                 return this._returnResponse(
@@ -172,11 +160,11 @@ class AuthController extends UserController {
                 );
             }
 
-            const accessToken = this.createAccessToken({
+            const accessToken = await this._model.createToken({
                 id: user.id,
                 email: user.email,
                 role: user.role
-            });
+            }, '7d');
 
             return this._returnResponse(
                 res, 200, { accessToken, data: user.toJSON() },
@@ -200,19 +188,6 @@ class AuthController extends UserController {
     }
 
     /**
-     * @param {Object} data
-     * @param {string} expiresIn
-     * @return {string}
-     */
-    createPasswordResetToken(data, expiresIn = '30d') {
-        return jwt.sign(
-            data,
-            process.env.APP_SECRET,
-            { expiresIn }
-        );
-    }
-
-    /**
      * @param {e.Request} req
      * @param {e.Response} res
      * @param {e.NextFunction} next
@@ -227,7 +202,7 @@ class AuthController extends UserController {
                 return this._returnNotFound(res);
             }
 
-            user.passwordResetToken = this.createPasswordResetToken({ userEmail: user.email });
+            user.passwordResetToken = await this._model.createToken({ userEmail: user.email });
             await user.save();
 
             await mailer.sendPasswordReset(
@@ -276,6 +251,7 @@ class AuthController extends UserController {
                 }
 
                 user.password = await this._model.createPassword(req.body.password);
+                user.passwordResetToken = null;
                 await user.save();
 
                 return this._returnResponse(res, 200, {}, "Successful password update.");
