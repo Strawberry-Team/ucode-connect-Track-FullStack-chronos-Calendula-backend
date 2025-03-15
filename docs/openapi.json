@@ -883,7 +883,7 @@
           "id": {"type": "integer", "example": "1"},
           "fullName": { "type": "string", "example": "Ann Nichols" },
           "email": { "type": "string", "format": "email", "example": "ann.nichols@example.com" },
-          "country": { "type": "string", "enum": ["Ukraine", "Poland", "Spain"], "example": "Ukraine" }
+          "country": { "type": "string", "enum": ["Ukraine", "Finland", "Estonia"], "example": "Ukraine" }
         }
       },
       "RegisterUser": {
@@ -891,7 +891,7 @@
         "properties": {
           "email": { "type": "string", "format": "email", "example": "ann.nichols@example.com" },
           "fullName": { "type": "string", "example": "Ann Nichols" },
-          "country": { "type": "string", "enum": ["Ukraine", "Poland", "Spain"], "example": "Ukraine" },
+          "country": { "type": "string", "enum": ["Ukraine", "Finland", "Estonia"], "example": "Ukraine" },
           "password": { "type": "string", "example": "StrongPassword123!$" },
           "password_confirm": { "type": "string", "example": "StrongPassword123!$" }
         },
@@ -917,7 +917,7 @@
               "fullName": { "type": "string", "example": "Ann Nichols" },
               "email": { "type": "string", "format": "email", "example": "ann.nichols@example.com" },
               "profilePicture": { "type": "string", "example": "default.png" },
-              "country": { "type": "string", "enum": ["Ukraine", "Poland", "Spain"], "example": "Ukraine" },
+              "country": { "type": "string", "enum": ["Ukraine", "Finland", "Estonia"], "example": "Ukraine" },
               "role": { "type": "string", "enum": [ "user", "admin" ], "example": "user" },
               "isVerified": { "type": "boolean", "example": true },
               "creationAt": { "type": "string", "format": "date-time", "example": "2025-03-08 09:05:13" }
@@ -931,7 +931,7 @@
           "email": { "type": "string", "format": "email", "example": "ann.nichols@example.com" },
           "fullName": { "type": "string", "example": "Ann Nichols" },
           "role": { "type": "string", "enum": ["user", "admin"], "example": "user" },
-          "country": { "type": "string", "enum": ["Ukraine", "Poland", "Spain"], "example": "Ukraine" },
+          "country": { "type": "string", "enum": ["Ukraine", "Finland", "Estonia"], "example": "Ukraine" },
           "password": { "type": "string", "example": "StrongPassword123!$" },
           "password_confirm": { "type": "string", "example": "StrongPassword123!$" }
         },

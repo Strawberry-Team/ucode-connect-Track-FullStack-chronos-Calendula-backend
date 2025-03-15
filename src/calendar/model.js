@@ -86,6 +86,42 @@ class CalendarModel extends Model {
             new Where('id', 'in', relatedEvents.map(event => event.eventId))
         ]);
     }
+
+    /**
+     * @param {number} userId
+     * @return {Promise<void>}
+     */
+    async addUserToHolidaysCalendar(userId) {
+        const user = await (new UserModel()).getEntityById(userId);
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        let calendarId = 0;
+        switch (user.country) {
+            case 'Ukraine':
+                calendarId = 12;
+                break;
+            case 'Finland':
+                calendarId = 13;
+                break;
+            case 'Estonia':
+                calendarId = 14;
+                break;
+        }
+
+        const calendar = await this.getEntityById(calendarId);
+        if (!calendar) {
+            throw new Error('Calendar not found');
+        }
+
+        await (new CalendarUserModel()).addParticipant(
+            calendarId,
+            userId,
+            'viewer',
+            true
+        )
+    }
 }
 
 export default CalendarModel;
