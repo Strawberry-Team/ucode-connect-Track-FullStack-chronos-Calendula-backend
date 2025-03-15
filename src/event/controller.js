@@ -89,6 +89,7 @@ class EventController extends Controller {
         let participants = req?.body?.participants;
 
         if (participants && Array.isArray(participants)) {
+            participants = participants.filter(p => p.userId !== req?.user.id);
             participants.push({
                 userId: req?.user.id,
                 isOrganizer: true,
