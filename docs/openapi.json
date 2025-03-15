@@ -132,7 +132,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "email": { "type": "string", "format": "email", "example": "ann.nichols@example.com" }
+                  "email": { "type": "string", "format": "email", "example": "ann.nichols@calendula.ua" }
                 },
                 "required": ["email"]
               }
@@ -168,8 +168,8 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "password": { "type": "string", "example": "NewStrongPassword123!$" },
-                  "password_confirm": { "type": "string", "example": "NewStrongPassword123!$" }
+                  "password": { "type": "string", "example": "NewPassword123!$" },
+                  "password_confirm": { "type": "string", "example": "NewPassword123!$" }
                 },
                 "required": ["password", "password_confirm"]
               }
@@ -213,45 +213,11 @@
             }
           }
         }
-      },
-      "post": {
-        "summary": "Create a new user (admin only)",
-        "tags": ["Users"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateUser"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Successful user creation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Access denied"
-          }
-        }
       }
     },
     "/api/users/{user_id}": {
       "get": {
-        "summary": "Retrieval of user data",
+        "summary": "Get user data",
         "tags": ["Users"],
         "security": [
           {
@@ -317,9 +283,11 @@
             "description": "Access denied"
           }
         }
-      },
-      "delete": {
-        "summary": "Delete a user (admin only)",
+      }
+    },
+    "/api/users/{user_id}/avatar": {
+      "patch": {
+        "summary": "Upload a user avatar",
         "tags": ["Users"],
         "security": [
           {
@@ -332,25 +300,6 @@
             "in": "path",
             "required": true,
             "schema": { "type": "integer", "example": "1" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful deletion"
-          },
-          "403": {
-            "description": "Access denied"
-          }
-        }
-      }
-    },
-    "/api/users/avatar": {
-      "patch": {
-        "summary": "Upload a user avatar",
-        "tags": ["Users"],
-        "security": [
-          {
-            "bearerAuth": []
           }
         ],
         "requestBody": {
@@ -882,26 +831,30 @@
         "properties": {
           "id": {"type": "integer", "example": "1"},
           "fullName": { "type": "string", "example": "Ann Nichols" },
-          "email": { "type": "string", "format": "email", "example": "ann.nichols@example.com" },
-          "country": { "type": "string", "enum": ["Ukraine", "Finland", "Estonia"], "example": "Ukraine" }
+          "email": { "type": "string", "format": "email", "example": "ann.nichols@calendula.ua" },
+          "profilePicture": { "type": "string", "example": "default.png" },
+          "country": { "type": "string", "enum": ["Ukraine", "Finland", "Estonia"], "example": "Ukraine" },
+          "role": { "type": "string", "enum": ["admin", "user"], "example": "user" },
+          "isVerified": { "type": "boolean", "example": true },
+          "creationAt": { "type": "string", "format": "date-time", "example": "2025-03-08 09:05:13" }
         }
       },
       "RegisterUser": {
         "type": "object",
         "properties": {
-          "email": { "type": "string", "format": "email", "example": "ann.nichols@example.com" },
+          "email": { "type": "string", "format": "email", "example": "ann.nichols@calendula.ua" },
           "fullName": { "type": "string", "example": "Ann Nichols" },
           "country": { "type": "string", "enum": ["Ukraine", "Finland", "Estonia"], "example": "Ukraine" },
-          "password": { "type": "string", "example": "StrongPassword123!$" },
-          "password_confirm": { "type": "string", "example": "StrongPassword123!$" }
+          "password": { "type": "string", "example": "Password123!$" },
+          "password_confirm": { "type": "string", "example": "Password123!$" }
         },
         "required": ["email", "fullName", "country", "password", "password_confirm"]
       },
       "LoginUser": {
         "type": "object",
         "properties": {
-          "email": { "type": "string", "format": "email", "example": "ann.nichols@example.com" },
-          "password": { "type": "string", "example": "StrongPassword123!$" }
+          "email": { "type": "string", "format": "email", "example": "ann.nichols@calendula.ua" },
+          "password": { "type": "string", "example": "Password123!$" }
         },
         "required": ["email", "password"]
       },
@@ -915,7 +868,7 @@
             "properties": {
               "id": { "type": "integer", "example": "1" },
               "fullName": { "type": "string", "example": "Ann Nichols" },
-              "email": { "type": "string", "format": "email", "example": "ann.nichols@example.com" },
+              "email": { "type": "string", "format": "email", "example": "ann.nichols@calendula.ua" },
               "profilePicture": { "type": "string", "example": "default.png" },
               "country": { "type": "string", "enum": ["Ukraine", "Finland", "Estonia"], "example": "Ukraine" },
               "role": { "type": "string", "enum": [ "user", "admin" ], "example": "user" },
@@ -928,12 +881,12 @@
       "CreateUser": {
         "type": "object",
         "properties": {
-          "email": { "type": "string", "format": "email", "example": "ann.nichols@example.com" },
+          "email": { "type": "string", "format": "email", "example": "ann.nichols@calendula.ua" },
           "fullName": { "type": "string", "example": "Ann Nichols" },
           "role": { "type": "string", "enum": ["user", "admin"], "example": "user" },
           "country": { "type": "string", "enum": ["Ukraine", "Finland", "Estonia"], "example": "Ukraine" },
-          "password": { "type": "string", "example": "StrongPassword123!$" },
-          "password_confirm": { "type": "string", "example": "StrongPassword123!$" }
+          "password": { "type": "string", "example": "Password123!$" },
+          "password_confirm": { "type": "string", "example": "Password123!$" }
         },
         "required": ["email", "fullName", "role", "country", "password", "password_confirm"]
       },
@@ -941,8 +894,8 @@
         "type": "object",
         "properties": {
           "fullName": { "type": "string", "example": "Ann Nichols" },
-          "password": { "type": "string", "example": "StrongPassword123!$" },
-          "password_confirm": { "type": "string", "example": "StrongPassword123!$" }
+          "password": { "type": "string", "example": "Password123!$" },
+          "password_confirm": { "type": "string", "example": "Password123!$" }
         }
       },
       "Calendar": {

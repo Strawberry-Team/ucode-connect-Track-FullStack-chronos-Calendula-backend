@@ -1,8 +1,9 @@
 import { test } from '@playwright/test';
 import dotenv from 'dotenv';
-import { BASE_URL, generateHeaders } from "./helpers/general.helpers.js";
-import { createAndLoginUser, generateUserData } from "./helpers/users.helpers.js";
-import { generateEventData, expectEventResponse, getMainCalendarByUserId } from "./helpers/events.helpers.js"
+import {expectResponseHeaders, generateHeaders} from "./helpers/general.helpers.js";
+import {cleanUpUser, createAndLoginUser, generateUserData} from "./helpers/users.helpers.js";
+import { generateEventData, expectEventResponse, getMainCalendarByUserId,
+        generateParticipants, expectParticipantsDataToMatch } from "./helpers/events.helpers.js"
 
 dotenv.config({ path: '.env.test', debug: true });
 
@@ -12,18 +13,26 @@ test.describe('Events', () => {
     let userData = {};
     let eventData = {};
     let headers = {};
+    let participants = [];
 
     test.beforeAll('Create and login user', async ({ request }) => {
         const user = await createAndLoginUser(request);
-        const userCalendar = await getMainCalendarByUserId(user.id);
-        //console.log(userCalendar, 'USER_CALENDAR_HELLO');
         userData = generateUserData(user);
-        eventData = generateEventData({}, { creationByUserId: userData.id, calendarId: userCalendar.id });
         headers = generateHeaders(userData.accessToken);
     });
 
+    test.beforeAll('Create users and fill participants', async ({ request}) => {
+        const userCalendar = await getMainCalendarByUserId(userData.id);
+        participants = await generateParticipants(userData.id);
+        eventData = generateEventData({}, {
+            creationByUserId: userData.id,
+            calendarId: userCalendar.id,
+            participants
+        });
+    });
+
     test("Create Event", async ({request}) => {
-        const response = await request.post(`${BASE_URL}/events/`, {
+        const response = await request.post(`events/`, {
             headers,
             data: {
                 title: eventData.title,
@@ -32,15 +41,18 @@ test.describe('Events', () => {
                 type: eventData.type,
                 startAt: eventData.startAt,
                 endAt: eventData.endAt,
-                calendarId: eventData.calendarId
+                calendarId: eventData.calendarId,
+                participants: eventData.participants,
             }
         });
+
         const responseBody = await expectEventResponse(response, eventData, 201);
         eventData.id = responseBody.data.id;
+        eventData.creationAt = responseBody.data.creationAt;
     });
 
     test("Get Event", async ({request}) => {
-        const response = await request.get(`${BASE_URL}/events/${eventData.id}`, {
+        const response = await request.get(`events/${eventData.id}`, {
             headers
         });
 
@@ -49,7 +61,8 @@ test.describe('Events', () => {
 
     test("Update Event", async ({request}) => {
         eventData = generateEventData(eventData, {});
-        const response = await request.patch(`${BASE_URL}/events/${eventData.id}`, {
+
+        const response = await request.patch(`events/${eventData.id}`, {
             headers,
             data: {
                 title: eventData.title,
@@ -57,18 +70,44 @@ test.describe('Events', () => {
                 category: eventData.category,
                 type: eventData.type,
                 startAt: eventData.startAt,
-                endAt: eventData.endAt
+                endAt: eventData.endAt,
+                participants: eventData.participants
             }
         });
 
         await expectEventResponse(response, eventData);
     });
 
+    test("Update Event Participants", async ({request}) => {
+        const response = await request.patch(`events/${eventData.id}`, {
+            headers,
+            data: {
+                title: eventData.title,
+                description: eventData.description,
+                category: eventData.category,
+                type: eventData.type,
+                startAt: eventData.startAt,
+                endAt: eventData.endAt,
+                participants: [eventData.participants[0]]
+            }
+        });
+
+        expectResponseHeaders(response);
+        const responseBody = await response.json();
+        expectParticipantsDataToMatch(eventData, responseBody.data);
+    });
+
     test("Delete Event", async ({request}) => {
-        const response = await request.delete(`${BASE_URL}/events/${eventData.id}`, {
+        const response = await request.delete(`events/${eventData.id}`, {
             headers
         });
 
         await expectEventResponse(response, eventData, 200);
+    });
+
+    test("Cleanup of test data", async ({request}) => {
+        for (const participant of eventData.participants) {
+            await cleanUpUser(participant.userId);
+        }
     });
 });

@@ -1,4 +1,4 @@
-INSERT INTO `users` (id, fullName, password, email, profilePicture, country, role, isVerified, confirmToken, passwordResetToken, creationAt) VALUES (11, 'Admin', '$argon2id$v=19$m=65536,t=3,p=4$JFBoYW50b20kTGliZXJ0eQ$oos7LxrnBkcb6ixqWMQlGWgJ375wU7acfo8ks9r2x8E', 'admin@calendula.ua', 'default.png', 'Ukraine', 'admin', 1, '', null, '2025-03-15 10:52:49');
+INSERT INTO `users` (id, fullName, password, email, profilePicture, country, role, isVerified, confirmToken, passwordResetToken, creationAt) VALUES (11, 'Admin', '$argon2id$v=19$m=65536,t=3,p=4$JFBoYW50b20kTGliZXJ0eQ$oos7LxrnBkcb6ixqWMQlGWgJ375wU7acfo8ks9r2x8E', 'admin@calendula.ua', 'default.png', 'Ukraine', 'admin', 1, null, null, '2025-03-15 10:52:49');
 
 INSERT INTO `calendars` (id, title, description, creationByUserId, creationAt, type) VALUES (11, 'Admin', 'Admin\'s main calendar', 11, '2025-03-15 10:52:49', 'main');
 

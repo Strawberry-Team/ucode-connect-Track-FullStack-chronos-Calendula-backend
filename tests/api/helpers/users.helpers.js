@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
 import { faker } from "@faker-js/faker/locale/en";
-import { BASE_URL, HEADERS, expectResponseHeaders } from "./general.helpers.js";
+import { HEADERS, expectResponseHeaders } from "./general.helpers.js";
 import UserModel from "../../../src/user/model.js";
 
 const userModel = new UserModel();
@@ -32,6 +32,10 @@ export function generatePassword() {
     return 'Password123!$';
 }
 
+export function generateProfilePicture() {
+    return 'default.png';
+}
+
 export function generateUserData(base = {}, overrides = {}) {
     const name = generateFullName();
     return {
@@ -48,8 +52,18 @@ export function generateUserData(base = {}, overrides = {}) {
     };
 }
 
+export async function createAndSaveUserData() {
+    const data = generateUserData({ isVerified: true });
+    data.password = await userModel.createPassword(data.password);
+
+    const user = await userModel.createEntity(data);
+    await user.save();
+
+    return user;
+}
+
 export async function registerUser(request, userData) {
-    const response = await request.post(`${BASE_URL}/auth/register`, {
+    const response = await request.post(`auth/register`, {
         headers: HEADERS,
         data: {
             email: userData.email,
@@ -86,7 +100,7 @@ export async function registerUser(request, userData) {
 }
 
 export async function confirmUserEmail(request, userData) {
-    const response = await request.get(`${BASE_URL}/auth/confirm-email/${userData.confirmToken}`, {
+    const response = await request.get(`auth/confirm-email/${userData.confirmToken}`, {
         params: {
             confirm_token: userData.confirmToken
         }
@@ -113,7 +127,7 @@ export async function confirmUserEmail(request, userData) {
 }
 
 export async function loginUser(request, userData) {
-    const response = await request.post(`${BASE_URL}/auth/login`, {
+    const response = await request.post(`auth/login`, {
         headers: HEADERS,
         data: {
             email: userData.email,
@@ -147,4 +161,51 @@ export async function createAndLoginUser(request, overrideUserData = {}) {
     await confirmUserEmail(request, user);
     const { userData } = await loginUser(request, user);
     return userData;
+}
+
+export function expectUserDataToMatch(expected, actual) {
+    expect(actual).toMatchObject({
+        id: expected.id ?? expect.any(Number),
+        fullName: expected.fullName,
+        email: expected.email,
+        profilePicture: expected.profilePicture,
+        country: expected.country,
+        role: expected.role,
+        isVerified: expected.isVerified,
+        creationAt: expected.creationAt ?? expect.any(String)
+    });
+}
+
+export async function expectUserResponse(response, expectedData, statusCode = 200) {
+    expectResponseHeaders(response, statusCode);
+    const responseBody = await response.json();
+    expectUserDataToMatch(expectedData, responseBody.data);
+    return responseBody;
+}
+
+export async function expectAllUsersResponse(response, expectedData, statusCode = 200) {
+    expectResponseHeaders(response, statusCode);
+
+    const responseBody = await response.json();
+    expect(Array.isArray(responseBody.data)).toBe(true);
+    expect(responseBody.data.length).toBeGreaterThan(0);
+
+    for (const user of responseBody.data) {
+        expect(user.role).toBe('user');
+        expect(user.isVerified).toBe(true);
+    }
+
+    const firstUser = responseBody.data.filter(item => item.email === expectedData.email)[0];
+    const expectedUser = {};
+    Object.assign(expectedUser, expectedData);
+    expectedUser.id = undefined;
+    expectedUser.createdAt = undefined;
+    expectUserDataToMatch(expectedUser, firstUser);
+
+    return responseBody;
+}
+
+export async function cleanUpUser(userId) {
+    const user = await userModel.getEntityById(userId);
+    await user.delete();
 }

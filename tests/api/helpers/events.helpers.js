@@ -1,6 +1,7 @@
-import {faker} from "@faker-js/faker/locale/en";
-import {expect} from "@playwright/test";
+import { faker } from "@faker-js/faker/locale/en";
+import { expect } from "@playwright/test";
 import { expectResponseHeaders } from "./general.helpers.js";
+import { createAndSaveUserData } from "./users.helpers.js";
 import CalendarModel from "../../../src/calendar/model.js";
 
 export function generateEventTitle() {
@@ -48,6 +49,7 @@ export function generateEventData(base = {}, overrides = {}) {
         startAt: dateTime.startAt,
         endAt: dateTime.endAt,
         creationAt: undefined,
+        participants: [],
         ...base,
         ...overrides
     };
@@ -76,4 +78,28 @@ export async function expectEventResponse(response, expectedData, statusCode = 2
 
 export async function getMainCalendarByUserId(userId) {
     return (new CalendarModel()).getMainCalendar(userId);
+}
+
+export async function generateParticipants(ownerId) {
+    return [
+        {
+            userId: ownerId
+        },
+        {
+            userId: (await createAndSaveUserData()).id
+        },
+        {
+            userId: (await createAndSaveUserData()).id
+        },
+    ];
+}
+
+export function expectParticipantsDataToMatch(expected, actual) {
+    expect(actual).toMatchObject({
+        participants: [
+            {
+                userId: expected.participants[0].userId
+            }
+        ]
+    });
 }
