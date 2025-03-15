@@ -2,6 +2,7 @@ import Controller from "../controller.js";
 import UserModel from "./model.js";
 import { body } from "express-validator";
 import Where from "../sql/where.js";
+import CalendarModel from "../calendar/model.js";
 
 /**
  * @property {UserModel} _model
@@ -20,8 +21,8 @@ class UserController extends Controller {
 
             body('country')
                 .notEmpty().withMessage('Country is required.')
-                .isIn(['Ukraine', 'Poland', 'Spain'])
-                .withMessage('Allowed countries: Ukraine, Poland, Spain.'),
+                .isIn(['Ukraine', 'Finland', 'Estonia'])
+                .withMessage('Allowed countries: Ukraine, Finland, Estonia.'),
 
             body('password')
                 .optional()
@@ -135,6 +136,9 @@ class UserController extends Controller {
 
             const newUser = this._model.createEntity(fields);
             await newUser.save();
+
+            await (new CalendarModel()).createMainCalendar(newUser.id);
+            await (new CalendarModel()).addUserToHolidaysCalendar(newUser.id);
 
             req.confirmToken = newUser?.confirmToken;
             req.newUser = newUser.toJSON();

@@ -79,24 +79,13 @@ class CalendarUserModel extends Model {
             participants = participants.filter(p => p.userId !== calendarUser.userId);
         }
 
-        const calendarUserModel = new CalendarUserModel();
-        const userModel = new UserModel();
-
         for (const participant of participants) {
-            const user = await userModel.getEntityById(participant.userId);
-
-            if (!user) {
-                continue;
-            }
-
-            const calendarUser = calendarUserModel.createEntity({
-                calendarId: calendarId,
-                userId: participant.userId,
-                role: participant.role,
-                isConfirmed: participant.role === 'owner'
-            });
-
-            await calendarUser.save();
+            await this.addParticipant(
+                calendarId,
+                participant.userId,
+                participant.role,
+                participant.role === 'owner'
+            );
         }
     }
 
@@ -110,6 +99,46 @@ class CalendarUserModel extends Model {
         return await this.getEntities([], [
             new Where('calendarId', '=', calendarId)
         ]);
+    }
+
+    /**
+     * @param {number} calendarId
+     * @param {number} userId
+     * @param {string} role
+     * @param {boolean} isConfirmed
+     * @return {Promise<Entity|void>}
+     */
+    async addParticipant(calendarId, userId, role, isConfirmed) {
+        const user = await (new UserModel()).getEntityById(userId);
+
+        if (!user) {
+            return;
+        }
+
+        if ((await this.getParticipantByCalendarIdAndUserId(calendarId, userId))) {
+            return;
+        }
+
+        const calendarUser = this.createEntity({
+            calendarId,
+            userId,
+            role,
+            isConfirmed
+        });
+
+        await calendarUser.save();
+
+        return calendarUser;
+    }
+
+    async getParticipantByCalendarIdAndUserId(calendarId, userId) {
+        return await this.getEntities([], [
+                new Where('calendarId', '=', calendarId),
+                new Where('userId', '=', userId),
+            ],
+            'id',
+            1
+        );
     }
 }
 

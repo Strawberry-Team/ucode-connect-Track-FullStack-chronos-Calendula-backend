@@ -54,9 +54,6 @@ class AuthController extends UserController {
             && parentResponse?.statusCode === 201
         ) {
             const newUser = parentResponse.req?.newUser;
-
-            await (new CalendarModel()).createMainCalendar(newUser.id);
-
             await mailer.sendConfirm(
                 newUser.email,
                 {
