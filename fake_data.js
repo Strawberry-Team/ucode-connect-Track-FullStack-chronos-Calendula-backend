@@ -67,11 +67,11 @@ import CalendarUserModel from "./src/calendar/user/model.js";
                 3,
                 faker.number.int({ min: 4, max: 11 }),
                 faker.number.int({ min: 8, max: 17 }),
-                faker.number.int({ min: 0, max: 3, multipleOf: 15 }),
+                faker.number.int({ min: 0, max: 3, multipleOf: 30 }),
                 0,
                 0
             ),
-            duration: faker.number.int({ min: 1, max: 12, multipleOf: 15 })
+            duration: faker.number.int({ min: 1, max: 12, multipleOf: 30 })
         }
     }
 
@@ -82,11 +82,11 @@ import CalendarUserModel from "./src/calendar/user/model.js";
                 3,
                 faker.number.int({ min: 4, max: 11 }),
                 faker.number.int({ min: 17, max: 20 }),
-                faker.number.int({ min: 0, max: 3, multipleOf: 15 }),
+                faker.number.int({ min: 0, max: 3, multipleOf: 30 }),
                 0,
                 0
             ),
-            duration: faker.number.int({ min: 1, max: 3, multipleOf: 15 })
+            duration: faker.number.int({ min: 1, max: 3, multipleOf: 30 })
         };
     }
 
@@ -97,11 +97,11 @@ import CalendarUserModel from "./src/calendar/user/model.js";
                 3,
                 faker.number.int({ min: 12, max: 13 }),
                 faker.number.int({ min: 10, max: 18 }),
-                faker.number.int({ min: 0, max: 3, multipleOf: 15 }),
+                faker.number.int({ min: 0, max: 3, multipleOf: 30 }),
                 0,
                 0
             ),
-            duration: faker.number.int({ min: 1, max: 8, multipleOf: 15 })
+            duration: faker.number.int({ min: 1, max: 8, multipleOf: 30 })
         };
     }
 
@@ -114,7 +114,7 @@ import CalendarUserModel from "./src/calendar/user/model.js";
         const startAt = eventTime.startAt
             .toISOString().replace("T", " ").split(".")[0];
         const endAt = new Date(
-            startAt.setHours(startAt.getHours() + (eventTime.duration * 15)))
+            startAt.setHours(startAt.getHours() + (eventTime.duration * 30)))
             .toISOString().replace("T", " ").split(".")[0];
         return {
             startAt,
