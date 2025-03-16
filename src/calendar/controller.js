@@ -101,7 +101,7 @@ class CalendarController extends Controller {
         let participants = req?.body?.participants;
 
         if (participants && Array.isArray(participants)) {
-            participants = participants.filter(participant => participant.role !== 'owner');
+            participants = participants.filter(participant => participant.userId !== req?.user.id);
             participants.push({
                 userId: req?.user.id,
                 color: req?.user.color,

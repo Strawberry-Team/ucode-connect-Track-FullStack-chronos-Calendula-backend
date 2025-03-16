@@ -98,14 +98,12 @@ class EventController extends Controller {
         if (participants && Array.isArray(participants)) {
             participants = participants.filter(p => p.userId !== req?.user.id);
             participants.push({
-                userId: req?.user.id,
-                isOrganizer: true,
+                userId: req?.user.id
             });
         } else {
             participants = [
                 {
-                    userId: req?.user.id,
-                    isOrganizer: true,
+                    userId: req?.user.id
                 }
             ];
         }
@@ -158,20 +156,15 @@ class EventController extends Controller {
                 fields[this.model._creationByRelationFieldName] = req.user.id;
             }
 
-            let entity = this.model.createEntity(fields);
-            await entity.save();
+            let event = this.model.createEntity(fields);
+            await event.save();
 
-            await this.model.syncEventParticipants(entity.id, this._prepareParticipants(req));
+            await req?.calendar.attachEvent(event.id);
 
-            const event = await this.model.getEntityById(entity.id);
+            await this.model.syncEventParticipants(event.id, this._prepareParticipants(req));
+
+            event = await this.model.getEntityById(event.id);
             await event.prepareRelationFields();
-
-            if (req.calendar.isMain()) {
-                req.calendar.addEvent(event.id);
-            } else {
-                // TODO: временное решение. Пока нет идей, как сделать хорошо
-                req.calendar.addEvent(event.id);
-            }
 
             await this._notifyParticipants(event);
 
@@ -191,18 +184,17 @@ class EventController extends Controller {
      */
     async update(req, res, next) {
         try {
-            const entity = await this._getEntityByIdAndAccessFilter(req);
-
-            if (!entity) {
+            let event = await this._getEntityByIdAndAccessFilter(req);
+            if (!event) {
                 return this._returnNotFound(res);
             }
 
-            Object.assign(entity, this._prepareFields(req));
-            await entity.save();
+            Object.assign(event, this._prepareFields(req));
+            await event.save();
 
-            await this.model.syncEventParticipants(entity.id, this._prepareParticipants(req));
+            await this.model.syncEventParticipants(event.id, this._prepareParticipants(req));
 
-            const event = await this.model.getEntityById(entity.id);
+            event = await this.model.getEntityById(event.id);
             await event.prepareRelationFields();
 
             await this._notifyParticipants(event);

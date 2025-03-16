@@ -17,7 +17,9 @@
     "migrate:down:dev": "db-migrate down -c 1 --env dev",
     "migrate:down:test": "db-migrate down -c 1 --env test",
     "migrate:reset:dev": "db-migrate reset --env dev",
-    "migrate:reset:test": "db-migrate reset --env test"
+    "migrate:reset:test": "db-migrate reset --env test",
+    "migrate:refresh:dev": "db-migrate reset --env dev && db-migrate up --env dev",
+    "migrate:refresh:test": "db-migrate reset --env test && db-migrate up --env test"
   },
   "dependencies": {
     "argon2": "^0.41.1",

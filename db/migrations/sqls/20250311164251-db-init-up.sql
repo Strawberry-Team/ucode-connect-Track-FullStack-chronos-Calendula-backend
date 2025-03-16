@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS `calendars` (
     `creationAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     INDEX `calendars_creationByUserId_i` (creationByUserId),
-    CONSTRAINT `foreign_key_calendars_creationByUserId`
+    CONSTRAINT `fk_calendars_creationByUserId`
     FOREIGN KEY (`creationByUserId`) REFERENCES `users`(`id`)
     ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;
@@ -40,10 +40,10 @@ CREATE TABLE IF NOT EXISTS `calendars_users` (
     UNIQUE KEY `user_calendar` (`calendarId`, `userId`),
     INDEX `calendars_users_calendarId_i` (calendarId),
     INDEX `calendars_users_userId_i` (userId),
-    CONSTRAINT `foreign_key_calendars_users_calendarId`
+    CONSTRAINT `fk_calendars_users_calendarId`
     FOREIGN KEY (`calendarId`) REFERENCES `calendars`(`id`)
     ON DELETE CASCADE,
-    CONSTRAINT `foreign_key_calendars_users_userId`
+    CONSTRAINT `fk_calendars_users_userId`
     FOREIGN KEY (`userId`) REFERENCES `users`(`id`)
     ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;
@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS `events` (
     `creationAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     INDEX `events_creationByUserId_i` (creationByUserId),
-    CONSTRAINT `foreign_key_comments_creationByUserId`
+    CONSTRAINT `fk_comments_creationByUserId`
     FOREIGN KEY (`creationByUserId`) REFERENCES `users`(`id`)
     ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;
@@ -76,10 +76,10 @@ CREATE TABLE IF NOT EXISTS `events_users` (
     UNIQUE KEY `user_event` (`eventId`, `userId`),
     INDEX `events_users_eventId_i` (eventId),
     INDEX `events_users_userId_i` (userId),
-    CONSTRAINT `foreign_key_events_users_eventId`
+    CONSTRAINT `fk_events_users_eventId`
     FOREIGN KEY (`eventId`) REFERENCES `events`(`id`)
     ON DELETE CASCADE,
-    CONSTRAINT `foreign_key_events_users_userId`
+    CONSTRAINT `fk_events_users_userId`
     FOREIGN KEY (`userId`) REFERENCES `users`(`id`)
     ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;
@@ -93,10 +93,10 @@ CREATE TABLE IF NOT EXISTS `calendars_events` (
     UNIQUE KEY `user_event` (`eventId`, `calendarId`),
     INDEX `calendars_events_eventId_i` (eventId),
     INDEX `calendars_events_calendarId_i` (calendarId),
-    CONSTRAINT `foreign_key_calendars_events_eventId`
+    CONSTRAINT `fk_calendars_events_eventId`
     FOREIGN KEY (`eventId`) REFERENCES `events`(`id`)
     ON DELETE CASCADE,
-    CONSTRAINT `foreign_key_calendars_events_calendarId`
+    CONSTRAINT `fk_calendars_events_calendarId`
     FOREIGN KEY (`calendarId`) REFERENCES `calendars`(`id`)
     ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;

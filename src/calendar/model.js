@@ -23,6 +23,14 @@ class CalendarModel extends Model {
         );
     }
 
+    /**
+     * @param {number} id
+     * @return {Promise<CalendarEntity>}
+     */
+    async getEntityById(id) {
+        return super.getEntityById(id);
+    }
+
     async getCreatorById(userId) {
         return (new UserModel()).getEntityById(userId);
     }
@@ -34,6 +42,10 @@ class CalendarModel extends Model {
         ]);
     }
 
+    /**
+     * @param {number} userId
+     * @return {Promise<CalendarEntity>}
+     */
     async createMainCalendar(userId) {
         const user = await (new UserModel()).getEntityById(userId);
         if (!user) {
@@ -62,10 +74,16 @@ class CalendarModel extends Model {
         });
 
         await calendarUser.save();
+
+        return calendar;
     }
 
+    /**
+     * @param userId
+     * @return {Promise<CalendarEntity|null>}
+     */
     async getMainCalendar(userId) {
-        return await this.getEntities([], [
+        return this.getEntities([], [
                 new Where(this._creationByRelationFieldName, '=', userId),
                 new Where('type', '=', 'main')
             ],

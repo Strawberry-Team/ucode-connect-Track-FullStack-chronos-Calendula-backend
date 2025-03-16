@@ -23,13 +23,21 @@ class CalendarEntity extends Entity {
     _getRelationFields() {
         return {
             creator: async () => await (new UserModel()).getEntityById(this[this._model._creationByRelationFieldName]),
-            participants: async () => await this._model.getParticipantsByCalendarId(this.id),
+            participants: async () => await this.getParticipants(),
             events: async () => await this._model.getEventsByCalendarId(this.id)
         };
     }
 
-    async addEvent(eventId) {
-        await (new CalendarEventModel()).create(this.id, eventId);
+    async attachEvent(eventId) {
+        await (new CalendarEventModel()).createRelation(this.id, eventId);
+    }
+
+    async detachEvent(eventId) {
+        await (new CalendarEventModel()).deleteRelation(this.id, eventId);
+    }
+
+    async getParticipants() {
+        return this._model.getParticipantsByCalendarId(this.id);
     }
 
 }

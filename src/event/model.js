@@ -12,6 +12,7 @@ class EventModel extends Model {
             [
                 'id',
                 'creationByUserId',
+                'calendarId',
                 'title',
                 'description',
                 'category',
