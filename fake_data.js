@@ -10,9 +10,6 @@ import CalendarUserModel from "./src/calendar/user/model.js";
     const NUMBER_OF_USERS = 10;
     const NUMBER_OF_USERS_BY_GENDER = 5;
     const NUMBER_OF_SHARED_CALENDARS = 3;
-    const NUMBER_OF_EVENTS = 25;
-    const NUMBER_OF_CATEGORIES = 3;
-    const NUMBER_OF_TYPES = 3;
 
     const USER_ROLE = 'user';
     const USER_PASSWORD = 'Password123!$';

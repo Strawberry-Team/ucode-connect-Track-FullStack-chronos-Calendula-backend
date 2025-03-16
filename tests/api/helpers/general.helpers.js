@@ -1,6 +1,6 @@
-import {expect} from "@playwright/test";
+import { expect, test } from "@playwright/test";
+import UserModel from "../../../src/user/model.js";
 
-export const BASE_URL = 'http://localhost:8080/api';
 export const HEADERS = { 'Content-Type': 'application/json' };
 
 export function generateHeaders(accessToken) {
@@ -15,4 +15,16 @@ export function expectResponseHeaders(response, statusCode = 200) {
     const headers = response.headers();
     expect(headers).toHaveProperty('content-type');
     expect(headers['content-type']).toContain('application/json');
+}
+
+export function cleanup(users = []) {
+    test("Cleanup of test data", async ({ request}) => {
+        const userModel = new UserModel();
+
+        for (const user of users) {
+            userModel.delete(user.userId);
+        }
+
+        userModel.delete(user.id);
+    });
 }

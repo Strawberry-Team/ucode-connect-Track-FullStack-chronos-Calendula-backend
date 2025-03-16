@@ -1,9 +1,9 @@
 import { test } from '@playwright/test';
 import dotenv from 'dotenv';
-import { BASE_URL, expectResponseHeaders, generateHeaders } from "./helpers/general.helpers.js";
-import { createAndLoginUser, generateUserData } from "./helpers/users.helpers.js";
-import { createUser, generateCalendarTitle, generateCalendarDescription, generateCalendarData,
-    expectCalendarResponse, expectParticipantsDataToMatch } from "./helpers/calendars.helpers.js";
+import { expectResponseHeaders, generateHeaders } from "./helpers/general.helpers.js";
+import { createAndLoginUser, generateUserData, cleanUpUser } from "./helpers/users.helpers.js";
+import { generateCalendarTitle, generateCalendarDescription, generateCalendarData,
+        expectCalendarResponse, generateParticipants, expectParticipantsDataToMatch } from "./helpers/calendars.helpers.js";
 
 dotenv.config({ path: '.env.test', debug: true });
 
@@ -13,20 +13,7 @@ test.describe('Calendars', () => {
     let userData = {};
     let calendarData = {};
     let headers = {};
-    let participants = [
-        {
-            userId: undefined,
-            role: 'owner'
-        },
-        {
-            userId: undefined,
-            role: 'member'
-        },
-        {
-            userId: undefined,
-            role: 'viewer'
-        },
-    ];
+    let participants = [];
 
     test.beforeAll('Create and login user', async ({ request}) => {
         const user = await createAndLoginUser(request);
@@ -35,23 +22,16 @@ test.describe('Calendars', () => {
     });
 
     test.beforeAll('Create users and fill participants', async ({ request}) => {
-        for (const participant of participants) {
-            const user = await createUser();
-            participant.userId = user.id;
-        }
-
-        participants.forEach(participant => {
-            if (participant.role === 'owner') {
-                participant.userId = userData.id;
-            }
+        participants = await generateParticipants(userData.id);
+        calendarData = generateCalendarData({}, {
+            creationByUserId: userData.id,
+            participants
         });
-
-        calendarData = generateCalendarData({}, { creationByUserId: userData.id, participants });
     });
 
 
     test("Create Calendar", async ({request}) => {
-        const response = await request.post(`${BASE_URL}/calendars/`, {
+        const response = await request.post(`calendars/`, {
             headers,
             data: {
                 title: calendarData.title,
@@ -62,10 +42,11 @@ test.describe('Calendars', () => {
 
         const responseBody = await expectCalendarResponse(response, calendarData, 201);
         calendarData.id = responseBody.data.id;
+        calendarData.creationAt = responseBody.data.creationAt;
     });
 
     test("Get Calendar", async ({request}) => {
-        const response = await request.get(`${BASE_URL}/calendars/${calendarData.id}`, {
+        const response = await request.get(`calendars/${calendarData.id}`, {
             headers
         });
 
@@ -76,7 +57,7 @@ test.describe('Calendars', () => {
         calendarData.title = generateCalendarTitle();
         calendarData.description = generateCalendarDescription();
 
-        const response = await request.patch(`${BASE_URL}/calendars/${calendarData.id}`, {
+        const response = await request.patch(`calendars/${calendarData.id}`, {
             headers,
             data: {
                 title: calendarData.title,
@@ -89,14 +70,12 @@ test.describe('Calendars', () => {
     });
 
     test("Update Calendar Participants", async ({request}) => {
-        calendarData.participants = calendarData.participants.filter(participant => participant.role === 'owner');
-
-        const response = await request.patch(`${BASE_URL}/calendars/${calendarData.id}`, {
+        const response = await request.patch(`calendars/${calendarData.id}`, {
             headers,
             data: {
                 title: calendarData.title,
                 description: calendarData.description,
-                participants: calendarData.participants
+                participants: calendarData.participants.filter(p => p.role === 'owner')
             }
         });
 
@@ -106,10 +85,16 @@ test.describe('Calendars', () => {
     });
 
     test("Delete Calendar", async ({request}) => {
-        const response = await request.delete(`${BASE_URL}/calendars/${calendarData.id}`, {
+        const response = await request.delete(`calendars/${calendarData.id}`, {
             headers
         });
 
         expectResponseHeaders(response);
+    });
+
+    test("Cleanup of test data", async ({request}) => {
+        for (const participant of calendarData.participants) {
+            await cleanUpUser(participant.userId);
+        }
     });
 });

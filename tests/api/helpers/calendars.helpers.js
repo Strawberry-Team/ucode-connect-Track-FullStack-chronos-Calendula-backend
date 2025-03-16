@@ -1,10 +1,7 @@
 import { expect } from "@playwright/test";
 import { faker } from "@faker-js/faker/locale/en";
 import { expectResponseHeaders } from "./general.helpers.js";
-import { generateEmail, generateFullName, generateCountry, generatePassword } from "./users.helpers.js";
-import UserModel from "../../../src/user/model.js";
-
-const userModel = new UserModel();
+import { createAndSaveUserData } from "./users.helpers.js";
 
 export function generateCalendarTitle() {
     return faker.lorem.sentence({ min: 1, max: 5 });
@@ -21,24 +18,10 @@ export function generateCalendarData(base = {}, overrides = {}) {
         description: generateCalendarDescription(),
         creationByUserId: undefined,
         creationAt: undefined,
+        participants: [],
         ...base,
         ...overrides
     };
-}
-
-export async function createUser() {
-    const newUser = userModel.createEntity(
-        {
-            email: generateEmail(),
-            fullName: generateFullName().fullName,
-            country: generateCountry(),
-            password: generatePassword(),
-        }
-    );
-
-    await newUser.save();
-
-    return newUser;
 }
 
 export function expectCalendarDataToMatch(expected, actual) {
@@ -65,6 +48,30 @@ export function expectCalendarDataToMatch(expected, actual) {
     });
 }
 
+export async function expectCalendarResponse(response, expectedData, statusCode = 200) {
+    expectResponseHeaders(response, statusCode);
+    const responseBody = await response.json();
+    expectCalendarDataToMatch(expectedData, responseBody.data);
+    return responseBody;
+}
+
+export async function generateParticipants(ownerId) {
+    return [
+        {
+            userId: ownerId,
+            role: 'owner'
+        },
+        {
+            userId: (await createAndSaveUserData()).id,
+            role: 'member'
+        },
+        {
+            userId: (await createAndSaveUserData()).id,
+            role: 'viewer'
+        },
+    ];
+}
+
 export function expectParticipantsDataToMatch(expected, actual) {
     expect(actual).toMatchObject({
         participants: [
@@ -74,11 +81,4 @@ export function expectParticipantsDataToMatch(expected, actual) {
             }
         ]
     });
-}
-
-export async function expectCalendarResponse(response, expectedData, statusCode = 200) {
-    expectResponseHeaders(response, statusCode);
-    const responseBody = await response.json();
-    expectCalendarDataToMatch(expectedData, responseBody.data);
-    return responseBody;
 }
