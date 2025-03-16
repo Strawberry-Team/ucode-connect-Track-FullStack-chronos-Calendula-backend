@@ -91,7 +91,8 @@ class CalendarUserModel extends Model {
 
     async getCalendarsByUserId(userId) {
         return await this.getEntities([], [
-            new Where('userId', '=', userId)
+            new Where('userId', '=', userId),
+            new Where('isConfirmed', '=', 1)
         ]);
     }
 
