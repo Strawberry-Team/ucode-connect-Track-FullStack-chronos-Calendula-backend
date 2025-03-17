@@ -43,6 +43,17 @@ class CalendarModel extends Model {
     }
 
     /**
+     *
+     * @param {string} type
+     * @returns {Promise<Entity[]|Entity>}
+     */
+    async getCalendarsByType(type) {
+        return await super.getEntities([], [
+            new Where('type', '=', type)
+        ]);
+    }
+
+    /**
      * @param {number} userId
      * @return {Promise<CalendarEntity>}
      */
