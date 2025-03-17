@@ -8,6 +8,11 @@ import Where from "../sql/where.js";
 
 
 class CalendarController extends Controller {
+    /**
+     * @type {[]}
+     */
+    _validationRulesForUpdateColor = [];
+
     constructor() {
         super(new CalendarModel(),
             [
@@ -34,6 +39,13 @@ class CalendarController extends Controller {
                     .isIn(['owner', 'member', 'viewer']).withMessage('Role must be either member or viewer.')
             ]
         );
+
+        this._validationRulesForUpdateColor = [
+            body('color')
+                .notEmpty().withMessage('Color is required.')
+                .isLength({ min: 7, max: 7 }).withMessage('Length of color should be 7 characters long.')
+                .matches(/^#[0-9A-Fa-f]{6}$/).withMessage('Color must be in the format #RRGGBB.'),
+        ];
 
         const allowedFields = ['title', 'description'];
 
@@ -64,6 +76,38 @@ class CalendarController extends Controller {
      * @param {e.NextFunction} next
      * @return {Promise<e.Response>}
      */
+    async getById(req, res, next) {
+        try {
+            const currentUserAsParticipants = await (new CalendarUserModel()).getCalendarsByUserId(req?.user.id);
+            if (!currentUserAsParticipants.find(p => p.calendarId === Number(req.params.id))) {
+                return this._returnAccessDenied(
+                    res, 403, {},
+                    "Unable to access a calendar without an invitation."
+                );
+            }
+
+            const entity = await this._getEntityByIdAndAccessFilter(req);
+            if (!entity) {
+                return this._returnNotFound(res);
+            }
+
+            const calendar = entity.toJSON();
+            calendar.color = calendar.participants.find(p => p.userId === req.user.id)?.color;
+
+            return this._returnResponse(res, 200, {
+                data: calendar
+            });
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    /**
+     * @param {e.Request} req
+     * @param {e.Response} res
+     * @param {e.NextFunction} next
+     * @return {Promise<e.Response>}
+     */
     async getAll(req, res, next) {
         try {
             const calendarUserModel = new CalendarUserModel();
@@ -82,8 +126,13 @@ class CalendarController extends Controller {
                 filters
             );
 
+            const calendars = entities.map(entity => entity.toJSON());
+            calendars.forEach(calendar => {
+                calendar.color = calendar.participants.find(p => p.userId === req.user.id)?.color;
+            });
+
             return this._returnResponse(res, 200, {
-                data: entities.map(entity => entity.toJSON())
+                data: calendars
             });
         } catch (e) {
             next(e);
@@ -319,6 +368,48 @@ class CalendarController extends Controller {
         } catch (e) {
             next(e);
         }
+    }
+
+    /**
+     * @param {e.Request} req
+     * @param {e.Response} res
+     * @param {e.NextFunction} next
+     * @return {Promise<e.Response>}
+     */
+    async updateColor(req, res, next) {
+        const calendar = await this.model.getEntityById(req.params.id);
+        if (!calendar) {
+            return this._returnNotFound(res);
+        }
+
+        const color = req.body.color;
+        const calendarUserModel = new CalendarUserModel();
+        const participants = await calendarUserModel.getCalendarsByCalendarId(calendar.id);
+
+        const participant = participants.find(p => p.userId === req.user.id);
+        if (!participant) {
+            return this._returnAccessDenied(
+                res, 403, {},
+                "Unable to change the color of a calendar without an invitation."
+            );
+        }
+
+        participant.color = color;
+        await participant.save();
+
+        return this._returnResponse(res, 200);
+    }
+
+    /**
+     * @param {e.Request} req
+     * @param {e.Response} res
+     * @param {e.NextFunction} next
+     * @return {Promise<e.Response>}
+     */
+    async validateUpdateColor(req, res, next) {
+        return await this.validateBody(req, res, next,
+            this._validationRulesForUpdateColor
+        );
     }
 }
 
