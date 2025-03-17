@@ -1052,6 +1052,17 @@
             "type": "array",
             "items": { "$ref": "#/components/schemas/EventUser" }
           },
+          "calendar": {
+            "type": "object",
+            "properties": {
+              "id": {"type": "integer", "example": "1"},
+              "title": { "type": "string", "example": "Calendula Dev Team" },
+              "description": { "type": "string", "example": "Stand-ups, retrospectives, planning sprints and product demos" },
+              "type": { "type": "string", "enum": ["main", "shared", "holidays"], "example": "shared" },
+              "creationByUserId": {"type": "integer", "example": "1"},
+              "creationAt": { "type": "string", "format": "date-time", "example": "2025-03-08 10:05:13" }
+            }
+          },
           "creationAt": { "type": "string", "format": "date-time", "example": "2023-03-09 10:00:00" }
         }
       },

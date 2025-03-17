@@ -107,6 +107,7 @@ class Model {
      * @param {string} orderBy
      * @param {number} limit
      * @param {number} offset
+     * @param {boolean} withRelations
      * @return {Promise<[Entity]|Entity>}
      */
     async getEntities(
@@ -114,7 +115,8 @@ class Model {
         where = [],
         orderBy = 'id',
         limit = undefined,
-        offset = undefined
+        offset = undefined,
+        withRelations = true
     ) {
         const query = `
             ${this._getSelect(fields)}
@@ -130,8 +132,10 @@ class Model {
             return this.createEntity(item);
         });
 
-        for (const entity of entities) {
-            await entity.prepareRelationFields();
+        if (withRelations) {
+            for (const entity of entities) {
+                await entity.prepareRelationFields();
+            }
         }
 
         if (limit === 1) {
@@ -159,37 +163,20 @@ class Model {
 
     /**
      * @param {number} id
+     * @param {boolean} withRelations
      * @return {Promise<Entity>}
      */
-    async getEntityById(id) {
+    async getEntityById(id, withRelations = true) {
         return await this.getEntities(
             [],
             [
                 new Where('id', '=', id)
             ],
             'id',
-            1
+            1,
+            undefined,
+            withRelations
         );
-    }
-
-
-    /**
-     * @param {number} fieldValue
-     * @return {Where}
-     */
-    getCreationByRelationFilter(fieldValue = undefined) {
-        return new Where(
-            this._creationByRelationFieldName,
-            '=',
-            fieldValue
-        );
-    }
-
-    /**
-     * @return {[string]}
-     */
-    getAllowedFieldsToChange() {
-        return this._fields.filter(field => field !== 'id');
     }
 }
 

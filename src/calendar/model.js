@@ -24,11 +24,11 @@ class CalendarModel extends Model {
     }
 
     /**
-     * @param {number} id
+     * @inheritDoc
      * @return {Promise<CalendarEntity>}
      */
-    async getEntityById(id) {
-        return super.getEntityById(id);
+    async getEntityById(id, withRelations = true) {
+        return super.getEntityById(id, withRelations);
     }
 
     async getCreatorById(userId) {
@@ -101,7 +101,7 @@ class CalendarModel extends Model {
         }
 
         return await (new EventModel()).getEntities([], [
-            new Where('id', 'in', relatedEvents.map(event => event.eventId))
+            new Where('id', 'IN', relatedEvents.map(event => event.eventId))
         ]);
     }
 

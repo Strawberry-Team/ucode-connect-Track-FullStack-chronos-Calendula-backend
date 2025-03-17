@@ -1,5 +1,6 @@
 import Entity from "../../entity.js";
 import UserModel from "../../user/model.js";
+import Where from "../../sql/where.js";
 
 class EventUserEntity extends Entity {
     /**

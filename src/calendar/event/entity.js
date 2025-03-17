@@ -8,14 +8,6 @@ class CalendarEventEntity extends Entity {
      */
     constructor(model, data = {}) {
         super(model, data);
-
-        this._publicFields.push('user');
-    }
-
-    _getRelationFields() {
-        return {
-            user: async () => await (new UserModel()).getEntityById(this.userId),
-        };
     }
 }
 
