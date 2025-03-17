@@ -35,7 +35,6 @@ class EventController extends Controller {
 
                 body('startAt')
                     .notEmpty().withMessage('Please provide a start date and time.')
-                    // todo create a custom validator for date and time
                     .custom((value, {req}) => {
                         if (value > req.body.endAt) {
                             throw new Error('Start date and time should be less than the end date and time.');
@@ -50,7 +49,6 @@ class EventController extends Controller {
                         }
                         return true;
                     })
-                    // todo create a custom validator for date and time
                     .custom((value, {req}) => {
                         if (value < req.body.startAt) {
                             throw new Error('End date and time should be greater than the start date and time.');
@@ -159,13 +157,6 @@ class EventController extends Controller {
     async create(req, res, next) {
         try {
             const fields = this._prepareFields(req);
-            /* TODO
-            Если добавляю в isMain = TRUE, то добляем в syncEventParticipants
-            только в аналогичные isMain календари
-
-            Если в isMain = FALSE, то только в общий.
-            * */
-
             if (this.model._fields.includes(this.model._creationByRelationFieldName)) {
                 fields[this.model._creationByRelationFieldName] = req.user.id;
             }
@@ -315,10 +306,9 @@ class EventController extends Controller {
     /**
      * @param {e.Request} req
      * @param {e.Response} res
-     * @param {e.NextFunction} next
      * @return {Promise<e.Response>}
      */
-    async updateColor(req, res, next) {
+    async updateColor(req, res) {
         const event = await this.model.getEntityById(req.params.id);
         if (!event) {
             return this._returnNotFound(res);

@@ -381,10 +381,9 @@ class CalendarController extends Controller {
     /**
      * @param {e.Request} req
      * @param {e.Response} res
-     * @param {e.NextFunction} next
      * @return {Promise<e.Response>}
      */
-    async updateColor(req, res, next) {
+    async updateColor(req, res) {
         const calendar = await this.model.getEntityById(req.params.id);
         if (!calendar) {
             return this._returnNotFound(res);
