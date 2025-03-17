@@ -317,24 +317,21 @@ test.describe('Seed fake data to database', () => {
 
             test(description, async ({request}) => {
                 const possibleOwners = allUsersIds.filter(id => !sharedCalendarOwnersIds.includes(id));
-                const ownerId = faker.number.int({
-                    min: Math.min(...possibleOwners),
-                    max: Math.max(...possibleOwners)
-                });
+                const ownerId = faker.helpers.arrayElement(possibleOwners);
                 sharedCalendarOwnersIds.push(ownerId);
 
                 calendar = generateCalendar(ownerId);
 
                 possibleParticipants = allUsersIds.filter(id => id !== ownerId);
+                // console.log(">>>>possibleParticipants", calendar.id, "participants", possibleParticipants);
+
 
                 for (let j = 1; j <= faker.number.int({min: 2, max: 4}); j++) {
                     const participant = generateSharedCalendarParticipant(
-                        faker.number.int({
-                            min: Math.min(...possibleParticipants),
-                            max: Math.max(...possibleParticipants)
-                        })
+                        faker.helpers.arrayElement(possibleParticipants)
                     );
 
+                    possibleParticipants = possibleParticipants.filter(id => id !== participant.userId);
                     calendar.participants.push(participant);
                 }
 
