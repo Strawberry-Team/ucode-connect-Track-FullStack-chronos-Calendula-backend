@@ -30,6 +30,12 @@ router.delete('/:id/',
     controller.delete.bind(controller)
 );
 
+router.patch('/:id/color/',
+    controller.setAccessPolicy.bind(controller),
+    controller.validateUpdateColor.bind(controller),
+    controller.updateColor.bind(controller)
+);
+
 router.patch('/:id/:command/',
     controller.setAccessPolicy.bind(controller),
     controller.joinOrLeaveOrTentative.bind(controller)

@@ -3,11 +3,17 @@ import EventModel from "./model.js";
 import { body } from "express-validator";
 import * as mailer from "../../mailer/service.js";
 import CalendarModel from "../calendar/model.js";
+import EventUserModel from "./user/model.js";
 
 /**
  * @property {EventModel} _model
  */
 class EventController extends Controller {
+    /**
+     * @type {[]}
+     */
+    _validationRulesForUpdateColor = [];
+
     constructor() {
         super(new EventModel(),
             [
@@ -62,6 +68,14 @@ class EventController extends Controller {
                         .isInt({ gt: 0 }).withMessage('User id must be a positive integer.')
             ]
         );
+
+        this._validationRulesForUpdateColor = [
+            body('color')
+                .optional()
+                .notEmpty().withMessage('Color is required.')
+                .isLength({ min: 7, max: 7 }).withMessage('Length of color should be 7 characters long.')
+                .matches(/^#[0-9A-Fa-f]{6}$/).withMessage('Color must be in the format #RRGGBB.'),
+        ];
 
         const allowedFields = ['title', 'description', 'category', 'type', 'startAt', 'endAt', 'calendarId'];
 
@@ -296,6 +310,45 @@ class EventController extends Controller {
                 "Unable to create events for a calendar without an invitation."
             );
         }
+    }
+
+    /**
+     * @param {e.Request} req
+     * @param {e.Response} res
+     * @param {e.NextFunction} next
+     * @return {Promise<e.Response>}
+     */
+    async updateColor(req, res, next) {
+        const event = await this.model.getEntityById(req.params.id);
+        if (!event) {
+            return this._returnNotFound(res);
+        }
+
+        const color = req?.body?.color ?? null;
+        const participant = await (new EventUserModel().getParticipantByEventIdAndUserId(event.id, req.user.id));
+        if (!participant) {
+            return this._returnAccessDenied(
+                res, 403, {},
+                "Unable to change the color of a event without an invitation."
+            );
+        }
+
+        participant.color = color;
+        await participant.save();
+
+        return this._returnResponse(res, 200);
+    }
+
+    /**
+     * @param {e.Request} req
+     * @param {e.Response} res
+     * @param {e.NextFunction} next
+     * @return {Promise<e.Response>}
+     */
+    async validateUpdateColor(req, res, next) {
+        return await this.validateBody(req, res, next,
+            this._validationRulesForUpdateColor
+        );
     }
 }
 

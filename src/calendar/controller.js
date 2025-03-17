@@ -192,7 +192,7 @@ class CalendarController extends Controller {
             await calendarUserModel.syncCalendarParticipants(entity.id, this._prepareParticipants(req));
 
             const calendar = await this.model.getEntityById(entity.id);
-            const participants = await calendarUserModel.getCalendarsByCalendarId(calendar.id);
+            const participants = await calendarUserModel.getParticipantsByCalendarId(calendar.id);
 
             for (const participant of participants) {
                 if (participant.userId === calendar.creationByUserId) {
@@ -248,7 +248,7 @@ class CalendarController extends Controller {
             await calendarUserModel.syncCalendarParticipants(entity.id, this._prepareParticipants(req));
 
             const calendar = await this.model.getEntityById(entity.id);
-            const participants = await calendarUserModel.getCalendarsByCalendarId(calendar.id);
+            const participants = await calendarUserModel.getParticipantsByCalendarId(calendar.id);
 
             for (const participant of participants) {
                 if (participant.userId === calendar.creationByUserId) {
@@ -383,8 +383,7 @@ class CalendarController extends Controller {
         }
 
         const color = req.body.color;
-        const calendarUserModel = new CalendarUserModel();
-        const participants = await calendarUserModel.getCalendarsByCalendarId(calendar.id);
+        const participants = await calendar.getParticipants();
 
         const participant = participants.find(p => p.userId === req.user.id);
         if (!participant) {

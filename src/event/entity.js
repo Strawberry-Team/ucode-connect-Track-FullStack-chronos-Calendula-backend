@@ -16,13 +16,17 @@ class EventEntity extends Entity {
     _getRelationFields() {
         return {
             creator: async () => await (new UserModel()).getEntityById(this[this._model._creationByRelationFieldName]),
-            participants: async () => await this._model.getParticipantsByEventId(this.id),
+            participants: async () => await this.getParticipants(),
             calendar: async () => await this._getCalendar(),
         };
     }
 
     async _getCalendar() {
         return (new CalendarModel()).getEntityById(this.calendarId, false);
+    }
+
+    async getParticipants() {
+        return this._model.getParticipantsByEventId(this.id)
     }
 }
 
