@@ -94,6 +94,10 @@ class CalendarController extends Controller {
             const calendar = entity.toJSON();
             calendar.color = calendar.participants.find(p => p.userId === req.user.id)?.color;
 
+            calendar.events.forEach(event => {
+                event.color = event.participants.find(p => p.userId === req.user.id)?.color ?? calendar.color;
+            });
+
             return this._returnResponse(res, 200, {
                 data: calendar
             });
@@ -129,6 +133,10 @@ class CalendarController extends Controller {
             const calendars = entities.map(entity => entity.toJSON());
             calendars.forEach(calendar => {
                 calendar.color = calendar.participants.find(p => p.userId === req.user.id)?.color;
+
+                calendar.events.forEach(event => {
+                    event.color = event.participants.find(p => p.userId === req.user.id)?.color ?? calendar.color;
+                });
             });
 
             return this._returnResponse(res, 200, {
