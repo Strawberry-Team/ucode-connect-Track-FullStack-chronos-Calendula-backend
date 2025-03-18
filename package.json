@@ -7,9 +7,12 @@
     "start": "node --env-file=.env index.js",
     "start:dev": "nodemon --env-file=.env.development index.js",
     "start:test": "nodemon --env-file=.env.test index.js",
+
     "test": "npx playwright test tests/api/*.test.js",
     "test:debug": "npx playwright test tests/api/*.test.js --debug",
     "test:report": "npx playwright test tests/api/*.test.js; npx playwright show-report",
+    "test:seed": "db-migrate reset --env test && db-migrate up --env test && npx playwright test tests/fake-data/*.test.js",
+
     "migrate:create:dev": "db-migrate create --sql-file --env dev",
     "migrate:create:test": "db-migrate create --sql-file --env test",
     "migrate:up:dev": "db-migrate up --env dev",
