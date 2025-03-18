@@ -120,7 +120,7 @@ test.describe('Authentication', () => {
         });
     });
 
-    test("Cleanup of test data", async ({request}) => {
+    test.afterAll("Cleanup of test data", async ({request}) => {
         const userModel = new UserModel();
         const user = await userModel.getByEmail(userData.email);
         await user.delete();

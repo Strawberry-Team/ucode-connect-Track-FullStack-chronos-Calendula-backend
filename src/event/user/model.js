@@ -104,11 +104,10 @@ class EventUserModel extends Model {
         }
 
         const t = await this.getParticipantByEventIdAndUserId(eventId, userId);
+
         if (await this.getParticipantByEventIdAndUserId(eventId, userId)) {
             return;
         }
-
-
 
         const eventUser = this.createEntity({
             eventId,

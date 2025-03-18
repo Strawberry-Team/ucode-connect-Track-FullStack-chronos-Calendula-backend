@@ -92,7 +92,7 @@ test.describe('Calendars', () => {
         expectResponseHeaders(response);
     });
 
-    test("Cleanup of test data", async ({request}) => {
+    test.afterAll("Cleanup of test data", async ({request}) => {
         for (const participant of calendarData.participants) {
             await cleanUpUser(participant.userId);
         }

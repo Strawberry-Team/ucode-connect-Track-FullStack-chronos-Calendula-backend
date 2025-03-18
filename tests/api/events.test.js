@@ -35,13 +35,13 @@ test.describe('Events', () => {
         const response = await request.post(`events/`, {
             headers,
             data: {
+                calendarId: eventData.calendarId,
                 title: eventData.title,
                 description: eventData.description,
                 category: eventData.category,
                 type: eventData.type,
                 startAt: eventData.startAt,
                 endAt: eventData.endAt,
-                calendarId: eventData.calendarId,
                 participants: eventData.participants,
             }
         });
@@ -105,7 +105,7 @@ test.describe('Events', () => {
         await expectEventResponse(response, eventData, 200);
     });
 
-    test("Cleanup of test data", async ({request}) => {
+    test.afterAll("Cleanup of test data", async ({request}) => {
         for (const participant of eventData.participants) {
             await cleanUpUser(participant.userId);
         }

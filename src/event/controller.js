@@ -128,6 +128,7 @@ class EventController extends Controller {
                     eventId: event.id,
                     title: event.title,
                     description: event.description,
+                    category: event.category,
                     type: event.type,
                     startAt: event.startAt,
                     endAt: event.endAt
