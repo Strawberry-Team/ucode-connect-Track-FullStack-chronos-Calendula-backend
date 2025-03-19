@@ -53,7 +53,7 @@ class UserModel extends Model {
     /**
      * @param {Object} data
      * @param {string} expiresIn
-     * @return {string}
+     * @return {Promise<string>}
      */
     async createToken(data, expiresIn = '30d') {
         return jwt.sign(

@@ -133,7 +133,7 @@ class EventController extends Controller {
                 continue;
             }
 
-            await mailer.sendEventInvitation(
+            mailer.sendEventInvitation(
                 participant.user.email,
                 {
                     userFullName: participant.user.fullName,
@@ -144,7 +144,7 @@ class EventController extends Controller {
                     startAt: event.startAt,
                     endAt: event.endAt
                 }
-            );
+            ).catch(e => console.error(e));
         }
     }
 
@@ -171,7 +171,7 @@ class EventController extends Controller {
             event = await this.model.getEntityById(event.id);
             await event.prepareRelationFields();
 
-            await this._notifyParticipants(event);
+            this._notifyParticipants(event).catch(e => console.error(e));
 
             return res.status(201).json({
                 data: event.toJSON(),
@@ -202,7 +202,7 @@ class EventController extends Controller {
             event = await this.model.getEntityById(event.id);
             await event.prepareRelationFields();
 
-            await this._notifyParticipants(event);
+            this._notifyParticipants(event).catch(e => console.error(e));
 
             return this._returnResponse(res, 200, {
                 data: event.toJSON()

@@ -196,34 +196,29 @@ class CalendarController extends Controller {
             let entity = this.model.createEntity(fields);
             await entity.save();
 
-            const calendarUserModel = new CalendarUserModel();
-            await calendarUserModel.syncCalendarParticipants(entity.id, this._prepareParticipants(req));
+            await (new CalendarUserModel()).syncCalendarParticipants(entity.id, this._prepareParticipants(req));
 
             const calendar = await this.model.getEntityById(entity.id);
-            const participants = await calendarUserModel.getParticipantsByCalendarId(calendar.id);
 
-            for (const participant of participants) {
+            res.status(201).json({
+                data: calendar.toJSON(),
+            });
+
+            for (const participant of calendar.participants) {
                 if (participant.userId === calendar.creationByUserId) {
                     continue;
                 }
 
-                const userModel = new UserModel();
-                const user = await userModel.getEntityById(participant.userId);
-
-                await mailer.sendCalendarInvitation(
-                    user.email,
+                mailer.sendCalendarInvitation(
+                    participant.user.email,
                     {
-                        userFullName: user.fullName,
+                        userFullName: participant.user.fullName,
                         calendarId: calendar.id,
-                        title: calendar.title,
-                        description: calendar.description,
+                        title: calendar?.title,
+                        description: calendar?.description,
                     }
-                );
+                ).catch(e => console.error(e));
             }
-
-            return res.status(201).json({
-                data: calendar.toJSON(),
-            });
         } catch (e) {
             next(e);
         }
@@ -252,34 +247,29 @@ class CalendarController extends Controller {
                 });
             }
 
-            const calendarUserModel = new CalendarUserModel();
-            await calendarUserModel.syncCalendarParticipants(entity.id, this._prepareParticipants(req));
+            await (new CalendarUserModel()).syncCalendarParticipants(entity.id, this._prepareParticipants(req));
 
             const calendar = await this.model.getEntityById(entity.id);
-            const participants = await calendarUserModel.getParticipantsByCalendarId(calendar.id);
 
-            for (const participant of participants) {
-                if (participant.userId === calendar.creationByUserId) {
+            res.status(200).json({
+                data: calendar.toJSON(),
+            });
+
+            for (const participant of calendar.participants) {
+                if (participant.userId === calendar.creationByUserId || participant.isConfirmed) {
                     continue;
                 }
 
-                const userModel = new UserModel();
-                const user = await userModel.getEntityById(participant.userId);
-
-                await mailer.sendCalendarInvitation(
-                    user.email,
+                mailer.sendCalendarInvitation(
+                    participant.user.email,
                     {
-                        userFullName: user.fullName,
+                        userFullName: participant.user.fullName,
                         calendarId: calendar.id,
-                        title: calendar.title,
-                        description: calendar.description,
+                        title: calendar?.title,
+                        description: calendar?.description,
                     }
-                );
+                ).catch(e => console.error(e));
             }
-
-            return this._returnResponse(res, 200, {
-                data: calendar.toJSON()
-            });
         } catch (e) {
             next(e);
         }
