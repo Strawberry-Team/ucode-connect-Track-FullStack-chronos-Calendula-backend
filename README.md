@@ -155,9 +155,18 @@ npx playwright test tests/api/<file_name>.test.js --project=chromium --debug
 
 
 ## Fake Data
-All users has password: `Password123!$`. It's fake data for presentations.
+Here is the fake data for presentations.
 
-
-
-## User emails for presentations
-* 
+User data for testing:
+* full name:
+   ```text
+   Test User
+   ```
+* email:
+  ```text
+  test.user@calendula.ua
+  ```
+All users have a password: 
+```text
+Password123!$
+```

@@ -79,6 +79,7 @@ class CalendarController extends Controller {
     async getById(req, res, next) {
         try {
             const currentUserAsParticipants = await (new CalendarUserModel()).getCalendarsByUserId(req?.user.id);
+
             if (!currentUserAsParticipants.find(p => p.calendarId === Number(req.params.id))) {
                 return this._returnAccessDenied(
                     res, 403, {},
@@ -87,6 +88,7 @@ class CalendarController extends Controller {
             }
 
             const entity = await this._getEntityByIdAndAccessFilter(req);
+
             if (!entity) {
                 return this._returnNotFound(res);
             }
@@ -375,6 +377,7 @@ class CalendarController extends Controller {
      */
     async updateColor(req, res) {
         const calendar = await this.model.getEntityById(req.params.id);
+
         if (!calendar) {
             return this._returnNotFound(res);
         }
@@ -383,6 +386,7 @@ class CalendarController extends Controller {
         const participants = await calendar.getParticipants();
 
         const participant = participants.find(p => p.userId === req.user.id);
+
         if (!participant) {
             return this._returnAccessDenied(
                 res, 403, {},

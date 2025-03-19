@@ -1,0 +1,92 @@
+import { faker } from '@faker-js/faker';
+import { test } from '@playwright/test';
+import dotenv from "dotenv";
+import { expectResponseHeaders, generateHeaders} from "../api/helpers/general.helpers.js";
+import { NUMBER_OF_SHARED_CALENDARS, CALENDAR_TYPES, generateCalendar, generateSharedCalendarParticipant }
+        from "./helpers/fake.calendars.helpers.js";
+import { USER_PASSWORD, generateUserAccessToken } from "./helpers/fake.users.helpers.js";
+import UserModel from "../../src/user/model.js";
+
+dotenv.config({path: '.env.test', debug: true});
+
+test.describe(`Create ${NUMBER_OF_SHARED_CALENDARS} shared calendars with participants`, async () => {
+    test.describe.configure({mode: 'serial', retries: 0, timeout: 10 * 60 * 1000});
+
+    let allUserObjects = [];
+    let sharedCalendarOwnersIds = [];
+    let possibleParticipants = [];
+
+    test(`Get users data`, async ({request}) => {
+        allUserObjects = await (new UserModel()).getEntitiesByIds(
+            Array.from({length: 11}, (_, i) => i + 12)
+        );
+
+        for (const user of allUserObjects) {
+            user.password = USER_PASSWORD;
+            user.accessToken = await generateUserAccessToken(request, user);
+        }
+    });
+
+    for (let i = 1; i <= NUMBER_OF_SHARED_CALENDARS; i++) {
+        let calendar = {};
+
+        test(`Calendar ${i}`, async ({request}) => {
+            /* Select the owner of the calendar */
+            const possibleOwners = allUserObjects
+                .filter(user => !sharedCalendarOwnersIds.includes(user.id))
+                .map(user => user.id);
+            const ownerId = faker.helpers.arrayElement(possibleOwners);
+            sharedCalendarOwnersIds.push(ownerId);
+
+            /* Generate first level data for the calendar */
+            calendar = generateCalendar(ownerId, CALENDAR_TYPES.SHARED);
+
+            /* Generate participants for the calendar */
+            possibleParticipants = allUserObjects
+                .filter(user => user.id !== ownerId)
+                .map(user => user.id);
+
+            for (let j = 1; j <= faker.number.int({min: 2, max: 4}); j++) {
+                const participant = generateSharedCalendarParticipant(
+                    faker.helpers.arrayElement(possibleParticipants)
+                );
+
+                possibleParticipants = possibleParticipants.filter(id => id !== participant.userId);
+                calendar.participants.push(participant);
+            }
+
+            /* Send request to the API to create a calendar with participants */
+            const ownerObject = allUserObjects.find(user => user.id === ownerId);
+
+            const response = await request.post(`calendars`, {
+                headers: generateHeaders(ownerObject.accessToken),
+                data: {
+                    title: calendar.title,
+                    description: calendar.description,
+                    participants: calendar.participants
+                }
+            });
+
+            expectResponseHeaders(response, 201);
+            const responseBody = await response.json();
+            calendar.id = responseBody.data.id;
+            calendar.creationAt = responseBody.data.creationAt;
+
+            /* Update the `isConfirmed` status for calendar participants  */
+            calendar.participants = calendar.participants.filter(p => p.isConfirmed === false);
+
+            for (const p of calendar.participants) {
+                const participant = allUserObjects.find(user => user.id === p.userId);
+
+                await test.step(`Update join status for participant ${participant.id} in Calendar ${calendar.id}`,
+                    async () => {
+                        const response = await request.patch(`calendars/${calendar.id}/join`, {
+                            headers: generateHeaders(participant.accessToken)
+                        });
+
+                        expectResponseHeaders(response, 200);
+                    });
+            }
+        });
+    }
+});

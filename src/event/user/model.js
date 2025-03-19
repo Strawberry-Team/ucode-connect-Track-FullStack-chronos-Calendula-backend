@@ -30,11 +30,13 @@ class EventUserModel extends Model {
      */
     async syncEventParticipants(eventId, participants) {
         const event = await (new EventModel()).getEntityById(eventId);
+
         if (!event) {
             throw new Error('Event not found.');
         }
         
         const eventCreator = await (new UserModel()).getEntityById(event[this._creationByRelationFieldName]);
+
         if (!eventCreator) {
             throw new Error('Event creator not found.');
         }
@@ -102,8 +104,6 @@ class EventUserModel extends Model {
             return;
         }
 
-
-
         const eventUser = this.createEntity({
             eventId,
             userId,
@@ -134,6 +134,7 @@ class EventUserModel extends Model {
      */
     async handleSyncEventWithCalendar(calendarId, eventId, userId, strategy) {
         const calendar = await (new CalendarModel()).getEntityById(calendarId);
+
         if (!calendar) {
             throw new Error('Calendar not found.');
         }
@@ -142,6 +143,7 @@ class EventUserModel extends Model {
 
         if (calendar.isMain() || !calendarUsers.find(cu => cu.userId === userId)) {
             let participantMainCalendar = await (new CalendarModel()).getMainCalendar(userId);
+
             if (!participantMainCalendar) {
                 participantMainCalendar = await (new CalendarModel()).createMainCalendar(userId);
                 // throw new Error('Participant must have a main calendar.');

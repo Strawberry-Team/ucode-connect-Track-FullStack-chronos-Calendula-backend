@@ -10,8 +10,12 @@
 
     "test": "npx playwright test tests/api/*.test.js",
     "test:debug": "npx playwright test tests/api/*.test.js --debug",
-    "test:report": "npx playwright test tests/api/*.test.js; npx playwright show-report",
-    "test:seed": "db-migrate reset --env test && db-migrate up --env test && npx playwright test tests/fake-data/*.test.js",
+    "test:report": "npm run test:debug; npx playwright show-report",
+
+    "test:seed:users": "npx playwright test --workers=1 tests/fake-data/fake.users.test.js",
+    "test:seed:calendars": "npx playwright test --workers=1 tests/fake-data/fake.calendars.test.js",
+    "test:seed:events": "npx playwright test --workers=1 tests/fake-data/fake.events.test.js",
+    "test:seed": "npm run migrate:refresh:test && npm run test:seed:users && npm run test:seed:calendars && npm run test:seed:events",
 
     "migrate:create:dev": "db-migrate create --sql-file --env dev",
     "migrate:create:test": "db-migrate create --sql-file --env test",
@@ -21,8 +25,8 @@
     "migrate:down:test": "db-migrate down -c 1 --env test",
     "migrate:reset:dev": "db-migrate reset --env dev",
     "migrate:reset:test": "db-migrate reset --env test",
-    "migrate:refresh:dev": "db-migrate reset --env dev && db-migrate up --env dev",
-    "migrate:refresh:test": "db-migrate reset --env test && db-migrate up --env test"
+    "migrate:refresh:dev": "npm run migrate:reset:dev && npm run migrate:up:dev",
+    "migrate:refresh:test": "npm run migrate:reset:test && npm run migrate:up:test"
   },
   "dependencies": {
     "argon2": "^0.41.1",
