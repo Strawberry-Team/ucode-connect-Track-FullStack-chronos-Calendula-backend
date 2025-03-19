@@ -1,36 +1,177 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta charset="UTF-8">
-    <title>Join event</title>
+    <title>Join Event</title>
+    <style>
+        /* Import font Inter */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        /* Reset default styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #1f2a44;
+            background-color: #f4f4f5;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 24px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e4e4e7;
+        }
+
+        .header {
+            padding-bottom: 16px;
+            text-align: center;
+            border-bottom: 1px solid #e4e4e7;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #18181b;
+        }
+
+        .content {
+            padding: 24px 0;
+            text-align: center;
+        }
+
+        .greeting {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 16px;
+            color: #27272a;
+        }
+
+        .message {
+            font-size: 14px;
+            margin-bottom: 24px;
+            color: #52525b;
+        }
+
+        .event-details {
+            margin-bottom: 24px;
+            padding: 2rem 5rem;
+            background-color: #f9fafb;
+            border-radius: 6px;
+            text-align: left;
+        }
+
+        .event-details p {
+            font-size: 14px;
+            color: #52525b;
+            margin-bottom: 8px;
+            text-align: left;
+        }
+
+        .one-row {
+            word-wrap: normal;
+            flex-wrap: nowrap;
+            text-align: left;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #18181b;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.2s ease;
+            min-width: 8rem;
+        }
+
+        .button:hover {
+            background-color: #27272a;
+        }
+
+        .footer {
+            padding-top: 16px;
+            text-align: center;
+            font-size: 12px;
+            color: #71717a;
+            border-top: 1px solid #e4e4e7;
+        }
+
+        .footer a {
+            color: #71717a;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 16px;
+                padding: 16px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+            .button {
+                display: block;
+                text-align: center;
+            }
+
+            .event-details {
+                padding: 0.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
-<h1>Join event</h1>
-<p>Hi, <%= userFullName %>!</p>
-<p>
-    You were invited to the following event:<br>
-    <ul>
-        <li>Title: <%= title %></li>
-        <li>Description: <%= description %></li>
-        <li>Category: <%= category %></li>
-        <li>Type: <%= type %></li>
-        <li>Start at: <%= startAt %></li>
-        <li>End at at: <%= endAt %></li>
-    </ul>
-</p>
-<p>
-    Link to join the event:
-    <a href="http://localhost:3000/events/<%= eventId %>/join/">
-             http://localhost:3000/events/<%= eventId %>/join/
-    </a>
-</p>
-<p>
-    Link to participate tentatively to the event:
-    <a href="http://localhost:3000/events/<%= eventId %>/tentative/">
-             http://localhost:3000/events/<%= eventId %>/tentative/
-    </a>
-</p>
+    <div class="container">
+        <div class="header">
+            <h1>Join Event '<%= title %>'</h1>
+        </div>
+        <div class="content">
+            <p class="greeting">Hi, <%= fullName %>!</p>
+            <p class="message">
+                You’ve been invited to an upcoming event. Here are the details:
+            </p>
+            <div class="event-details one-row">
+                <p><strong><%= title %></strong></p>
+                <p><%= date %></p>
+                <p><%= description %></p>
+                <p><span><%= category %></span> <span><%= type %></span> <span><%= category %></span></p>
+            </div>
+            <p class="message">
+                Let us know if you’ll be joining us.
+            </p>
+            <a href="http://localhost:3000/events/<%= eventId %>/join/" class="button">
+                Yes
+            </a>
+            <a href="http://localhost:3000/events/<%= eventId %>/tentative/" class="button secondary">
+                No
+            </a>
+            <a href="http://localhost:3000/events/<%= eventId %>/leave/" class="button secondary">
+                Maybe
+            </a>
+        </div>
+        <div class="footer">
+            <p>If you didn’t expect this invitation, you can safely ignore this email.</p>
+            <p>© 2025 <a href="http://localhost:3000/">Calendula</a>. All rights reserved.</p>
+        </div>
+    </div>
 </body>
 </html>

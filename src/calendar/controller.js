@@ -212,12 +212,13 @@ class CalendarController extends Controller {
                 }
 
                 mailer.sendCalendarInvitation(
-                    participant.user.email,
+                    participant?.user?.email,
                     {
-                        userFullName: participant.user.fullName,
-                        calendarId: calendar.id,
+                        userFullName: participant?.user?.fullName,
+                        calendarId: calendar?.id,
                         title: calendar?.title,
                         description: calendar?.description,
+                        creator: calendar?.creator?.fullName
                     }
                 ).catch(e => console.error(e));
             }
@@ -263,12 +264,13 @@ class CalendarController extends Controller {
                 }
 
                 mailer.sendCalendarInvitation(
-                    participant.user.email,
+                    participant?.user.email,
                     {
-                        userFullName: participant.user.fullName,
-                        calendarId: calendar.id,
+                        userFullName: participant?.user?.fullName,
+                        calendarId: calendar?.id,
                         title: calendar?.title,
                         description: calendar?.description,
+                        creator: calendar?.creator?.fullName
                     }
                 ).catch(e => console.error(e));
             }

@@ -1,9 +1,11 @@
-import nodemailer from 'nodemailer'
+import nodemailer from 'nodemailer';
 import ejs from 'ejs';
 import * as path from "path";
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const { format, parse } = require("date-fns");
+
 
 /**
  * @param {string} email
@@ -94,11 +96,27 @@ export async function sendCalendarInvitation(email, data) {
 }
 
 /**
+ * @param {string} startAt
+ * @param {string} endAt
+ * @return {string}
+ */
+function formatEventDate(startAt, endAt) {
+    const startDate = parse(startAt, "yyyy-MM-dd HH:mm:ss", new Date());
+    const endDate = parse(endAt, "yyyy-MM-dd HH:mm:ss", new Date());
+    const formattedStartDate = format(startDate, "EEEE, MMMM d HH:mm");
+    const formattedEndTime = format(startDate, "EEEE, MMMM d_HH:mm").split('_')[1];
+
+    return `${formattedStartDate} - ${formattedEndTime}`;
+}
+
+/**
  * @param {string} email
  * @param {Object} data
  * @return {Promise<void>}
  */
 export async function sendEventInvitation(email, data) {
+    data.date = formatEventDate(data.startAt, data.endAt);
+
     await send(
         email,
         `Join "${data.title}" Event`,
