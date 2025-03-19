@@ -580,7 +580,7 @@
           }
         ],
         "requestBody": {
-          "required": false,
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
@@ -869,6 +869,52 @@
           }
         }
       }
+    },
+    "/api/events/{event_id}/color/": {
+      "patch": {
+        "summary": "Change event color. If you do not pass the request body, the colour value will be reset",
+        "tags": ["Events"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "example": "1" }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "color": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$", "example": "#039BE5" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful update."
+          },
+          "400": {
+            "description": "Validation failed."
+          },
+          "403": {
+            "description": "Unable to change the color of a event without an invitation."
+          },
+          "404": {
+            "description": "Event not found."
+          }
+        }
+      }
     }
   },
   "components": {
@@ -952,6 +998,7 @@
           "title": { "type": "string", "example": "Calendula Dev Team" },
           "description": { "type": "string", "example": "Stand-ups, retrospectives, planning sprints and product demos" },
           "type": { "type": "string", "enum": ["main", "shared", "holidays"], "example": "shared" },
+          "color": {"type": "string", "example": "#F4511E" },
           "creationByUserId": {"type": "integer", "example": "1"},
           "creationAt": { "type": "string", "format": "date-time", "example": "2025-03-08 10:05:13" },
           "creator": { "$ref": "#/components/schemas/User" },
@@ -1044,6 +1091,7 @@
           "description": { "type": "string", "example": "Discussion of requirements, business logic, clarification of team composition" },
           "category": { "type": "string", "enum": ["work", "home", "hobby"], "example": "work" },
           "type": { "type": "string", "enum": ["meeting", "reminder", "task"], "example": "meeting" },
+          "color": {"type": "string", "example": "#F4511E" },
           "startAt": { "type": "string", "format": "date-time", "example": "2023-03-09 14:00:00" },
           "endAt": { "type": "string", "format": "date-time", "example": "2023-03-09 15:00:00" },
           "creationByUserId": {"type": "integer", "example": "1"},

@@ -79,6 +79,7 @@ class CalendarController extends Controller {
     async getById(req, res, next) {
         try {
             const currentUserAsParticipants = await (new CalendarUserModel()).getCalendarsByUserId(req?.user.id);
+
             if (!currentUserAsParticipants.find(p => p.calendarId === Number(req.params.id))) {
                 return this._returnAccessDenied(
                     res, 403, {},
@@ -87,12 +88,17 @@ class CalendarController extends Controller {
             }
 
             const entity = await this._getEntityByIdAndAccessFilter(req);
+
             if (!entity) {
                 return this._returnNotFound(res);
             }
 
             const calendar = entity.toJSON();
             calendar.color = calendar.participants.find(p => p.userId === req.user.id)?.color;
+
+            calendar.events.forEach(event => {
+                event.color = event.participants.find(p => p.userId === req.user.id)?.color ?? calendar.color;
+            });
 
             return this._returnResponse(res, 200, {
                 data: calendar
@@ -129,6 +135,10 @@ class CalendarController extends Controller {
             const calendars = entities.map(entity => entity.toJSON());
             calendars.forEach(calendar => {
                 calendar.color = calendar.participants.find(p => p.userId === req.user.id)?.color;
+
+                calendar.events.forEach(event => {
+                    event.color = event.participants.find(p => p.userId === req.user.id)?.color ?? calendar.color;
+                });
             });
 
             return this._returnResponse(res, 200, {
@@ -188,34 +198,29 @@ class CalendarController extends Controller {
             let entity = this.model.createEntity(fields);
             await entity.save();
 
-            const calendarUserModel = new CalendarUserModel();
-            await calendarUserModel.syncCalendarParticipants(entity.id, this._prepareParticipants(req));
+            await (new CalendarUserModel()).syncCalendarParticipants(entity.id, this._prepareParticipants(req));
 
             const calendar = await this.model.getEntityById(entity.id);
-            const participants = await calendarUserModel.getCalendarUsersByCalendarId(calendar.id);
 
-            for (const participant of participants) {
+            res.status(201).json({
+                data: calendar.toJSON(),
+            });
+
+            for (const participant of calendar.participants) {
                 if (participant.userId === calendar.creationByUserId) {
                     continue;
                 }
 
-                const userModel = new UserModel();
-                const user = await userModel.getEntityById(participant.userId);
-
-                await mailer.sendCalendarInvitation(
-                    user.email,
+                mailer.sendCalendarInvitation(
+                    participant.user.email,
                     {
-                        userFullName: user.fullName,
+                        userFullName: participant.user.fullName,
                         calendarId: calendar.id,
-                        title: calendar.title,
-                        description: calendar.description,
+                        title: calendar?.title,
+                        description: calendar?.description,
                     }
-                );
+                ).catch(e => console.error(e));
             }
-
-            return res.status(201).json({
-                data: calendar.toJSON(),
-            });
         } catch (e) {
             next(e);
         }
@@ -244,34 +249,29 @@ class CalendarController extends Controller {
                 });
             }
 
-            const calendarUserModel = new CalendarUserModel();
-            await calendarUserModel.syncCalendarParticipants(entity.id, this._prepareParticipants(req));
+            await (new CalendarUserModel()).syncCalendarParticipants(entity.id, this._prepareParticipants(req));
 
             const calendar = await this.model.getEntityById(entity.id);
-            const participants = await calendarUserModel.getCalendarUsersByCalendarId(calendar.id);
 
-            for (const participant of participants) {
-                if (participant.userId === calendar.creationByUserId) {
+            res.status(200).json({
+                data: calendar.toJSON(),
+            });
+
+            for (const participant of calendar.participants) {
+                if (participant.userId === calendar.creationByUserId || participant.isConfirmed) {
                     continue;
                 }
 
-                const userModel = new UserModel();
-                const user = await userModel.getEntityById(participant.userId);
-
-                await mailer.sendCalendarInvitation(
-                    user.email,
+                mailer.sendCalendarInvitation(
+                    participant.user.email,
                     {
-                        userFullName: user.fullName,
+                        userFullName: participant.user.fullName,
                         calendarId: calendar.id,
-                        title: calendar.title,
-                        description: calendar.description,
+                        title: calendar?.title,
+                        description: calendar?.description,
                     }
-                );
+                ).catch(e => console.error(e));
             }
-
-            return this._returnResponse(res, 200, {
-                data: calendar.toJSON()
-            });
         } catch (e) {
             next(e);
         }
@@ -373,20 +373,20 @@ class CalendarController extends Controller {
     /**
      * @param {e.Request} req
      * @param {e.Response} res
-     * @param {e.NextFunction} next
      * @return {Promise<e.Response>}
      */
-    async updateColor(req, res, next) {
+    async updateColor(req, res) {
         const calendar = await this.model.getEntityById(req.params.id);
+
         if (!calendar) {
             return this._returnNotFound(res);
         }
 
         const color = req.body.color;
-        const calendarUserModel = new CalendarUserModel();
-        const participants = await calendarUserModel.getCalendarUsersByCalendarId(calendar.id);
+        const participants = await calendar.getParticipants();
 
         const participant = participants.find(p => p.userId === req.user.id);
+
         if (!participant) {
             return this._returnAccessDenied(
                 res, 403, {},

@@ -55,21 +55,17 @@ class AuthController extends UserController {
      */
     async create(req, res, next) {
         const parentResponse = await super.create(req, res, next);
-        if (
-            !req.user
-            && parentResponse?.statusCode === 201
-        ) {
-            const newUser = parentResponse.req?.newUser;
-            await mailer.sendConfirm(
-                newUser.email,
+        if (!req.user && parentResponse?.statusCode === 201) {
+            mailer.sendConfirm(
+                parentResponse.req?.newUser?.email,
                 {
-                    fullName: newUser.fullName,
+                    fullName: parentResponse.req?.newUser?.fullName,
                     token: parentResponse.req?.confirmToken
                 }
-            );
+            ).catch(e => console.log(e));
+        } else {
+            return parentResponse;
         }
-
-        return parentResponse;
     }
 
     /**
@@ -208,18 +204,17 @@ class AuthController extends UserController {
             user.passwordResetToken = await this.model.createToken({ userEmail: user.email });
             await user.save();
 
-            await mailer.sendPasswordReset(
-                user.email,
+            res.status(200).json({
+                message: 'Successful send an email.',
+            });
+
+            mailer.sendPasswordReset(
+                user?.email,
                 {
-                    fullName: user.fullName,
+                    fullName: user?.fullName,
                     token: user.passwordResetToken
                 }
-            )
-
-            return this._returnResponse(
-                res, 200, {},
-                'Successful send an email.'
-            );
+            ).catch(e => console.log(e));
         } catch (e) {
             next(e);
         }

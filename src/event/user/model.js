@@ -26,16 +26,17 @@ class EventUserModel extends Model {
      *
      * @param {number} eventId
      * @param {[{userId: number}]} participants
-     * @param {string|null} color
      * @return {Promise<void>}
      */
-    async syncEventParticipants(eventId, participants, color = null) {
+    async syncEventParticipants(eventId, participants) {
         const event = await (new EventModel()).getEntityById(eventId);
+
         if (!event) {
             throw new Error('Event not found.');
         }
         
         const eventCreator = await (new UserModel()).getEntityById(event[this._creationByRelationFieldName]);
+
         if (!eventCreator) {
             throw new Error('Event creator not found.');
         }
@@ -68,8 +69,6 @@ class EventUserModel extends Model {
             await this.addParticipant(
                 eventId,
                 p.userId,
-                //TODO: сделать тут NULL в будущем.
-                p.userId === eventCreator.id ? color : '',
                 p.userId === eventCreator.id ? 'yes' : null
             );
 
@@ -94,16 +93,12 @@ class EventUserModel extends Model {
         return Object.values(uniqueParticipants);
     }
 
-    async addParticipant(eventId, userId, color, attendanceStatus) {
-        console.log('----- addParticipant ---------');
-        console.log(eventId, userId, color, attendanceStatus);
+    async addParticipant(eventId, userId, attendanceStatus) {
         const user = await (new UserModel()).getEntityById(userId);
 
         if (!user) {
             return;
         }
-
-        const t = await this.getParticipantByEventIdAndUserId(eventId, userId);
 
         if (await this.getParticipantByEventIdAndUserId(eventId, userId)) {
             return;
@@ -112,7 +107,6 @@ class EventUserModel extends Model {
         const eventUser = this.createEntity({
             eventId,
             userId,
-            color,
             attendanceStatus
         });
 
@@ -140,6 +134,7 @@ class EventUserModel extends Model {
      */
     async handleSyncEventWithCalendar(calendarId, eventId, userId, strategy) {
         const calendar = await (new CalendarModel()).getEntityById(calendarId);
+
         if (!calendar) {
             throw new Error('Calendar not found.');
         }
@@ -148,6 +143,7 @@ class EventUserModel extends Model {
 
         if (calendar.isMain() || !calendarUsers.find(cu => cu.userId === userId)) {
             let participantMainCalendar = await (new CalendarModel()).getMainCalendar(userId);
+
             if (!participantMainCalendar) {
                 participantMainCalendar = await (new CalendarModel()).createMainCalendar(userId);
                 // throw new Error('Participant must have a main calendar.');

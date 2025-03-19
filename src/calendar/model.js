@@ -36,9 +36,17 @@ class CalendarModel extends Model {
     }
 
     async getParticipantsByCalendarId(calendarId) {
-        const calendarUserModel = new CalendarUserModel();
-        return await calendarUserModel.getEntities([], [
-            new Where('calendarId', '=', calendarId)
+        return (new CalendarUserModel()).getParticipantsByCalendarId(calendarId);
+    }
+
+    /**
+     *
+     * @param {string} type
+     * @returns {Promise<Entity[]|Entity>}
+     */
+    async getCalendarsByType(type) {
+        return await super.getEntities([], [
+            new Where('type', '=', type)
         ]);
     }
 

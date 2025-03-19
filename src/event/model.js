@@ -25,6 +25,14 @@ class EventModel extends Model {
         );
     }
 
+    /**
+     * @inheritDoc
+     * @return {Promise<CalendarEntity>}
+     */
+    async getEntityById(id, withRelations = true) {
+        return super.getEntityById(id, withRelations);
+    }
+
     async getParticipantsByEventId(eventId) {
         const eventUserModel = new EventUserModel();
         return await eventUserModel.getEntities([], [

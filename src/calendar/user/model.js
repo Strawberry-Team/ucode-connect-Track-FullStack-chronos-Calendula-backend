@@ -96,7 +96,7 @@ class CalendarUserModel extends Model {
         ]);
     }
 
-    async getCalendarUsersByCalendarId(calendarId) {
+    async getParticipantsByCalendarId(calendarId) {
         return await this.getEntities([], [
             new Where('calendarId', '=', calendarId)
         ]);
