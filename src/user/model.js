@@ -34,6 +34,14 @@ class UserModel extends Model {
     }
 
     /**
+     * @param {[number]} userIds
+     * @return {Promise<UserEntity>}
+     */
+    async getEntitiesByIds(userIds) {
+        return this.getEntities([], [ new Where('id', 'IN', userIds) ], 'id');
+    }
+
+    /**
      * @param {string} password
      * @param {string} passwordHash
      * @return {Promise<boolean>}
