@@ -155,6 +155,10 @@ npx playwright test tests/api/<file_name>.test.js --project=chromium --debug
 
 
 ## Fake Data
+To fill the database with demo data of users, calendars and events, run the command:
+```bash
+npm run test:seed
+```
 Here is the fake data for presentations.
 
 User data for testing:
@@ -170,3 +174,4 @@ All users have a password:
 ```text
 Password123!$
 ```
+

@@ -7,16 +7,13 @@
     "start": "node --env-file=.env index.js",
     "start:dev": "nodemon --env-file=.env.development index.js",
     "start:test": "nodemon --env-file=.env.test index.js",
-
     "test": "npx playwright test tests/api/*.test.js",
     "test:debug": "npx playwright test tests/api/*.test.js --debug",
     "test:report": "npm run test:debug; npx playwright show-report",
-
     "test:seed:users": "npx playwright test --workers=1 tests/fake-data/fake.users.test.js",
     "test:seed:calendars": "npx playwright test --workers=1 tests/fake-data/fake.calendars.test.js",
     "test:seed:events": "npx playwright test --workers=1 tests/fake-data/fake.events.test.js",
     "test:seed": "npm run migrate:refresh:test && npm run test:seed:users && npm run test:seed:calendars && npm run test:seed:events",
-
     "migrate:create:dev": "db-migrate create --sql-file --env dev",
     "migrate:create:test": "db-migrate create --sql-file --env test",
     "migrate:up:dev": "db-migrate up --env dev",
@@ -31,6 +28,7 @@
   "dependencies": {
     "argon2": "^0.41.1",
     "cors": "^2.8.5",
+    "date-fns": "^4.1.0",
     "db-migrate": "^0.11.14",
     "db-migrate-mysql": "^3.0.0",
     "dotenv": "^16.4.7",
