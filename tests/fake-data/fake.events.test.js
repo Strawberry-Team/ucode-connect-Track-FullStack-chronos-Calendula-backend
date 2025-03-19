@@ -211,7 +211,7 @@ test.describe(`Create events with participants`, async () => {
         for (const calendar of sharedCalendars) {
             /* Select the event owner and its participants */
             const ownerObject = allUserObjects.find(user => user.id === calendar.creationByUserId);
-            const calendarParticipants = await (new CalendarUserModel()).getCalendarUsersByCalendarId(calendar.id);
+            const calendarParticipants = await (new CalendarUserModel()).getParticipantsByCalendarId(calendar.id);
 
             /* Generate DAILY WORK EVENTS */
             await test.step(`DAILY WORK EVENTS`, async () => {
