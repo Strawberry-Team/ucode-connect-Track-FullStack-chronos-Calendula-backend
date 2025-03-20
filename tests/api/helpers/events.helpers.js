@@ -1,5 +1,6 @@
 import { faker } from "@faker-js/faker/locale/en";
 import { expect } from "@playwright/test";
+import { format } from 'date-fns';
 import { expectResponseHeaders } from "./general.helpers.js";
 import { createAndSaveUserData } from "./users.helpers.js";
 import CalendarModel from "../../../src/calendar/model.js";
@@ -26,10 +27,12 @@ export function generateDateTime() {
         to: '2025-04-14T00:00:00.000Z'
     });
 
-    const startAt = fakerDateTime.toISOString().replace("T", " ").split(".")[0];
-
-    const endAt = new Date(fakerDateTime.setHours(fakerDateTime.getHours() + 1))
-        .toISOString().replace("T", " ").split(".")[0];
+    const startAt = format(fakerDateTime,
+        "yyyy-MM-dd HH:mm:ss"
+    );
+    const endAt = format(new Date(fakerDateTime.setHours(fakerDateTime.getHours() + 1)),
+        "yyyy-MM-dd HH:mm:ss"
+    );
 
     return {
         startAt,

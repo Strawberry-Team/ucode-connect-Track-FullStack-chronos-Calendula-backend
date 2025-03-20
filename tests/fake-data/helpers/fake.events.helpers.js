@@ -1,4 +1,5 @@
 import { faker } from "@faker-js/faker";
+import { format } from 'date-fns';
 import { generateDescription, generateTitle } from "./general.fake.helpers.js";
 
 /* Must be 7 days from Monday to Sunday inclusive */
@@ -103,10 +104,12 @@ export function generateEventDateTime(time = {}) {
         [TIME_INTERVAL.WEEKEND]: generateWeekendTime()
     }[time.interval] || generateWorkTime();
 
-    const startAt = eventTime.startAt
-        .toISOString().replace("T", " ").split(".")[0];
-    const endAt = new Date(eventTime.startAt.getTime() + eventTime.duration * 60 * 1000)
-        .toISOString().replace("T", " ").split(".")[0];
+    const startAt = format(eventTime.startAt,
+        "yyyy-MM-dd HH:mm:ss"
+    );
+    const endAt = format(new Date(eventTime.startAt.getTime() + eventTime.duration * 60 * 1000),
+        "yyyy-MM-dd HH:mm:ss"
+    );
 
     return {
         startAt,
