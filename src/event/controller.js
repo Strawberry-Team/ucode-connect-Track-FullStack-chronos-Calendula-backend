@@ -33,6 +33,10 @@ class EventController extends Controller {
                     .notEmpty().withMessage('Please provide a type.')
                     .isIn(['meeting', 'reminder', 'task']).withMessage('Types: meeting, reminder, task.'),
 
+                body('notifyBeforeMinutes')
+                    .optional()
+                    .isIn([10, 30, 60, 1440]).withMessage('Notify before minutes should be 10, 30, 60, or 1440 minutes.'),
+
                 body('startAt')
                     .notEmpty().withMessage('Please provide a start date and time.')
                     .custom((value, {req}) => {
@@ -75,7 +79,7 @@ class EventController extends Controller {
                 .matches(/^#[0-9A-Fa-f]{6}$/).withMessage('Color must be in the format #RRGGBB.'),
         ];
 
-        const allowedFields = ['title', 'description', 'category', 'type', 'startAt', 'endAt', 'calendarId'];
+        const allowedFields = ['title', 'description', 'category', 'type', 'startAt', 'endAt', 'calendarId', 'notifyBeforeMinutes'];
 
         this._accessPolicies.user
             .setCreate(allowedFields)
@@ -144,6 +148,7 @@ class EventController extends Controller {
                     type: event.type,
                     startAt: event.startAt,
                     endAt: event.endAt,
+                    date: event.getFormattedEventDate(),
                     creator: event.creator.fullName,
                     calendar: event.calendar.title,
                 }

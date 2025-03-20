@@ -17,6 +17,7 @@ class EventModel extends Model {
                 'description',
                 'category',
                 'type',
+                'notifyBeforeMinutes',
                 'startAt',
                 'endAt',
                 'creationAt'
@@ -43,6 +44,39 @@ class EventModel extends Model {
     async syncEventParticipants(eventId, participants) {
         const eventUserModel = new EventUserModel();
         await eventUserModel.syncEventParticipants(eventId, participants);
+    }
+
+    /**
+     * @return {Promise<EventEntity[]>}
+     */
+    async getEventsToNotify() {
+        const query = `
+            SELECT
+                id,
+                title,
+                startAt,
+                DATE_FORMAT(CONVERT_TZ(NOW(), '+00:00', '+02:00'), '%Y-%m-%d %H:%i:00') AS nowDateTime,
+                TIMESTAMPDIFF(MINUTE, DATE_FORMAT(CONVERT_TZ(NOW(), '+00:00', '+02:00'), '%Y-%m-%d %H:%i:00'), startAt) AS diff,
+                notifyBeforeMinutes
+            FROM
+                \`${this._table}\`
+            WHERE
+                TIMESTAMPDIFF(MINUTE, DATE_FORMAT(CONVERT_TZ(NOW(), '+00:00', '+02:00'), '%Y-%m-%d %H:%i:00'), startAt) = notifyBeforeMinutes
+        `;
+
+        const [rawData] = await this._dbConnection.query(query);
+
+        const ids = rawData.map(item => {
+            return item.id;
+        });
+
+        if (ids.length === 0) {
+            return [];
+        }
+
+        return this.getEntities([], [
+            new Where('id', 'IN', ids)
+        ]);
     }
 }
 

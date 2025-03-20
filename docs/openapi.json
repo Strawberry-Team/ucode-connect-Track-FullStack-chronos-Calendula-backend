@@ -1092,6 +1092,7 @@
           "category": { "type": "string", "enum": ["work", "home", "hobby"], "example": "work" },
           "type": { "type": "string", "enum": ["meeting", "reminder", "task"], "example": "meeting" },
           "color": {"type": "string", "example": "#F4511E" },
+          "notifyBeforeMinutes": { "type": "integer", "enum": ["10", "30", "60", "1440"], "example": "30" },
           "startAt": { "type": "string", "format": "date-time", "example": "2023-03-09 14:00:00" },
           "endAt": { "type": "string", "format": "date-time", "example": "2023-03-09 15:00:00" },
           "creationByUserId": {"type": "integer", "example": "1"},
@@ -1134,6 +1135,7 @@
           "description": { "type": "string", "example": "Discussion of requirements, business logic, clarification of team composition" },
           "category": { "type": "string", "enum": ["work", "home", "hobby"], "example": "work" },
           "type": { "type": "string", "enum": ["meeting", "reminder", "task"], "example": "meeting" },
+          "notifyBeforeMinutes": { "type": "integer", "enum": ["10", "30", "60", "1440"], "example": "30" },
           "startAt": { "type": "string", "format": "date-time", "example": "2023-03-09 14:00:00" },
           "endAt": { "type": "string", "format": "date-time", "example": "2023-03-09 15:00:00" },
           "participants": {
@@ -1154,6 +1156,7 @@
           "description": { "type": "string", "example": "Creating user flow for authorisation" },
           "category": { "type": "string", "enum": ["work", "home", "hobby"], "example": "work" },
           "type": { "type": "string", "enum": ["meeting", "reminder", "task"], "example": "task" },
+          "notifyBeforeMinutes": { "type": "integer", "enum": ["10", "30", "60", "1440"], "example": "30" },
           "startAt": { "type": "string", "format": "date-time", "example": "2023-03-11 10:00:00" },
           "endAt": { "type": "string", "format": "date-time", "example": "2023-03-11 13:00:00" },
           "participants": {
@@ -1178,6 +1181,7 @@
               "description": { "type": "string", "example": "Creating user flow for authorisation" },
               "category": { "type": "string", "enum": ["work", "home", "hobby"], "example": "work" },
               "type": { "type": "string", "enum": ["meeting", "reminder", "task"], "example": "task" },
+              "notifyBeforeMinutes": { "type": "integer", "enum": ["10", "30", "60", "1440"], "example": "30" },
               "startAt": { "type": "string", "format": "date-time", "example": "2023-03-11 10:00:00" },
               "endAt": { "type": "string", "format": "date-time", "example": "2023-03-11 13:00:00" },
               "creationByUserId": {"type": "integer", "example": "1"},

@@ -5,10 +5,10 @@ import { generateDescription, generateTitle } from "./general.fake.helpers.js";
 /* Must be 7 days from Monday to Sunday inclusive */
 export const DEMO_DATES = {
     year: 2025,
-    monthIndex: 3,
+    monthIndex: 2,
     date: {
-        start: 7,
-        end: 13
+        start: 17,
+        end: 23
     }
 };
 export const EVENT_ATTENDANCE_STATUSES = ['yes', 'no', 'maybe'];

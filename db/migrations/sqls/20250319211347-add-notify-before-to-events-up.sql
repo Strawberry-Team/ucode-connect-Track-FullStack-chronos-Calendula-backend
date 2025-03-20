@@ -1,0 +1,1 @@
+ALTER TABLE `events` ADD `notifyBeforeMinutes` INT(10) UNSIGNED DEFAULT 10 NOT NULL;
