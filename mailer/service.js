@@ -20,6 +20,7 @@ async function send(email, subject, htmlTemplate, dataForTemplate) {
     if (process.env.ETHEREAL_MAILER_LOGIN === '') {
         return;
     }
+
     console.log('Sending email to ' + email, process.env.ETHEREAL_MAILER_LOGIN);
 
     try {
