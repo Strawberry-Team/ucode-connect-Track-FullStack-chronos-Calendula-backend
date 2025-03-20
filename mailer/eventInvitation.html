@@ -151,9 +151,10 @@
             </p>
             <div class="event-details one-row">
                 <p><strong><%= title %></strong></p>
-                <p><%= date %></p>
+                <p><time datetime="<%= startAt %>"><%= date %></time></p>
                 <p><%= description %></p>
-                <p><span><%= category %></span> <span><%= type %></span> <span><%= category %></span></p>
+                <p><code><span><%= category %></span> <span><%= type %></span> <span><%= category %></span></code></p>
+                <p><i><%= creator %></i></p>
             </div>
             <p class="message">
                 Let us know if you’ll be joining us.

@@ -2,9 +2,9 @@ import nodemailer from 'nodemailer';
 import ejs from 'ejs';
 import * as path from "path";
 import { fileURLToPath } from 'url';
+import { format, parse } from 'date-fns';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const { format, parse } = require("date-fns");
 
 
 /**
@@ -89,7 +89,7 @@ export async function sendPasswordReset(email, data) {
 export async function sendCalendarInvitation(email, data) {
     await send(
         email,
-        `Join "${data.title}" Calendar`,
+        `Join Calendar '${data.title}'`,
         'calendarInvitation.html',
         data
     );
@@ -119,7 +119,7 @@ export async function sendEventInvitation(email, data) {
 
     await send(
         email,
-        `Join "${data.title}" Event`,
+        `Join Event '${data.title}'`,
         'eventInvitation.html',
         data
     );
