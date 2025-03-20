@@ -66,7 +66,14 @@ Full list of commands:
 
 Answers to other questions can be found in the official [db-migrate](https://db-migrate.readthedocs.io/en/latest/) documentation.
 
+## Task Scheduler
 
+Our service can process tasks in the background. Currently, we use it to send email notifications about upcoming events.
+Scheduler are possible on such environments: `dev`, `test`, and `prod`.
+To start the service, you need to run the command.
+```bash
+   npm run scheduler:<env>
+   ```
 
 ## Docker
 Environment variables are taken from `.env.development` file. You can start containers with the command:

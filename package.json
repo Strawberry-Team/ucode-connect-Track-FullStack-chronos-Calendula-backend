@@ -11,6 +11,10 @@
     "test": "PLAYWRIGHT_HTML_REPORT=\"playwright-report/$(date +%Y-%m-%d_%H-%M-%S)\" npx playwright test tests/api/*.test.js",
     "test:report": "npm run test --debug; npx playwright show-report",
 
+    "scheduler": "node --env-file=.env ./src/services/scheduler/scheduler-service.js",
+    "scheduler:dev": "node --env-file=.env.development ./src/services/scheduler/scheduler-service.js",
+    "scheduler:test": "node --env-file=.env.test ./src/services/scheduler/scheduler-service.js",
+
     "test:seed:users": "PLAYWRIGHT_HTML_REPORT=\"playwright-report/$(date +%Y-%m-%d_%H-%M-%S)\" npx playwright test --workers=1 tests/fake-data/fake.users.test.js",
     "test:seed:calendars": "PLAYWRIGHT_HTML_REPORT=\"playwright-report/$(date +%Y-%m-%d_%H-%M-%S)\" npx playwright test --workers=1 tests/fake-data/fake.calendars.test.js",
     "test:seed:events": "PLAYWRIGHT_HTML_REPORT=\"playwright-report/$(date +%Y-%m-%d_%H-%M-%S)\" npx playwright test --workers=1 tests/fake-data/fake.events.test.js",
@@ -40,6 +44,7 @@
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.10.1",
+    "node-cron": "^3.0.3",
     "nodemailer": "^6.9.15",
     "nodemon": "^3.1.7",
     "playwright": "^1.51.0",

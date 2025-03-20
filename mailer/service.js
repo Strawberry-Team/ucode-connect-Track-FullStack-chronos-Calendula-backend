@@ -2,7 +2,6 @@ import nodemailer from 'nodemailer';
 import ejs from 'ejs';
 import * as path from "path";
 import { fileURLToPath } from 'url';
-import { format, parse } from 'date-fns';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -97,17 +96,17 @@ export async function sendCalendarInvitation(email, data) {
 }
 
 /**
- * @param {string} startAt
- * @param {string} endAt
- * @return {string}
+ * @param {string} email
+ * @param {Object} data
+ * @return {Promise<void>}
  */
-function formatEventDate(startAt, endAt) {
-    const startDate = parse(startAt, "yyyy-MM-dd HH:mm:ss", new Date());
-    const endDate = parse(endAt, "yyyy-MM-dd HH:mm:ss", new Date());
-    const formattedStartDate = format(startDate, "EEEE, MMMM d HH:mm");
-    const formattedEndTime = format(startDate, "EEEE, MMMM d_HH:mm").split('_')[1];
-
-    return `${formattedStartDate} - ${formattedEndTime}`;
+export async function sendEventInvitation(email, data) {
+    await send(
+        email,
+        `Join Event '${data.title}'`,
+        'eventInvitation.html',
+        data
+    );
 }
 
 /**
@@ -115,13 +114,11 @@ function formatEventDate(startAt, endAt) {
  * @param {Object} data
  * @return {Promise<void>}
  */
-export async function sendEventInvitation(email, data) {
-    data.date = formatEventDate(data.startAt, data.endAt);
-
+export async function sendNotifyAboutUpcomingEvent(email, data) {
     await send(
         email,
-        `Join Event '${data.title}'`,
-        'eventInvitation.html',
+        `Notification: ${data.title} @ ${data.date}`,
+        'eventUpcoming.html',
         data
     );
 }
