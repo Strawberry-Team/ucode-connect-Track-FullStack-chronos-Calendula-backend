@@ -67,11 +67,13 @@ class CalendarModel extends Model {
      */
     async createMainCalendar(userId) {
         const user = await (new UserModel()).getEntityById(userId);
+
         if (!user) {
             throw new Error('User not found');
         }
 
         let calendar = await this.getMainCalendar(userId);
+
         if (calendar) {
             throw new Error('User already has a main calendar');
         }
@@ -130,24 +132,15 @@ class CalendarModel extends Model {
      */
     async addUserToHolidaysCalendar(userId) {
         const user = await (new UserModel()).getEntityById(userId);
+
         if (!user) {
             throw new Error('User not found');
         }
 
-        let calendarId = 0;
-        switch (user.country) {
-            case 'Ukraine':
-                calendarId = 12;
-                break;
-            case 'Finland':
-                calendarId = 13;
-                break;
-            case 'Estonia':
-                calendarId = 14;
-                break;
-        }
+        let calendarId = { 'Ukraine': 2, 'Finland': 3, 'Estonia': 4 }[user.country] || 0;
 
         const calendar = await this.getEntityById(calendarId);
+
         if (!calendar) {
             throw new Error('Calendar not found');
         }
