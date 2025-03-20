@@ -19,7 +19,7 @@ test.describe(`Create events with participants`, async () => {
 
     test(`Get users data`, async ({request}) => {
         allUserObjects = await (new UserModel()).getEntitiesByIds(
-            Array.from({length: 11}, (_, i) => i + 12)
+            Array.from({length: 11}, (_, i) => i + 2)
         );
 
         for (const user of allUserObjects) {
