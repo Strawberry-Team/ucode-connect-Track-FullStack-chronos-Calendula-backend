@@ -3,7 +3,7 @@ import CalendarModel from "./model.js";
 import { body } from "express-validator";
 import CalendarUserModel from "./user/model.js";
 import UserModel from "../user/model.js";
-import * as mailer from "../../mailer/service.js";
+import * as mailer from "../services/mailer/service.js";
 import Where from "../sql/where.js";
 
 
@@ -219,7 +219,7 @@ class CalendarController extends Controller {
                         calendarId: calendar?.id,
                         title: calendar?.title,
                         description: calendar?.description,
-                        creator: calendar?.creator?.fullName
+                        creator: calendar?.getFormattedCreatorFullName()
                     }
                 ).catch(e => console.error(e));
             }

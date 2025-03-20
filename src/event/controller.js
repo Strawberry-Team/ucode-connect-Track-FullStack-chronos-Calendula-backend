@@ -1,7 +1,7 @@
 import Controller from "../controller.js";
 import EventModel from "./model.js";
 import { body } from "express-validator";
-import * as mailer from "../../mailer/service.js";
+import * as mailer from "../services/mailer/service.js";
 import CalendarModel from "../calendar/model.js";
 import EventUserModel from "./user/model.js";
 
@@ -144,13 +144,13 @@ class EventController extends Controller {
                     eventId: event.id,
                     title: event.title,
                     description: event.description,
-                    category: event.category,
-                    type: event.type,
+                    category: event.getFormattedCategory(),
+                    type: event.getFormattedType(),
                     startAt: event.startAt,
                     endAt: event.endAt,
                     date: event.getFormattedEventDate(),
-                    creator: event.creator.fullName,
-                    calendar: event.calendar.title,
+                    creator: event.getFormattedCreatorFullName(),
+                    calendar: event.getFormattedCalendarTitle(),
                 }
             ).catch(e => console.error(e));
         }

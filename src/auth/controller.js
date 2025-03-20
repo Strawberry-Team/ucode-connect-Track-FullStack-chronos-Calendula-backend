@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import * as argon2 from "argon2";
 import UserController from "../user/controller.js";
-import * as mailer from "../../mailer/service.js";
+import * as mailer from "../services/mailer/service.js";
 
 class AuthController extends UserController {
     constructor() {
@@ -163,7 +163,7 @@ class AuthController extends UserController {
                 id: user.id,
                 email: user.email,
                 role: user.role
-            }, '7d');
+            });
 
             return this._returnResponse(
                 res, 200, { accessToken, data: user.toJSON() },
@@ -201,7 +201,10 @@ class AuthController extends UserController {
                 return this._returnNotFound(res);
             }
 
-            user.passwordResetToken = await this.model.createToken({ userEmail: user.email });
+            user.passwordResetToken = await this.model.createToken(
+                { userEmail: user.email },
+                '1d'
+            );
             await user.save();
 
             res.status(200).json({

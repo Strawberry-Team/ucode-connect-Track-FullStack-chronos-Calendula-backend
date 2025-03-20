@@ -138,7 +138,9 @@ class UserController extends Controller {
             }
 
             if (fields.email) {
-                fields.confirmToken = await this.model.createToken({ userEmail: fields.email });
+                fields.confirmToken = await this.model.createToken({
+                    userEmail: fields.email
+                });
             }
 
             const newUser = this.model.createEntity(fields);

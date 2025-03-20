@@ -5,7 +5,6 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-
 /**
  * @param {string} email
  * @param {string} subject
@@ -62,7 +61,7 @@ export async function sendConfirm(email, data) {
     await send(
         email,
         '[Action Required] Confirm Email',
-        'confirmEmail.html',
+        'templates/confirmEmail.html',
         data
     );
 }
@@ -76,7 +75,7 @@ export async function sendPasswordReset(email, data) {
     await send(
         email,
         '[Action Required] Password Reset',
-        'passwordReset.html',
+        'templates/passwordReset.html',
         data
     );
 }
@@ -90,7 +89,7 @@ export async function sendCalendarInvitation(email, data) {
     await send(
         email,
         `Join Calendar '${data.title}'`,
-        'calendarInvitation.html',
+        'templates/calendarInvitation.html',
         data
     );
 }
@@ -104,7 +103,7 @@ export async function sendEventInvitation(email, data) {
     await send(
         email,
         `Join Event '${data.title}'`,
-        'eventInvitation.html',
+        'templates/eventInvitation.html',
         data
     );
 }
@@ -118,7 +117,7 @@ export async function sendNotifyAboutUpcomingEvent(email, data) {
     await send(
         email,
         `Notification: ${data.title} @ ${data.date}`,
-        'eventUpcoming.html',
+        'templates/eventUpcoming.html',
         data
     );
 }

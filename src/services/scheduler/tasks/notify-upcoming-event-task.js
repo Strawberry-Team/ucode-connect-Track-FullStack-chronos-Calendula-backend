@@ -1,5 +1,5 @@
 import EventModel from '../../../event/model.js';
-import * as mailer from "../../../../mailer/service.js";
+import * as mailer from "../../mailer/service.js";
 
 
 export async function notifyUpcomingEventTask() {
@@ -20,11 +20,12 @@ export async function notifyUpcomingEventTask() {
                         userFullName: participant.user.fullName,
                         title: event.title,
                         description: event.title,
-                        type: event.type.charAt(0).toUpperCase() + event.type.slice(1),
-                        category: event.category.charAt(0).toUpperCase() + event.category.slice(1),
+                        type: event.getFormattedType(),
+                        category: event.getFormattedCategory(),
                         startAt: event.startAt,
-                        calendar: event.calendar.title,
+                        calendar: event.getFormattedCalendarTitle(),
                         date: event.getFormattedEventDate(),
+                        creator: event.getFormattedCreatorFullName(),
                     }
                 )
             }

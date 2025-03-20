@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Join Event</title>
+    <title>Join Calendar</title>
     <style>
         /* Import font Inter */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -63,7 +63,7 @@
             color: #52525b;
         }
 
-        .event-details {
+        .calendar-details {
             margin-bottom: 24px;
             padding: 2rem 5rem;
             background-color: #f9fafb;
@@ -71,34 +71,11 @@
             text-align: left;
         }
 
-        .event-details p {
+        .calendar-details p {
             font-size: 14px;
             color: #52525b;
             margin-bottom: 8px;
             text-align: left;
-        }
-
-        .one-row {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            width: 100%;
-            gap: 10px;
-            margin: 0;
-        }
-
-        .one-row code {
-            display: flex;
-            flex-wrap: wrap;
-            width: 100%;
-            gap: 10px;
-        }
-
-        .one-row span {
-            flex: 1 0 auto;
-            white-space: nowrap;
-            text-align: start;
-            min-width: 0;
         }
 
         .button {
@@ -150,7 +127,7 @@
                 text-align: center;
             }
 
-            .event-details {
+            .calendar-details {
                 padding: 0.5rem;
             }
         }
@@ -159,37 +136,23 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Join Event '<%= title %>'</h1>
+            <h1>Join Calendar '<%= title %>'</h1>
         </div>
         <div class="content">
-            <p class="greeting">Hi, <%= userFullName %>!</p>
+            <p class="greeting">👋 Hi, <%= userFullName %>!</p>
             <p class="message">
-                You’ve been invited to an upcoming event. Here are the details:
+                You’ve been invited to subscribe to the new calendar. Here are the details:
             </p>
-            <div class="event-details">
+            <div class="calendar-details">
                 <p><strong><%= title %></strong></p>
-                <p><i><time datetime="<%= startAt %>"><%= date %></time></i></p>
                 <p><%= description %></p>
-                <p class="one-row">
-                    <code>
-                        <span><%= category %></span>
-                        <span><%= type %></span>
-                        <span><%= calendar %></span>
-                    </code>
-                </p>
-                <p><i><%= creator %></i></p>
+                <p><%= creator %></p>
             </div>
             <p class="message">
-                Let us know if you’ll be joining us.
+                Click the button below to join the calendar.
             </p>
-            <a href="http://localhost:3000/events/<%= eventId %>/join/" class="button">
-                Yes
-            </a>
-            <a href="http://localhost:3000/events/<%= eventId %>/tentative/" class="button secondary">
-                No
-            </a>
-            <a href="http://localhost:3000/events/<%= eventId %>/leave/" class="button secondary">
-                Maybe
+            <a href="http://localhost:3000/calendars/<%= calendarId %>/join/" class="button">
+                Join Calendar
             </a>
         </div>
         <div class="footer">

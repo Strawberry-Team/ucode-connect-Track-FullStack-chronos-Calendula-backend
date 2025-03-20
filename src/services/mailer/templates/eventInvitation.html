@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Confirm Email</title>
+    <title>Join Event</title>
     <style>
         /* Import font Inter */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -63,6 +63,44 @@
             color: #52525b;
         }
 
+        .event-details {
+            margin-bottom: 24px;
+            padding: 2rem 5rem;
+            background-color: #f9fafb;
+            border-radius: 6px;
+            text-align: left;
+        }
+
+        .event-details p {
+            font-size: 14px;
+            color: #52525b;
+            margin-bottom: 8px;
+            text-align: left;
+        }
+
+        .one-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            width: 100%;
+            gap: 10px;
+            margin: 0;
+        }
+
+        .one-row code {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+            gap: 10px;
+        }
+
+        .one-row span {
+            flex: 1 0 auto;
+            white-space: nowrap;
+            text-align: start;
+            min-width: 0;
+        }
+
         .button {
             display: inline-block;
             padding: 10px 20px;
@@ -111,29 +149,51 @@
                 display: block;
                 text-align: center;
             }
+
+            .event-details {
+                padding: 0.5rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>Confirm Email</h1>
+            <h1>Join Event '<%= title %>'</h1>
         </div>
         <div class="content">
-            <p class="greeting">Hi, <%= fullName %>!</p>
+            <p class="greeting">👋 Hi, <%= userFullName %>!</p>
             <p class="message">
-                Thank you for signing up!
+                You’ve been invited to the upcoming event. Here are the details:
             </p>
+            <div class="event-details">
+                <p><strong><%= title %></strong></p>
+                <p><time datetime="<%= startAt %>"><%= date %></time></p>
+                <p><%= description %></p>
+                <p class="one-row">
+                    <code>
+                        <span><%= category %></span>
+                        <span><%= type %></span>
+                        <span><%= calendar %></span>
+                    </code>
+                </p>
+                <p><%= creator %></p>
+            </div>
             <p class="message">
-                To complete your registration, please confirm your email address by clicking the button below.
-                This link will expire in 30 days.
+                🤝 Let us know if you’ll be joining us.
             </p>
-            <a href="http://localhost:3000/confirm-email/<%= token %>/" class="button">
-                Confirm Email
+            <a href="http://localhost:3000/events/<%= eventId %>/join/" class="button">
+                Yes
+            </a>
+            <a href="http://localhost:3000/events/<%= eventId %>/tentative/" class="button secondary">
+                No
+            </a>
+            <a href="http://localhost:3000/events/<%= eventId %>/leave/" class="button secondary">
+                Maybe
             </a>
         </div>
         <div class="footer">
-            <p>If you didn’t sign up for this account, you can safely ignore this email.</p>
+            <p>If you didn’t expect this invitation, you can safely ignore this email.</p>
             <p>© 2025 <a href="http://localhost:3000/">Calendula</a>. All rights reserved.</p>
         </div>
     </div>

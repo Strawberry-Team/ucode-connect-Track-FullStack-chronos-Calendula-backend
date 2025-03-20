@@ -40,6 +40,14 @@ class CalendarEntity extends Entity {
         return this._model.getParticipantsByCalendarId(this.id);
     }
 
+    /**
+     * Formats the calendar creator's full name into an emoji string.
+     *
+     * @return {string} A formatted string representing the calendar creator's full name.
+     */
+    getFormattedCreatorFullName() {
+        return `👤 ${this.creator.fullName}`;
+    }
 }
 
 export default CalendarEntity;

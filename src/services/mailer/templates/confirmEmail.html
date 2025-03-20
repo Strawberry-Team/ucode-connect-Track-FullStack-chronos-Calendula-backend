@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Password Reset</title>
+    <title>Confirm Email</title>
     <style>
         /* Import font Inter */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -117,20 +117,25 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Password Reset</h1>
+            <h1>Confirm Email</h1>
         </div>
         <div class="content">
-            <p class="greeting">Hi, <%= fullName %>!</p>
+            <p class="greeting">👋 Hi, <%= fullName %>!</p>
             <p class="message">
-                We received a request to reset your password. Click the button below to reset it.
-                This link will expire in 30 days.
+                Thank you for signing up! 😊
             </p>
-            <a href="http://localhost:3000/password-reset/<%= token %>/" class="button">
-                Reset Password
+            <p class="message">
+                To complete your registration, please confirm your email address by clicking the button below.
+            </p>
+            <p class="message">
+                ⏳ This link will expire in 7 days.
+            </p>
+            <a href="http://localhost:3000/confirm-email/<%= token %>/" class="button">
+                Confirm Email
             </a>
         </div>
         <div class="footer">
-            <p>If you didn’t request a password reset, please ignore this email.</p>
+            <p>If you didn’t sign up for this account, you can safely ignore this email.</p>
             <p>© 2025 <a href="http://localhost:3000/">Calendula</a>. All rights reserved.</p>
         </div>
     </div>

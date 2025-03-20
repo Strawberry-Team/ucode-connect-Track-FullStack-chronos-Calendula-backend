@@ -41,25 +41,69 @@ class EventEntity extends Entity {
         const startDate = parse(this.startAt, 'yyyy-MM-dd HH:mm:ss', new Date());
         const endDate = parse(this.endAt, 'yyyy-MM-dd HH:mm:ss', new Date());
 
-        // Якщо обидві дати співпадають (на весь день, 00:00 до 23:59)
+        /* Якщо обидві дати співпадають (на весь день, 00:00 до 23:59) */
         if (isSameDay(startDate, endDate) && format(startDate, 'HH:mm:ss') === '00:00:00' && format(endDate, 'HH:mm:ss') === '23:59:59') {
-            return format(startDate, 'EEE MMM d, yyyy');
+            return `⏰ ${format(startDate, 'EEE MMM d, yyyy')}`;
         }
 
-        // Якщо обидві дати в один день, але час не на весь день
+        /* Якщо обидві дати в один день, але час не на весь день */
         if (isSameDay(startDate, endDate)) {
             const day = format(startDate, 'EEE MMM d, yyyy');
             const timeRange = `${format(startDate, 'HH:mm')} - ${format(endDate, 'HH:mm')}`;
-            return `${day} ${timeRange}`;
+            return `⏰ ${day} ${timeRange}`;
         }
 
-        // Якщо дати охоплюють кілька днів і час на весь день
+        /* Якщо дати охоплюють кілька днів і час на весь день */
         if (format(startDate, 'HH:mm:ss') === '00:00:00' && format(endDate, 'HH:mm:ss') === '23:59:59') {
-            return `${format(startDate, 'MMM d')} - ${format(endDate, 'MMM d, yyyy')}`;
+            return `⏰ ${format(startDate, 'MMM d')} - ${format(endDate, 'MMM d, yyyy')}`;
         }
 
-        // Якщо дати охоплюють кілька днів і час не на весь день
-        return `${format(startDate, 'EEE MMM d HH:mm')} - ${format(endDate, 'EEE MMM d HH:mm, yyyy')}`;
+        /* Якщо дати охоплюють кілька днів і час не на весь день */
+        return `⏰ ${format(startDate, 'EEE MMM d HH:mm')} - ${format(endDate, 'EEE MMM d HH:mm, yyyy')}`;
+    }
+
+    /**
+     * Formats the event category into an emoji string.
+     *
+     * @return {string} A formatted string representing the event's category.
+     */
+    getFormattedCategory() {
+        return `${({
+            'work': '💼 Work',
+            'home': '🛋 Home',
+            'hobby': '🎨 Hobby'
+        })[this.category] || this.category}`;
+    }
+
+    /**
+     * Formats the event type into an emoji string.
+     *
+     * @return {string} A formatted string representing the event's type.
+     */
+    getFormattedType() {
+        return `${({
+            'meeting': '🎥 Meeting',
+            'reminder': '🔔 Reminder',
+            'task': '🔖 Task'
+        })[this.type] || this.type}`;
+    }
+
+    /**
+     * Formats the calendar title into an emoji string.
+     *
+     * @return {string} A formatted string representing the event's calendar title.
+     */
+    getFormattedCalendarTitle() {
+        return `📆 ${this.calendar.title}`;
+    }
+
+    /**
+     * Formats the event creator's full name into an emoji string.
+     *
+     * @return {string} A formatted string representing the event creator's full name.
+     */
+    getFormattedCreatorFullName() {
+        return `👤 ${this.creator.fullName}`;
     }
 }
 
