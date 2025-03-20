@@ -79,9 +79,26 @@
         }
 
         .one-row {
-            word-wrap: normal;
-            flex-wrap: nowrap;
-            text-align: left;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            width: 100%;
+            gap: 10px;
+            margin: 0;
+        }
+
+        .one-row code {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+            gap: 10px;
+        }
+
+        .one-row span {
+            flex: 1 0 auto;
+            white-space: nowrap;
+            text-align: start;
+            min-width: 0;
         }
 
         .button {
@@ -145,15 +162,21 @@
             <h1>Join Event '<%= title %>'</h1>
         </div>
         <div class="content">
-            <p class="greeting">Hi, <%= fullName %>!</p>
+            <p class="greeting">Hi, <%= userFullName %>!</p>
             <p class="message">
                 You’ve been invited to an upcoming event. Here are the details:
             </p>
-            <div class="event-details one-row">
+            <div class="event-details">
                 <p><strong><%= title %></strong></p>
-                <p><time datetime="<%= startAt %>"><%= date %></time></p>
+                <p><i><time datetime="<%= startAt %>"><%= date %></time></i></p>
                 <p><%= description %></p>
-                <p><code><span><%= category %></span> <span><%= type %></span> <span><%= category %></span></code></p>
+                <p class="one-row">
+                    <code>
+                        <span><%= category %></span>
+                        <span><%= type %></span>
+                        <span><%= calendar %></span>
+                    </code>
+                </p>
                 <p><i><%= creator %></i></p>
             </div>
             <p class="message">

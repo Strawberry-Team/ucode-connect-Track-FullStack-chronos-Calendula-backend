@@ -206,6 +206,7 @@ class CalendarController extends Controller {
                 data: calendar.toJSON(),
             });
 
+            console.log(">>>calendar.participants", calendar.participants);
             for (const participant of calendar.participants) {
                 if (participant.userId === calendar.creationByUserId) {
                     continue;

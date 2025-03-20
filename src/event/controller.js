@@ -144,7 +144,8 @@ class EventController extends Controller {
                     type: event.type,
                     startAt: event.startAt,
                     endAt: event.endAt,
-                    creator: event.creator.fullName
+                    creator: event.creator.fullName,
+                    calendar: event.calendar.title,
                 }
             ).catch(e => console.error(e));
         }
