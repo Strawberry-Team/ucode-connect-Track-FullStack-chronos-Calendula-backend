@@ -322,7 +322,7 @@ class EventController extends Controller {
             return this._returnNotFound(res);
         }
 
-        const color = req?.body?.color ?? null;
+        const color = req?.body?.color ?? '';
         const participant = await (new EventUserModel().getParticipantByEventIdAndUserId(event.id, req.user.id));
         if (!participant) {
             return this._returnAccessDenied(

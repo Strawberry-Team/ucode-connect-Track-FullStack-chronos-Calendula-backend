@@ -93,15 +93,8 @@ class CalendarController extends Controller {
                 return this._returnNotFound(res);
             }
 
-            const calendar = entity.toJSON();
-            calendar.color = calendar.participants.find(p => p.userId === req.user.id)?.color;
-
-            calendar.events.forEach(event => {
-                event.color = event.participants.find(p => p.userId === req.user.id)?.color ?? calendar.color;
-            });
-
             return this._returnResponse(res, 200, {
-                data: calendar
+                data: entity.toJSON()
             });
         } catch (e) {
             next(e);
@@ -132,17 +125,8 @@ class CalendarController extends Controller {
                 filters
             );
 
-            const calendars = entities.map(entity => entity.toJSON());
-            calendars.forEach(calendar => {
-                calendar.color = calendar.participants.find(p => p.userId === req.user.id)?.color;
-
-                calendar.events.forEach(event => {
-                    event.color = event.participants.find(p => p.userId === req.user.id)?.color ?? calendar.color;
-                });
-            });
-
             return this._returnResponse(res, 200, {
-                data: calendars
+                data: entities.map(entity => entity.toJSON())
             });
         } catch (e) {
             next(e);
@@ -163,7 +147,6 @@ class CalendarController extends Controller {
             participants = participants.filter(participant => participant.userId !== req?.user.id);
             participants.push({
                 userId: req?.user.id,
-                color: req?.user.color,
                 role: 'owner',
                 isConfirmed: true,
             });
@@ -171,7 +154,6 @@ class CalendarController extends Controller {
             participants = [
                 {
                     userId: req?.user.id,
-                    color: req?.user.color,
                     role: 'owner',
                     isConfirmed: true,
                 }

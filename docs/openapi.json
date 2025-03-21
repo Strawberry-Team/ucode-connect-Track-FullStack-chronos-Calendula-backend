@@ -998,7 +998,6 @@
           "title": { "type": "string", "example": "Calendula Dev Team" },
           "description": { "type": "string", "example": "Stand-ups, retrospectives, planning sprints and product demos" },
           "type": { "type": "string", "enum": ["main", "shared", "holidays"], "example": "shared" },
-          "color": {"type": "string", "example": "#F4511E" },
           "creationByUserId": {"type": "integer", "example": "1"},
           "creationAt": { "type": "string", "format": "date-time", "example": "2025-03-08 10:05:13" },
           "creator": { "$ref": "#/components/schemas/User" },
@@ -1021,7 +1020,7 @@
           "user": { "$ref": "#/components/schemas/User" },
           "color": {"type": "string", "example": "#F4511E" },
           "role": { "type": "string", "enum": ["owner", "member", "viewer"], "example": "owner" },
-          "isConfirmed": { "type": "boolean", "example": false },
+          "isConfirmed": { "type": "boolean", "example": true },
           "creationAt": { "type": "string", "format": "date-time", "example": "2025-03-08 10:05:13" }
         }
       },
@@ -1035,9 +1034,7 @@
             "items": {
               "properties": {
                 "userId": {"type": "integer", "example": "2"},
-                "color": { "type": "string", "example": "#F4511E" },
-                "role": { "type": "string", "enum": ["owner", "member", "viewer"], "example": "member" },
-                "isConfirmed": { "type": "boolean", "example": false }
+                "role": { "type": "string", "enum": ["owner", "member", "viewer"], "example": "member" }
               }
             }
           }
@@ -1054,9 +1051,7 @@
             "items": {
               "properties": {
                 "userId": { "type": "integer", "example": "2" },
-                "color": { "type": "string", "example": "#F4511E" },
-                "role": { "type": "string", "enum": ["owner", "member", "viewer"], "example": "member" },
-                "isConfirmed": { "type": "boolean", "example": false }
+                "role": { "type": "string", "enum": ["owner", "member", "viewer"], "example": "member" }
               }
             }
           }
@@ -1091,7 +1086,6 @@
           "description": { "type": "string", "example": "Discussion of requirements, business logic, clarification of team composition" },
           "category": { "type": "string", "enum": ["work", "home", "hobby"], "example": "work" },
           "type": { "type": "string", "enum": ["meeting", "reminder", "task"], "example": "meeting" },
-          "color": {"type": "string", "example": "#F4511E" },
           "notifyBeforeMinutes": { "type": "integer", "enum": ["10", "30", "60", "1440"], "example": "30" },
           "startAt": { "type": "string", "format": "date-time", "example": "2023-03-09 14:00:00" },
           "endAt": { "type": "string", "format": "date-time", "example": "2023-03-09 15:00:00" },
