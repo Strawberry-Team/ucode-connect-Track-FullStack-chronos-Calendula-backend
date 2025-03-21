@@ -132,17 +132,7 @@ class EventModel extends Model {
             });
             await event.save();
 
-            const eventUser = (new EventUserModel()).createEntity({
-                eventId: event.id,
-                userId: user.id,
-            });
-            await eventUser.save();
-
-            const calendarEvent = (new CalendarEventModel()).createEntity({
-                eventId: event.id,
-                calendarId: calendar.id,
-            });
-            await calendarEvent.save();
+            await this.syncEventParticipants(event.id, [{ userId: user.id }]);
 
             events.push(event);
 
