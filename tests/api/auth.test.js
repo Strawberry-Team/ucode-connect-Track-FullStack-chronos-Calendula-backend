@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import dotenv from 'dotenv';
 import { HEADERS, expectResponseHeaders } from "./helpers/general.helpers.js";
 import { registerUser, confirmUserEmail, loginUser, generateUserData } from "./helpers/users.helpers.js";
-import UserModel from "./../../src/user/model.js";
+import UserModel from "../../src/user/user-model.js";
 
 dotenv.config({ path: '.env.test', debug: true });
 

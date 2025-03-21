@@ -1,5 +1,5 @@
 import {test} from '@playwright/test';
-import UserModel from "../../src/user/model.js";
+import UserModel from "../../src/user/user-model.js";
 import dotenv from "dotenv";
 import {confirmUserEmail, loginUser, registerUser} from "../api/helpers/users.helpers.js";
 import {generateUser, NUMBER_OF_USERS, NUMBER_OF_USERS_BY_GENDER} from "./helpers/fake.users.helpers.js";

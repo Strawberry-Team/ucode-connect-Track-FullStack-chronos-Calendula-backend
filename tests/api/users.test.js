@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import { generateHeaders } from "./helpers/general.helpers.js";
 import { createAndLoginUser, generateUserData, expectUserResponse, expectAllUsersResponse }
         from "./helpers/users.helpers.js";
-import UserModel from "../../src/user/model.js";
+import UserModel from "../../src/user/user-model.js";
 
 dotenv.config({ path: '.env.test', debug: true });
 

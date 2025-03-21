@@ -1,11 +1,11 @@
 import Controller from "../controller.js";
-import UserModel from "./model.js";
+import UserModel from "./user-model.js";
 import { body } from "express-validator";
 import {differenceInYears, isValid, parse} from 'date-fns';
-import Where from "../sql/where.js";
-import CalendarModel from "../calendar/model.js";
-import CalendarEventModel from "../calendar/event/model.js";
-import EventModel from "../event/model.js";
+import Where from "../db/sql/where.js";
+import CalendarModel from "../calendar/calendar-model.js";
+import CalendarEventModel from "../calendar/event/calendar-event-model.js";
+import EventModel from "../event/event-model.js";
 
 /**
  * @property {UserModel} model

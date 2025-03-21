@@ -1,6 +1,6 @@
 import Model from "../../model.js";
-import CalendarEventEntity from "./entity.js";
-import Where from "../../sql/where.js";
+import CalendarEventEntity from "./calendar-event-entity.js";
+import Where from "../../db/sql/where.js";
 
 class CalendarEventModel extends Model {
     constructor() {

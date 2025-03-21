@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import UserModel from "../../../src/user/model.js";
+import UserModel from "../../../src/user/user-model.js";
 
 export const HEADERS = { 'Content-Type': 'application/json' };
 

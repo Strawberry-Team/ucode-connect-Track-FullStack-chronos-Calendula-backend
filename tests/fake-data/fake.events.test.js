@@ -5,9 +5,9 @@ import { expectResponseHeaders, generateHeaders } from "../api/helpers/general.h
 import { NUMBER_OF_USERS, USER_PASSWORD, generateUserAccessToken } from "./helpers/fake.users.helpers.js";
 import { EVENT_ATTENDANCE_STATUSES, EVENT_CATEGORIES, EVENT_TYPES, generateEvent, generateEventParticipant, TIME_INTERVAL }
         from "./helpers/fake.events.helpers.js";
-import UserModel from "../../src/user/model.js";
-import CalendarModel from "../../src/calendar/model.js";
-import CalendarUserModel from "../../src/calendar/user/model.js";
+import UserModel from "../../src/user/user-model.js";
+import CalendarModel from "../../src/calendar/calendar-model.js";
+import CalendarUserModel from "../../src/calendar/user/calendar-user-model.js";
 
 dotenv.config({path: '.env.test', debug: true});
 

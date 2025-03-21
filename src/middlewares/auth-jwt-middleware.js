@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-import UserModel from "../../user/model.js";
+import UserModel from "../user/user-model.js";
 
 function invalidCredentials(req, res, message = "Invalid token.") {
     return res.status(401).json({

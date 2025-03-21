@@ -1,6 +1,6 @@
-import dbConnection from './db.js';
+import dbConnection from './db/db.js';
 import Entity from './entity.js';
-import Where from './sql/where.js';
+import Where from './db/sql/where.js';
 
 class Model {
     _dbConnection;

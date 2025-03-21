@@ -1,5 +1,5 @@
 import express from "express";
-import controller from "./controller.js";
+import controller from "./event-controller.js";
 const router = express.Router();
 
 router.get('/',
@@ -15,6 +15,7 @@ router.get('/:id/',
 router.post('/',
     controller.setAccessPolicy.bind(controller),
     controller.validateBody.bind(controller),
+    controller._canCreateEvents.bind(controller),
     controller.create.bind(controller)
 );
 
@@ -37,7 +38,7 @@ router.patch('/:id/color/',
 
 router.patch('/:id/:command/',
     controller.setAccessPolicy.bind(controller),
-    controller.joinOrLeave.bind(controller)
+    controller.joinOrLeaveOrTentative.bind(controller)
 );
 
 export default router;

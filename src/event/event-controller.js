@@ -1,9 +1,9 @@
 import Controller from "../controller.js";
-import EventModel from "./model.js";
+import EventModel from "./event-model.js";
 import { body } from "express-validator";
 import * as mailer from "../services/mailer/mailer-service.js";
-import CalendarModel from "../calendar/model.js";
-import EventUserModel from "./user/model.js";
+import CalendarModel from "../calendar/calendar-model.js";
+import EventUserModel from "./user/event-user-model.js";
 
 /**
  * @property {EventModel} _model

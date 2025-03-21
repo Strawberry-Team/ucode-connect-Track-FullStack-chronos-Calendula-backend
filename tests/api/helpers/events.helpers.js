@@ -3,7 +3,7 @@ import { expect } from "@playwright/test";
 import { format } from 'date-fns';
 import { expectResponseHeaders } from "./general.helpers.js";
 import { createAndSaveUserData } from "./users.helpers.js";
-import CalendarModel from "../../../src/calendar/model.js";
+import CalendarModel from "../../../src/calendar/calendar-model.js";
 
 export function generateEventTitle() {
     return faker.lorem.sentence({ min: 1, max: 5 });
