@@ -1,7 +1,7 @@
 import Controller from "../controller.js";
 import EventModel from "./model.js";
 import { body } from "express-validator";
-import * as mailer from "../services/mailer/service.js";
+import * as mailer from "../services/mailer/mailer-service.js";
 import CalendarModel from "../calendar/model.js";
 import EventUserModel from "./user/model.js";
 

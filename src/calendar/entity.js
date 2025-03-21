@@ -46,7 +46,7 @@ class CalendarEntity extends Entity {
      * @return {string} A formatted string representing the calendar creator's full name.
      */
     getFormattedCreatorFullName() {
-        return `👤 ${this.creator.fullName}`;
+        return `${this.creator.fullName}`;
     }
 }
 

@@ -103,7 +103,7 @@ class EventEntity extends Entity {
      * @return {string} A formatted string representing the event creator's full name.
      */
     getFormattedCreatorFullName() {
-        return `👤 ${this.creator.fullName}`;
+        return `${this.creator.fullName}`;
     }
 }
 

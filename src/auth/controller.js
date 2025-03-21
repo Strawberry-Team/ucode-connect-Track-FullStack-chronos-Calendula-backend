@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import * as argon2 from "argon2";
 import UserController from "../user/controller.js";
-import * as mailer from "../services/mailer/service.js";
+import * as mailer from "../services/mailer/mailer-service.js";
 
 class AuthController extends UserController {
     constructor() {

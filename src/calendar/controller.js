@@ -3,7 +3,7 @@ import CalendarModel from "./model.js";
 import { body } from "express-validator";
 import CalendarUserModel from "./user/model.js";
 import UserModel from "../user/model.js";
-import * as mailer from "../services/mailer/service.js";
+import * as mailer from "../services/mailer/mailer-service.js";
 import Where from "../sql/where.js";
 
 

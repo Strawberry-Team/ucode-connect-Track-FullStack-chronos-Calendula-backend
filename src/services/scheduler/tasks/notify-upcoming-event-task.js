@@ -1,5 +1,5 @@
 import EventModel from '../../../event/model.js';
-import * as mailer from "../../mailer/service.js";
+import * as mailer from "../../mailer/mailer-service.js";
 import CalendarUserModel from "../../../calendar/user/model.js";
 
 

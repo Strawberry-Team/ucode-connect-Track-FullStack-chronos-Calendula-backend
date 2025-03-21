@@ -164,7 +164,7 @@
         <div class="content">
             <p class="greeting">👋 Hi, <%= userFullName %>!</p>
             <p class="message">
-                You’ve been invited to the upcoming event. Here are the details:
+                <strong><%= creator %></strong> invited you to the upcoming event. Here are the details:
             </p>
             <div class="event-details">
                 <p><strong><%= title %></strong></p>
@@ -177,7 +177,6 @@
                         <span><%= calendar %></span>
                     </code>
                 </p>
-                <p><%= creator %></p>
             </div>
             <p class="message">
                 🤝 Let us know if you’ll be joining us.
