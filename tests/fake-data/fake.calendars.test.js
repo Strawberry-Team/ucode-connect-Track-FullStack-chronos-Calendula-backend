@@ -5,7 +5,7 @@ import { expectResponseHeaders, generateHeaders} from "../api/helpers/general.he
 import { NUMBER_OF_SHARED_CALENDARS, CALENDAR_TYPES, generateCalendar, generateSharedCalendarParticipant }
         from "./helpers/fake.calendars.helpers.js";
 import { USER_PASSWORD, generateUserAccessToken } from "./helpers/fake.users.helpers.js";
-import UserModel from "../../src/user/model.js";
+import UserModel from "../../src/user/user-model.js";
 
 dotenv.config({path: '.env.test', debug: true});
 

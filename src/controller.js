@@ -2,9 +2,9 @@ import express from "express";
 import { body, validationResult } from "express-validator";
 import Model from "./model.js";
 import Entity from "./entity.js";
-import Where from './sql/where.js';
-import AccessPolicy from './access/policy.js';
-import AccessOperation from './access/operation.js';
+import Where from './db/sql/where.js';
+import AccessPolicy from './access-control/policy.js';
+import AccessOperation from './access-control/operation.js';
 
 class Controller {
     /**

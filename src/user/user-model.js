@@ -1,6 +1,6 @@
 import Model from "../model.js";
-import UserEntity from "./entity.js";
-import Where from "../sql/where.js";
+import UserEntity from "./user-entity.js";
+import Where from "../db/sql/where.js";
 import * as argon2 from "argon2";
 import jwt from 'jsonwebtoken';
 

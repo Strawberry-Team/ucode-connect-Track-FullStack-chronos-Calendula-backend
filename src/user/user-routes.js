@@ -1,6 +1,6 @@
 import express from "express";
-import UserController from "./controller.js";
-import uploadMiddleware from "./middlewares/profilePictureUploader.js";
+import UserController from "./user-controller.js";
+import uploadMiddleware from "../middlewares/profile-picture-uploader-middleware.js";
 const router = express.Router();
 const controller = new UserController();
 

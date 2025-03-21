@@ -1,5 +1,5 @@
 import Entity from "../../entity.js";
-import UserModel from "../../user/model.js";
+import UserModel from "../../user/user-model.js";
 
 class CalendarEventEntity extends Entity {
     /**

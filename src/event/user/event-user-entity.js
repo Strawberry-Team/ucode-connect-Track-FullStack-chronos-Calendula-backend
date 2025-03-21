@@ -1,9 +1,10 @@
 import Entity from "../../entity.js";
-import UserModel from "../../user/model.js";
+import UserModel from "../../user/user-model.js";
+import Where from "../../db/sql/where.js";
 
-class CalendarUserEntity extends Entity {
+class EventUserEntity extends Entity {
     /**
-     * @param {CalendarUserModel} model
+     * @param {EventUserModel} model
      * @param {Object} data
      */
     constructor(model, data = {}) {
@@ -19,4 +20,4 @@ class CalendarUserEntity extends Entity {
     }
 }
 
-export default CalendarUserEntity;
+export default EventUserEntity;

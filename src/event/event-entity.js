@@ -1,6 +1,6 @@
 import Entity from "../entity.js";
-import UserModel from "../user/model.js";
-import CalendarModel from "../calendar/model.js";
+import UserModel from "../user/user-model.js";
+import CalendarModel from "../calendar/calendar-model.js";
 import {format, isSameDay, parse} from "date-fns";
 
 class EventEntity extends Entity {

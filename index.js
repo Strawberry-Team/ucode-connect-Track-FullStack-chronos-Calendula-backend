@@ -42,11 +42,11 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-import * as jwtMiddleware from './src/auth/middlewares/jwt.js';
-import userRouter from './src/user/routes.js';
-import authRoutes from './src/auth/routes.js';
-import calendarRoutes from './src/calendar/routes.js';
-import eventRoutes from './src/event/routes.js';
+import * as jwtMiddleware from './src/middlewares/auth-jwt-middleware.js';
+import userRouter from './src/user/user-routes.js';
+import authRoutes from './src/auth/auth-routes.js';
+import calendarRoutes from './src/calendar/calendar-routes.js';
+import eventRoutes from './src/event/event-routes.js';
 
 const app = express();
 const PORT = 8080;

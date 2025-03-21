@@ -1,6 +1,6 @@
-import EventModel from '../../../event/model.js';
-import * as mailer from "../../mailer/mailer-service.js";
-import CalendarUserModel from "../../../calendar/user/model.js";
+import EventModel from '../../../../event/event-model.js';
+import * as mailer from "../../../mailer/mailer-service.js";
+import CalendarUserModel from "../../../../calendar/user/calendar-user-model.js";
 
 
 export async function notifyUpcomingEventTask() {

@@ -1,4 +1,4 @@
-import Where from './../sql/where.js';
+import Where from '../db/sql/where.js';
 
 class AccessOperation {
     /**

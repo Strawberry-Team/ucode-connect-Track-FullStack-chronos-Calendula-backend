@@ -1,6 +1,6 @@
 import AccessOperation from "./operation.js";
-import Where from "../sql/where.js";
-import UserEntity from "../user/entity.js";
+import Where from "../db/sql/where.js";
+import UserEntity from "../user/user-entity.js";
 
 class AccessPolicy {
     #model;

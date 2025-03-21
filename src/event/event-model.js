@@ -1,10 +1,10 @@
 import Model from "../model.js";
-import EventEntity from "./entity.js";
-import UserModel from "../user/model.js";
-import Where from "../sql/where.js";
-import EventUserModel from "./user/model.js";
-import CalendarModel from "../calendar/model.js";
-import CalendarEventModel from "../calendar/event/model.js";
+import EventEntity from "./event-entity.js";
+import UserModel from "../user/user-model.js";
+import Where from "../db/sql/where.js";
+import EventUserModel from "./user/event-user-model.js";
+import CalendarModel from "../calendar/calendar-model.js";
+import CalendarEventModel from "../calendar/event/calendar-event-model.js";
 import { addYears, differenceInCalendarDays, isBefore, parse, set } from "date-fns";
 
 const END_OF_CALENDARS = new Date(2026, 11, 31, 23, 59, 59, 0);

@@ -1,10 +1,10 @@
 import Model from "../../model.js";
-import EventUserEntity from "./entity.js";
-import Where from "../../sql/where.js";
-import UserModel from "../../user/model.js";
-import EventModel from "../model.js";
-import CalendarModel from "../../calendar/model.js";
-import CalendarUserModel from "../../calendar/user/model.js";
+import EventUserEntity from "./event-user-entity.js";
+import Where from "../../db/sql/where.js";
+import UserModel from "../../user/user-model.js";
+import EventModel from "../event-model.js";
+import CalendarModel from "../../calendar/calendar-model.js";
+import CalendarUserModel from "../../calendar/user/calendar-user-model.js";
 
 class EventUserModel extends Model {
     constructor() {

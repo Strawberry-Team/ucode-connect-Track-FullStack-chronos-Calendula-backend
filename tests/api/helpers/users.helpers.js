@@ -2,7 +2,7 @@ import { expect } from '@playwright/test';
 import { faker } from "@faker-js/faker/locale/en";
 import { formatDate } from "date-fns";
 import { HEADERS, expectResponseHeaders } from "./general.helpers.js";
-import UserModel from "../../../src/user/model.js";
+import UserModel from "../../../src/user/user-model.js";
 
 const userModel = new UserModel();
 

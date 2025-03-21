@@ -1,10 +1,10 @@
 import Controller from "../controller.js";
-import CalendarModel from "./model.js";
+import CalendarModel from "./calendar-model.js";
 import { body } from "express-validator";
-import CalendarUserModel from "./user/model.js";
-import UserModel from "../user/model.js";
+import CalendarUserModel from "./user/calendar-user-model.js";
+import UserModel from "../user/user-model.js";
 import * as mailer from "../services/mailer/mailer-service.js";
-import Where from "../sql/where.js";
+import Where from "../db/sql/where.js";
 
 
 class CalendarController extends Controller {
@@ -83,7 +83,7 @@ class CalendarController extends Controller {
             if (!currentUserAsParticipants.find(p => p.calendarId === Number(req.params.id))) {
                 return this._returnAccessDenied(
                     res, 403, {},
-                    "Unable to access a calendar without an invitation."
+                    "Unable to access-control a calendar without an invitation."
                 );
             }
 
