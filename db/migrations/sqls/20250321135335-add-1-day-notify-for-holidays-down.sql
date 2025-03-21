@@ -1,0 +1,1 @@
+UPDATE `events` SET `notifyBeforeMinutes` = 10 WHERE `calendarId` IN (2, 3, 4);
