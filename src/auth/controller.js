@@ -201,6 +201,13 @@ class AuthController extends UserController {
                 return this._returnNotFound(res);
             }
 
+            if (!user.isVerified) {
+                return this._returnResponse(
+                    res, 400, {},
+                    "Please confirm your email"
+                );
+            }
+
             user.passwordResetToken = await this.model.createToken(
                 { userEmail: user.email },
                 '1d'
@@ -249,6 +256,13 @@ class AuthController extends UserController {
 
                 if (!user) {
                     return this._returnNotFound(res);
+                }
+
+                if (!user.isVerified) {
+                    return this._returnResponse(
+                        res, 400, {},
+                        "Please confirm your email"
+                    );
                 }
 
                 user.password = await this.model.createPassword(req.body.password);
