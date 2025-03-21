@@ -84,7 +84,7 @@ class CalendarUserModel extends Model {
                 calendarId,
                 participant.userId,
                 participant.role,
-                participant.role === 'owner'
+                true
             );
         }
     }

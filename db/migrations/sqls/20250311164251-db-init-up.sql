@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `calendars_users` (
     `color` VARCHAR(10) DEFAULT '',
     `role` ENUM ('owner', 'editor', 'viewer') DEFAULT 'viewer' NOT NULL,
     `isMain` BOOLEAN DEFAULT FALSE,
-    `isConfirmed` BOOLEAN DEFAULT FALSE,
+    `isConfirmed` BOOLEAN DEFAULT TRUE,
     `creationAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     UNIQUE KEY `user_calendar` (`calendarId`, `userId`),

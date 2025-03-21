@@ -165,7 +165,7 @@ class CalendarController extends Controller {
                 userId: req?.user.id,
                 color: req?.user.color,
                 role: 'owner',
-                isConfirmed: req?.user.isConfirmed,
+                isConfirmed: true,
             });
         } else {
             participants = [
@@ -173,7 +173,7 @@ class CalendarController extends Controller {
                     userId: req?.user.id,
                     color: req?.user.color,
                     role: 'owner',
-                    isConfirmed: req?.user.isConfirmed,
+                    isConfirmed: true,
                 }
             ];
         }
@@ -206,7 +206,6 @@ class CalendarController extends Controller {
                 data: calendar.toJSON(),
             });
 
-            console.log(">>>calendar.participants", calendar.participants);
             for (const participant of calendar.participants) {
                 if (participant.userId === calendar.creationByUserId) {
                     continue;
