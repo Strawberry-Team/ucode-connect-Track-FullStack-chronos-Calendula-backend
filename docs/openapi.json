@@ -926,6 +926,7 @@
           "fullName": { "type": "string", "example": "Ann Nichols" },
           "email": { "type": "string", "format": "email", "example": "ann.nichols@calendula.ua" },
           "profilePicture": { "type": "string", "example": "default.png" },
+          "birthday": { "type": "string", "format": "date", "example": "1990-01-01" },
           "country": { "type": "string", "enum": ["Ukraine", "Finland", "Estonia"], "example": "Ukraine" },
           "role": { "type": "string", "enum": ["admin", "user"], "example": "user" },
           "isVerified": { "type": "boolean", "example": true },
@@ -937,11 +938,12 @@
         "properties": {
           "email": { "type": "string", "format": "email", "example": "ann.nichols@calendula.ua" },
           "fullName": { "type": "string", "example": "Ann Nichols" },
+          "birthday": { "type": "string", "format": "date", "example": "1990-01-01" },
           "country": { "type": "string", "enum": ["Ukraine", "Finland", "Estonia"], "example": "Ukraine" },
           "password": { "type": "string", "example": "Password123!$" },
           "password_confirm": { "type": "string", "example": "Password123!$" }
         },
-        "required": ["email", "fullName", "country", "password", "password_confirm"]
+        "required": ["email", "fullName", "country", "birthday", "password", "password_confirm"]
       },
       "LoginUser": {
         "type": "object",
@@ -963,6 +965,7 @@
               "fullName": { "type": "string", "example": "Ann Nichols" },
               "email": { "type": "string", "format": "email", "example": "ann.nichols@calendula.ua" },
               "profilePicture": { "type": "string", "example": "default.png" },
+              "birthday": { "type": "string", "format": "date", "example": "1990-01-01" },
               "country": { "type": "string", "enum": ["Ukraine", "Finland", "Estonia"], "example": "Ukraine" },
               "role": { "type": "string", "enum": [ "user", "admin" ], "example": "user" },
               "isVerified": { "type": "boolean", "example": true },
@@ -977,6 +980,7 @@
           "email": { "type": "string", "format": "email", "example": "ann.nichols@calendula.ua" },
           "fullName": { "type": "string", "example": "Ann Nichols" },
           "role": { "type": "string", "enum": ["user", "admin"], "example": "user" },
+          "birthday": { "type": "string", "format": "date", "example": "1990-01-01" },
           "country": { "type": "string", "enum": ["Ukraine", "Finland", "Estonia"], "example": "Ukraine" },
           "password": { "type": "string", "example": "Password123!$" },
           "password_confirm": { "type": "string", "example": "Password123!$" }
@@ -997,7 +1001,7 @@
           "id": {"type": "integer", "example": "1"},
           "title": { "type": "string", "example": "Calendula Dev Team" },
           "description": { "type": "string", "example": "Stand-ups, retrospectives, planning sprints and product demos" },
-          "type": { "type": "string", "enum": ["main", "shared", "holidays"], "example": "shared" },
+          "type": { "type": "string", "enum": ["main", "shared", "holidays", "birthdays"], "example": "shared" },
           "creationByUserId": {"type": "integer", "example": "1"},
           "creationAt": { "type": "string", "format": "date-time", "example": "2025-03-08 10:05:13" },
           "creator": { "$ref": "#/components/schemas/User" },
@@ -1101,7 +1105,7 @@
               "id": {"type": "integer", "example": "1"},
               "title": { "type": "string", "example": "Calendula Dev Team" },
               "description": { "type": "string", "example": "Stand-ups, retrospectives, planning sprints and product demos" },
-              "type": { "type": "string", "enum": ["main", "shared", "holidays"], "example": "shared" },
+              "type": { "type": "string", "enum": ["main", "shared", "holidays", "birthdays"], "example": "shared" },
               "creationByUserId": {"type": "integer", "example": "1"},
               "creationAt": { "type": "string", "format": "date-time", "example": "2025-03-08 10:05:13" }
             }

@@ -15,6 +15,7 @@ class UserModel extends Model {
                 'email',
                 'profilePicture',
                 'country',
+                'birthday',
                 'role',
                 'isVerified',
                 'confirmToken',

@@ -165,6 +165,7 @@ class EventController extends Controller {
     async create(req, res, next) {
         try {
             const fields = this._prepareFields(req);
+
             if (this.model._fields.includes(this.model._creationByRelationFieldName)) {
                 fields[this.model._creationByRelationFieldName] = req.user.id;
             }

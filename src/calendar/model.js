@@ -51,17 +51,6 @@ class CalendarModel extends Model {
     }
 
     /**
-     *
-     * @param {string} type
-     * @returns {Promise<Entity[]|Entity>}
-     */
-    async getCalendarsByType(type) {
-        return await super.getEntities([], [
-            new Where('type', '=', type)
-        ]);
-    }
-
-    /**
      * @param {number} userId
      * @return {Promise<CalendarEntity>}
      */
@@ -113,6 +102,18 @@ class CalendarModel extends Model {
         );
     }
 
+    /**
+     * @return {Promise<CalendarEntity|null>}
+     */
+    async getBirthdayCalendar() {
+        return this.getEntities([], [
+                new Where('type', '=', 'birthdays')
+            ],
+            'id',
+            1
+        );
+    }
+
     async getEventsByCalendarId(calendarId) {
         const relatedEvents = await (new CalendarEventModel()).getEntities([], [
             new Where('calendarId', '=', calendarId)
@@ -137,16 +138,45 @@ class CalendarModel extends Model {
             throw new Error('User not found');
         }
 
-        let calendarId = { 'Ukraine': 2, 'Finland': 3, 'Estonia': 4 }[user.country] || 0;
+        const holidaysCalendars = await this.getCalendarsByType('holidays');
 
-        const calendar = await this.getEntityById(calendarId);
+        const calendar = {
+            'Ukraine': holidaysCalendars.find(calendar => calendar.title.includes('Ukraine')),
+            'Finland': holidaysCalendars.find(calendar => calendar.title.includes('Finland')),
+            'Estonia': holidaysCalendars.find(calendar => calendar.title.includes('Estonia'))
+        }[user.country];
 
         if (!calendar) {
-            throw new Error('Calendar not found');
+            throw new Error('Holidays Calendar not found');
         }
 
         await (new CalendarUserModel()).addParticipant(
-            calendarId,
+            calendar.id,
+            userId,
+            'viewer',
+            true
+        )
+    }
+
+    /**
+     * @param {number} userId
+     * @return {Promise<void>}
+     */
+    async addUserToBirthdayCalendar(userId) {
+        const user = await (new UserModel()).getEntityById(userId);
+
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        const calendar = await this.getBirthdayCalendar();
+
+        if (!calendar) {
+            throw new Error('Birthday calendar not found');
+        }
+
+        await (new CalendarUserModel()).addParticipant(
+            calendar.id,
             userId,
             'viewer',
             true

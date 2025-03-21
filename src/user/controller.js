@@ -1,8 +1,11 @@
 import Controller from "../controller.js";
 import UserModel from "./model.js";
 import { body } from "express-validator";
+import {differenceInYears, isValid, parse} from 'date-fns';
 import Where from "../sql/where.js";
 import CalendarModel from "../calendar/model.js";
+import CalendarEventModel from "../calendar/event/model.js";
+import EventModel from "../event/model.js";
 
 /**
  * @property {UserModel} model
@@ -23,6 +26,29 @@ class UserController extends Controller {
                 .notEmpty().withMessage('Country is required.')
                 .isIn(['Ukraine', 'Finland', 'Estonia'])
                 .withMessage('Allowed countries: Ukraine, Finland, Estonia.'),
+
+            body('birthday')
+                .optional() // todo змінити на required
+                .custom((value, {req}) => {
+                    const birthday = parse(value, 'yyyy-MM-dd', new Date());
+
+                    if (!isValid(birthday)) {
+                        throw new Error('Invalid date format for birthday. Please use yyyy-MM-dd format.');
+                    }
+
+                    const today = new Date();
+                    const age = differenceInYears(today, birthday);
+
+                    if (age < 18) {
+                        throw new Error('Age must be at least 18 years old.');
+                    }
+
+                    if (age > 80) {
+                        throw new Error('Age cannot exceed 80 years.');
+                    }
+
+                    return true;
+                }),
 
             body('password')
                 .optional()
@@ -62,12 +88,17 @@ class UserController extends Controller {
                     return true;
                 })];
 
-        this._accessPolicies.admin.setUpdate(this.model._fields.filter(field => !['email'].includes(field)));
+        this._accessPolicies.admin
+            .setUpdate(this.model._fields.filter(
+                field => !['email'].includes(field)
+            ));
 
         this._accessPolicies.user
             .removeCreate()
             .setRead([], [])
-            .setUpdate(this.model._fields.filter(field => !['email', 'isVerified', 'role', 'creationAt'].includes(field)), [{
+            .setUpdate(this.model._fields.filter(
+                field => !['email', 'birthday', 'isVerified', 'role', 'creationAt'].includes(field)
+            ), [{
                 field: 'id', operator: '=', value: null
             }])
             .removeDelete();
@@ -146,8 +177,11 @@ class UserController extends Controller {
             const newUser = this.model.createEntity(fields);
             await newUser.save();
 
-            await (new CalendarModel()).createMainCalendar(newUser.id);
-            await (new CalendarModel()).addUserToHolidaysCalendar(newUser.id);
+            const calendarModel = new CalendarModel();
+            await calendarModel.createMainCalendar(newUser.id);
+            await calendarModel.addUserToHolidaysCalendar(newUser.id);
+            await calendarModel.addUserToBirthdayCalendar(newUser.id);
+            await (new EventModel()).createBirthdayEvents(newUser.id);
 
             req.confirmToken = newUser?.confirmToken;
             req.newUser = newUser.toJSON();

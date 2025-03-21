@@ -101,6 +101,7 @@ test.describe('Authentication', () => {
                 id: userData.id,
                 fullName: userData.fullName,
                 email: userData.email,
+                birthday: userData.birthday,
                 country: userData.country,
                 profilePicture: userData.profilePicture,
                 isVerified: userData.isVerified,

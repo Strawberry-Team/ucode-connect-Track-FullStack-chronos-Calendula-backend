@@ -12,8 +12,19 @@ const connection = mysql.createPool({
     waitForConnections: true,
     queueLimit: 0,
     typeCast: function (field, next) {
+        if (field.type === 'DATE') {
+            const val = field.string();
+
+            if (val === null) return null;
+
+            const d = new Date(val);
+
+            return `${d.getFullYear()}-${padZero(d.getMonth() + 1)}-${padZero(d.getDate())}`;
+        }
+
         if (field.type === 'DATETIME' || field.type === 'TIMESTAMP') {
             const val = field.string();
+
             if (val === null) return null;
 
             const d = new Date(val);
@@ -23,6 +34,7 @@ const connection = mysql.createPool({
 
         if (field.type === 'TINY' && field.length === 1) {
             const val = field.string();
+
             return val === null ? null : val === '1';
         }
 
@@ -31,16 +43,18 @@ const connection = mysql.createPool({
 });
 
 const originalQuery = connection.query;
+
 connection.query = async function (...args) {
-    if (process.env.DATABASE_LOGS === 'true') {
-        const formattedQuery = args[0]
-            .replace(/\s+/g, ' ')
-            .trim();
-        console.log('Executing SQL:', formattedQuery, args[1] ? '' : '\n');
-        if (args[1]) {
-            console.log('With values:', args[1], '\n');
-        }
+    const formattedQuery = args[0]
+        .replace(/\s+/g, ' ')
+        .trim();
+    console.log('Executing SQL:', formattedQuery, args[1] ? '' : '\n');
+
+    if (args[1]) {
+        console.log('With values:', args[1], '\n');
     }
+
     return originalQuery.apply(this, args);
 };
+
 export default connection;
