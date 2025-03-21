@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test';
 import { faker } from "@faker-js/faker/locale/en";
+import { formatDate } from "date-fns";
 import { HEADERS, expectResponseHeaders } from "./general.helpers.js";
 import UserModel from "../../../src/user/model.js";
 
@@ -28,6 +29,16 @@ export function generateCountry() {
     return faker.helpers.arrayElement(['Ukraine', 'Finland', 'Estonia']);
 }
 
+export function generateBirthday(){
+    const today = new Date();
+    const birthday = faker.date.between({
+        from: new Date(today).setFullYear(today.getFullYear() - 50),
+        to: new Date(today).setFullYear(today.getFullYear() - 18)
+    });
+
+    return formatDate(birthday, 'yyyy-MM-dd');
+}
+
 export function generatePassword() {
     return 'Password123!$';
 }
@@ -42,6 +53,7 @@ export function generateUserData(base = {}, overrides = {}) {
         id: undefined,
         email: generateEmail(name.firstName, name.lastName),
         fullName: name.fullName,
+        birthday: generateBirthday(),
         country: generateCountry(),
         password: generatePassword(),
         password_confirm: generatePassword(),
@@ -68,6 +80,7 @@ export async function registerUser(request, userData) {
         data: {
             email: userData.email,
             fullName: userData.fullName,
+            birthday: userData.birthday,
             country: userData.country,
             password: userData.password,
             password_confirm: userData.password_confirm
@@ -81,6 +94,7 @@ export async function registerUser(request, userData) {
             id: expect.any(Number),
             fullName: userData.fullName,
             email: userData.email,
+            birthday: userData.birthday,
             country: userData.country,
         }
     });
@@ -90,6 +104,7 @@ export async function registerUser(request, userData) {
         id: expect.any(Number),
         fullName: userData.fullName,
         email: userData.email,
+        birthday: userData.birthday,
         country: userData.country,
         confirmToken: expect.any(String)
     });
@@ -117,6 +132,7 @@ export async function confirmUserEmail(request, userData) {
         id: userData.id,
         fullName: userData.fullName,
         email: userData.email,
+        birthday: userData.birthday,
         country: userData.country,
         isVerified: true
     });
@@ -145,6 +161,7 @@ export async function loginUser(request, userData) {
             fullName: userData.fullName,
             email: userData.email,
             profilePicture: expect.any(String),
+            birthday: userData.birthday,
             country: userData.country,
             role: 'user',
             isVerified: true,
@@ -169,6 +186,7 @@ export function expectUserDataToMatch(expected, actual) {
         fullName: expected.fullName,
         email: expected.email,
         profilePicture: expected.profilePicture,
+        birthday: expected.birthday,
         country: expected.country,
         role: expected.role,
         isVerified: expected.isVerified,

@@ -55,6 +55,7 @@ class AuthController extends UserController {
      */
     async create(req, res, next) {
         const parentResponse = await super.create(req, res, next);
+
         if (!req.user && parentResponse?.statusCode === 201) {
             mailer.sendConfirm(
                 parentResponse.req?.newUser?.email,

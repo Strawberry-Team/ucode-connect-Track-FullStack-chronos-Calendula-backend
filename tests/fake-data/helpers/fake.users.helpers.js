@@ -1,5 +1,6 @@
 import { faker } from "@faker-js/faker";
 import { expect } from "@playwright/test";
+import { formatDate } from "date-fns";
 import { expectResponseHeaders, HEADERS } from "../../api/helpers/general.helpers.js";
 
 export const NUMBER_OF_USERS_BY_GENDER = 5;
@@ -28,6 +29,7 @@ export async function generateUserAccessToken(request, userData) {
             fullName: userData.fullName,
             email: userData.email,
             profilePicture: expect.any(String),
+            birthday: userData.birthday,
             country: userData.country,
             role: 'user',
             isVerified: true,
@@ -35,6 +37,16 @@ export async function generateUserAccessToken(request, userData) {
     });
 
     return responseBody.accessToken;
+}
+
+export function generateBirthday(){
+    const today = new Date();
+    const birthday = faker.date.between({
+        from: new Date(today).setFullYear(today.getFullYear() - 50),
+        to: new Date(today).setFullYear(today.getFullYear() - 18)
+    });
+
+    return formatDate(birthday, 'yyyy-MM-dd');
 }
 
 export function generateUser(gender = 'M', profilePictureNumber = 0, isTestUser = false) {
@@ -56,6 +68,7 @@ export function generateUser(gender = 'M', profilePictureNumber = 0, isTestUser 
         }).replace(/\d+/g, '').toLowerCase();
     user.profilePicture = profilePictureNumber === 0 ? USER_PROFILE_PICTURE : `${sex}_${profilePictureNumber}.png`;
     user.country = faker.helpers.arrayElement(USER_COUNTRIES);
+    user.birthday = generateBirthday();
     user.role = USER_ROLE;
     user.isVerified = 1;
 
