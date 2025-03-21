@@ -317,7 +317,6 @@ class CalendarController extends Controller {
                 return this._returnNotFound(res);
             }
 
-            await calendar.prepareRelationFields();
             const participant = calendar.participants.find(p => p.userId === req.user.id);
 
             if (!participant) {

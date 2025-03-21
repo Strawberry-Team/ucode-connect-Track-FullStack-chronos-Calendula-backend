@@ -178,7 +178,6 @@ class EventController extends Controller {
             await this.model.syncEventParticipants(event.id, this._prepareParticipants(req));
 
             event = await this.model.getEntityById(event.id);
-            await event.prepareRelationFields();
 
             this._notifyParticipants(event).catch(e => console.error(e));
 
@@ -209,7 +208,6 @@ class EventController extends Controller {
             await this.model.syncEventParticipants(event.id, this._prepareParticipants(req));
 
             event = await this.model.getEntityById(event.id);
-            await event.prepareRelationFields();
 
             this._notifyParticipants(event).catch(e => console.error(e));
 
@@ -243,7 +241,6 @@ class EventController extends Controller {
                 return this._returnNotFound(res);
             }
 
-            await event.prepareRelationFields();
             const participant = event.participants.find(p => p.userId === req.user.id);
 
             if (!participant) {
@@ -300,7 +297,6 @@ class EventController extends Controller {
             );
         }
 
-        await calendar.prepareRelationFields();
         if (calendar.participants.find(p => p.userId === req?.user.id && ['owner', 'member'].includes(p.role))) {
             req.calendar = calendar;
             return next();
