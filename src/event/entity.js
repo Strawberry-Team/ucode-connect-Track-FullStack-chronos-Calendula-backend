@@ -43,23 +43,23 @@ class EventEntity extends Entity {
 
         /* Якщо обидві дати співпадають (на весь день, 00:00 до 23:59) */
         if (isSameDay(startDate, endDate) && format(startDate, 'HH:mm:ss') === '00:00:00' && format(endDate, 'HH:mm:ss') === '23:59:59') {
-            return `⏰ ${format(startDate, 'EEE MMM d, yyyy')}`;
+            return `${format(startDate, 'EEE MMM d, yyyy')}`;
         }
 
         /* Якщо обидві дати в один день, але час не на весь день */
         if (isSameDay(startDate, endDate)) {
             const day = format(startDate, 'EEE MMM d, yyyy');
             const timeRange = `${format(startDate, 'HH:mm')} - ${format(endDate, 'HH:mm')}`;
-            return `⏰ ${day} ${timeRange}`;
+            return `${day} ${timeRange}`;
         }
 
         /* Якщо дати охоплюють кілька днів і час на весь день */
         if (format(startDate, 'HH:mm:ss') === '00:00:00' && format(endDate, 'HH:mm:ss') === '23:59:59') {
-            return `⏰ ${format(startDate, 'MMM d')} - ${format(endDate, 'MMM d, yyyy')}`;
+            return `${format(startDate, 'MMM d')} - ${format(endDate, 'MMM d, yyyy')}`;
         }
 
         /* Якщо дати охоплюють кілька днів і час не на весь день */
-        return `⏰ ${format(startDate, 'EEE MMM d HH:mm')} - ${format(endDate, 'EEE MMM d HH:mm, yyyy')}`;
+        return `${format(startDate, 'EEE MMM d HH:mm')} - ${format(endDate, 'EEE MMM d HH:mm, yyyy')}`;
     }
 
     /**

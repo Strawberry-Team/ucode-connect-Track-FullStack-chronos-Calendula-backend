@@ -328,15 +328,16 @@ class CalendarController extends Controller {
             }
 
             if (command === 'join') {
-                if (participant.isConfirmed) {
-                    return this._returnAccessDenied(
-                        res, 400, {},
-                        "Unable to join a calendar already joined."
-                    );
+                // if (participant.isConfirmed) {
+                //     return this._returnAccessDenied(
+                //         res, 400, {},
+                //         "Unable to join a calendar already joined."
+                //     );
+                // }
+                if (!participant.isConfirmed) {
+                    participant.isConfirmed = true;
+                    await participant.save();
                 }
-
-                participant.isConfirmed = true;
-                await participant.save();
             } else if (command === 'leave') {
                 if (participant.role === 'owner') {
                     return this._returnAccessDenied(

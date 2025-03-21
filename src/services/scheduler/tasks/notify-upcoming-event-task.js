@@ -1,5 +1,6 @@
 import EventModel from '../../../event/model.js';
 import * as mailer from "../../mailer/service.js";
+import CalendarUserModel from "../../../calendar/user/model.js";
 
 
 export async function notifyUpcomingEventTask() {
@@ -12,23 +13,30 @@ export async function notifyUpcomingEventTask() {
     console.info(`Event: [${event.id}] ${event.title} ${event.getFormattedEventDate()}`);
 
     console.group();
-    for (const participant of event.participants) {
+
+    let participants = [];
+    console.log(event.calendar);
+    if (['main', 'shared'].includes(event.calendar.type)) {
+        participants = event.participants.filter(p => ['yes', 'maybe'].includes(p.attendanceStatus));
+    } else if (['holidays', 'birthdays'].includes(event.calendar.type)) {
+        participants = await (new CalendarUserModel().getParticipantsByCalendarId(event.calendar.id));
+    }
+
+    for (const participant of participants) {
         console.info(`Participant: [${participant.userId}] ${participant.user.fullName} ${participant.attendanceStatus}`);
-            if (['yes', 'maybe'].includes(participant.attendanceStatus)) {
-                await mailer.sendNotifyAboutUpcomingEvent(
-                    participant.user.email, {
-                        userFullName: participant.user.fullName,
-                        title: event.title,
-                        description: event.title,
-                        type: event.getFormattedType(),
-                        category: event.getFormattedCategory(),
-                        startAt: event.startAt,
-                        calendar: event.getFormattedCalendarTitle(),
-                        date: event.getFormattedEventDate(),
-                        creator: event.getFormattedCreatorFullName(),
-                    }
-                )
-            }
+            await mailer.sendNotifyAboutUpcomingEvent(
+                participant.user.email, {
+                    userFullName: participant.user.fullName,
+                    title: event.title,
+                    description: event.title,
+                    type: event.getFormattedType(),
+                    category: event.getFormattedCategory(),
+                    startAt: event.startAt,
+                    calendar: event.getFormattedCalendarTitle(),
+                    date: event.getFormattedEventDate(),
+                    creator: event.getFormattedCreatorFullName(),
+                }
+            )
         }
     }
     console.groupEnd();

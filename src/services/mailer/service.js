@@ -14,8 +14,8 @@ const __dirname = path.dirname(__filename);
  * @return {Promise<void>}
  */
 async function send(email, subject, htmlTemplate, dataForTemplate) {
-    //TODO: потрібно розуміти, яке це оточення.
     if (process.env.ETHEREAL_MAILER_LOGIN === '') {
+        console.log('Skip mailing! `ETHEREAL_MAILER_LOGIN` is empty.');
         return;
     }
 
