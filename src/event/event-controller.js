@@ -14,6 +14,11 @@ class EventController extends Controller {
      */
     _validationRulesForUpdateColor = [];
 
+    /**
+     * @type {[]}
+     */
+    _validationRulesForUpdateDate = [];
+
     constructor() {
         super(new EventModel(),
             [
@@ -79,12 +84,16 @@ class EventController extends Controller {
                 .matches(/^#[0-9A-Fa-f]{6}$/).withMessage('Color must be in the format #RRGGBB.'),
         ];
 
+        this._validationRulesForUpdateDate = this._validationRules.filter(rule => {
+            return ['startAt', 'endAt'].includes(rule.builder.fields[0])
+        });
+
         const allowedFields = ['title', 'description', 'category', 'type', 'startAt', 'endAt', 'calendarId', 'notifyBeforeMinutes'];
 
         this._accessPolicies.user
             .setCreate(allowedFields)
             .setRead()
-            .setUpdate(allowedFields.filter(field => field !== 'calendarId'), [{
+            .setUpdate(allowedFields.filter(field => !['calendarId', 'type'].includes(field)), [{
                 field: this.model._creationByRelationFieldName, operator: '=', value: null
             }])
             .setDelete(allowedFields, [{
@@ -343,6 +352,41 @@ class EventController extends Controller {
     async validateUpdateColor(req, res, next) {
         return await this.validateBody(req, res, next,
             this._validationRulesForUpdateColor
+        );
+    }
+
+    /**
+     * @param {e.Request} req
+     * @param {e.Response} res
+     * @param {e.NextFunction} next
+     * @return {Promise<e.Response>}
+     */
+    async updateDate(req, res, next) {
+        try {
+            let event = await this._getEntityByIdAndAccessFilter(req);
+            if (!event) {
+                return this._returnNotFound(res);
+            }
+
+            event.starAt = req.body.startAt;
+            event.endAt = req.body.endAt;
+            await event.save();
+
+            return this._returnResponse(res, 200);
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    /**
+     * @param {e.Request} req
+     * @param {e.Response} res
+     * @param {e.NextFunction} next
+     * @return {Promise<e.Response>}
+     */
+    async validateUpdateDate(req, res, next) {
+        return await this.validateBody(req, res, next,
+            this._validationRulesForUpdateDate
         );
     }
 }

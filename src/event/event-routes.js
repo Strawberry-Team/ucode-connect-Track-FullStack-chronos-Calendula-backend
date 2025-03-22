@@ -36,6 +36,12 @@ router.patch('/:id/color/',
     controller.updateColor.bind(controller)
 );
 
+router.patch('/:id/date/',
+    controller.setAccessPolicy.bind(controller),
+    controller.validateUpdateDate.bind(controller),
+    controller.updateDate.bind(controller)
+);
+
 router.patch('/:id/:command/',
     controller.setAccessPolicy.bind(controller),
     controller.joinOrLeaveOrTentative.bind(controller)

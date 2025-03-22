@@ -915,6 +915,50 @@
           }
         }
       }
+    },
+    "/api/events/{event_id}/date/": {
+      "patch": {
+        "summary": "Change event date.",
+        "tags": ["Events"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "example": "1" }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "startAt": { "type": "string", "format": "date-time", "example": "2023-03-09 14:00:00" },
+                  "endAt": { "type": "string", "format": "date-time", "example": "2023-03-09 15:00:00" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful update."
+          },
+          "400": {
+            "description": "Validation failed."
+          },
+          "404": {
+            "description": "Event not found."
+          }
+        }
+      }
     }
   },
   "components": {
