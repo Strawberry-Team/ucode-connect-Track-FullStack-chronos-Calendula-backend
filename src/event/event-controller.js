@@ -368,7 +368,7 @@ class EventController extends Controller {
                 return this._returnNotFound(res);
             }
 
-            event.starAt = req.body.startAt;
+            event.startAt = req.body.startAt;
             event.endAt = req.body.endAt;
             await event.save();
 
