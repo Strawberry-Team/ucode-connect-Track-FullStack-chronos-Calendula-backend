@@ -4,9 +4,9 @@ INSERT INTO `calendars` (id, title, description, creationByUserId, creationAt, t
 
 INSERT INTO `calendars_users` (id, calendarId, userId, color, role, isConfirmed, creationAt) VALUES (1, 1, 1, '', 'owner', 1, '2025-03-15 10:52:49');
 
-INSERT INTO `calendars` (id, title, description, creationByUserId, creationAt, type) VALUES (2, 'Ukraine Holidays', 'Ukraine National Holidays', 1, '2025-03-15 12:21:15', 'holidays');
-INSERT INTO `calendars` (id, title, description, creationByUserId, creationAt, type) VALUES (3, 'Finland Holidays', 'Finland National Holidays', 1, '2025-03-15 12:21:15', 'holidays');
-INSERT INTO `calendars` (id, title, description, creationByUserId, creationAt, type) VALUES (4, 'Estonia Holidays', 'Estonia National Holidays', 1, '2025-03-15 12:21:15', 'holidays');
+INSERT INTO `calendars` (id, title, description, creationByUserId, creationAt, type) VALUES (2, '🇺🇦 Ukraine Holidays', 'Ukraine National Holidays', 1, '2025-03-15 12:21:15', 'holidays');
+INSERT INTO `calendars` (id, title, description, creationByUserId, creationAt, type) VALUES (3, '🇫🇮 Finland Holidays', 'Finland National Holidays', 1, '2025-03-15 12:21:15', 'holidays');
+INSERT INTO `calendars` (id, title, description, creationByUserId, creationAt, type) VALUES (4, '🇪🇪 Estonia Holidays', 'Estonia National Holidays', 1, '2025-03-15 12:21:15', 'holidays');
 
 INSERT INTO `calendars_users` (id, calendarId, userId, color, role, isConfirmed, creationAt) VALUES (2, 2, 1, '', 'owner', 1, '2025-03-15 10:52:49');
 INSERT INTO `calendars_users` (id, calendarId, userId, color, role, isConfirmed, creationAt) VALUES (3, 3, 1, '', 'owner', 1, '2025-03-15 10:52:49');
