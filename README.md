@@ -156,7 +156,7 @@ To view the letter that the user will receive, you need to log in to this servic
 ## REST API documentation
 The documentation of all available endpoints can be found [http://localhost:8080/api-docs/](http://localhost:8080/api-docs/). The [Swagger](https://swagger.io/) library is used.
 
-![swagger.png](docs/swagger.png)
+![swagger.png](docs/swagger_.png)
 
 
 ## API Testing
