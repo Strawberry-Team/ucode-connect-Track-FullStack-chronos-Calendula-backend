@@ -5,14 +5,68 @@ Calendula is a service for managing meetings and tasks within a company.
 You can invite colleagues to participate in the implementation of your tasks and discuss them.
 All participants will be notified of the upcoming event.
 
-## Screenshots of Solution
-
-
 ## Requirements and Dependencies
 Before starting, ensure the required technologies are installed.
 - **Node.JS** >= v22
 - **NPM** >= v10
 - **MySQL** >= 8.0
+
+
+## How to Run the Solution
+1. Clone this repository and move to the project directory.
+   ```bash
+   git clone <repository-url>
+   ```
+2. Install the dependencies.
+   ```bash
+   npm install
+   ```
+3. Configure the database connection by copying [.env.development.example](.env.development.example) to new file `.env.development`. After that put your MySQL credentials.
+   ```
+   # Example
+   DATABASE_HOST=localhost
+   DATABASE_PORT=3306
+   DATABASE_USER=root
+   DATABASE_PASSWORD=root
+   ```
+   For testers, you need to create `.env.test` based on the `.env.test.example` files.
+4. Configure the migrations config by copying [migration_config.json.example](db/migration_config.json.example) to new file `db/migration_config.json`. After that put your MySQL credentials to `dev` part.
+   ```json
+   {
+       "dev": {
+          "driver": "mysql",
+          "host": "localhost",
+          "database": "Calendula",
+          "user": "root",
+          "password": "root",
+          "port": 3306,
+          "multipleStatements": true
+     }
+   }
+   ```
+5. Run migration for create database `Calendula`
+   ```shell
+   npm run migrate:db:create:dev -- Calendula
+   ```
+
+6. Run migration for create tables in database `Calendula`
+   ```shell
+   npm run migrate:up:dev
+   ```
+
+   If you encounter problems, try the command that will delete all tables and create them again.
+   ```shell
+   npm run migrate:refresh:dev
+   ```
+
+7. Start the server.
+   ```bash
+   npm run start:dev
+   ```
+8. In new console you can run task scheduler. It's not necessary.
+   ```bash
+   npm run scheduler:<env>
+   ```
 
 
 ## Database Migration
@@ -91,63 +145,6 @@ Environment variables are taken from `.env.development` file. You can start cont
    ```bash
    docker-compose --env-file .env.development up -d
    ```
-
-## How to Run the Solution
-1. Clone this repository and move to the project directory.
-   ```bash
-   git clone <repository-url>
-   ```
-2. Install the dependencies.
-   ```bash
-   npm install
-   ```
-3. Configure the database connection by copying [.env.development.example](.env.development.example) to new file `.env.development`. After that put your MySQL credentials.
-   ```
-   # Example
-   DATABASE_HOST=localhost
-   DATABASE_PORT=3306
-   DATABASE_USER=root
-   DATABASE_PASSWORD=root
-   ```
-   For testers, you need to create `.env.test` based on the `.env.test.example` files.
-4. Configure the migrations config by copying [migration_config.json.example](db/migration_config.json.example) to new file `db/migration_config.json`. After that put your MySQL credentials to `dev` part.
-   ```json
-   {
-       "dev": {
-          "driver": "mysql",
-          "host": "localhost",
-          "database": "Calendula",
-          "user": "root",
-          "password": "root",
-          "port": 3306,
-          "multipleStatements": true
-     }
-   }
-   ```
-5. Run migration for create database `Calendula`
-   ```shell
-   npm run migrate:db:create:dev -- Calendula
-   ```
-
-6. Run migration for create tables in database `Calendula`
-   ```shell
-   npm run migrate:up:dev
-   ```
-
-If you encounter problems, try the command that will delete all tables and create them again.
-   ```shell
-   npm run migrate:refresh:dev
-   ```
-
-7. Start the server.
-   ```bash
-   npm run start:dev
-   ```
-8. In new console you can run task scheduler. It's not necessary.
-   ```bash
-   npm run scheduler:<env>
-   ```
-
 
 ## Mailing Service
 [Ethereal](https://ethereal.email/) is a fake SMTP service, mostly aimed at Nodemailer and EmailEngine users (but not limited to). It's a completely free anti-transactional email service where messages never get delivered.
