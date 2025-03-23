@@ -23,6 +23,10 @@
     "test:seed:events": "npm run setReportFolder -- npx playwright test --workers=1 tests/fake-data/fake.events.test.js",
     "test:seed": "rimraf playwright-report/* && npm run migrate:refresh:test && (npm run test:seed:users && npm run test:seed:calendars && npm run test:seed:events) && npm run openReport",
 
+    "migrate:db:create:dev": "db-migrate db:create --env dev",
+    "migrate:db:create:test": "db-migrate db:create --env test",
+    "migrate:db:drop:dev": "db-migrate db:drop --env dev",
+    "migrate:db:drop:test": "db-migrate db:drop --env test",
     "migrate:create:dev": "db-migrate create --sql-file --env dev",
     "migrate:create:test": "db-migrate create --sql-file --env test",
     "migrate:up:dev": "db-migrate up --env dev",
