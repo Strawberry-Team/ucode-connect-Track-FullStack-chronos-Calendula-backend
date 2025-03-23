@@ -1,7 +1,9 @@
 # 🌼 Calendula API
 
 ## Short Description
-
+Calendula is a service for managing meetings and tasks within a company.
+You can invite colleagues to participate in the implementation of your tasks and discuss them.
+All participants will be notified of the upcoming event.
 
 ## Screenshots of Solution
 
@@ -11,7 +13,6 @@ Before starting, ensure the required technologies are installed.
 - **Node.JS** >= v22
 - **NPM** >= v10
 - **MySQL** >= 8.0
-
 
 
 ## Database Migration
@@ -31,6 +32,8 @@ DROP DATABASE IF EXISTS Calendula_Test;
 CREATE DATABASE Calendula_Test;
 USE Calendula_Test;
 ```
+Or use commands: `migrate:db:create:<env>` and `migrate:db:drop:<env>`.
+
 In the examples of all commands below in the text `<env>` is the name of the environment to perform the migration, e.g. `dev`, `test` or `prod`.
 
 **To create tables and test data in the database, execute the command:**
@@ -63,6 +66,14 @@ Full list of commands:
    ```bash
    npm run migrate:refresh:<env>
    ```
+6. For create database try this command with {DATABASE_NAME}:
+   ```bash
+   npm run migrate:db:create:<env> -- {DATABASE_NAME}
+   ```
+7. For delete database try this command with {DATABASE_NAME}:
+   ```bash
+   npm run migrate:db:drop:<env> -- {DATABASE_NAME}
+   ```
 
 Answers to other questions can be found in the official [db-migrate](https://db-migrate.readthedocs.io/en/latest/) documentation.
 
@@ -71,17 +82,15 @@ Answers to other questions can be found in the official [db-migrate](https://db-
 Our service can process tasks in the background. Currently, we use it to send email notifications about upcoming events.
 Scheduler are possible on such environments: `dev`, `test`, and `prod`.
 To start the service, you need to run the command.
-```bash
+   ```bash
    npm run scheduler:<env>
    ```
 
 ## Docker
 Environment variables are taken from `.env.development` file. You can start containers with the command:
-```bash
-docker-compose --env-file .env.development up -d
-```
-
-
+   ```bash
+   docker-compose --env-file .env.development up -d
+   ```
 
 ## How to Run the Solution
 1. Clone this repository and move to the project directory.
@@ -92,40 +101,65 @@ docker-compose --env-file .env.development up -d
    ```bash
    npm install
    ```
-3. Configure the database connection by updating the `.env` file with your MySQL database credentials. Example:
+3. Configure the database connection by copying [.env.development.example](.env.development.example) to new file `.env.development`. After that put your MySQL credentials.
    ```
+   # Example
    DATABASE_HOST=localhost
    DATABASE_PORT=3306
    DATABASE_USER=root
    DATABASE_PASSWORD=root
    ```
-   For developers, you need to create `.env.development` and `.env.test` based on the `.env.*.example` files.
-4. Log in to your MySQL. 
-5. Copy the contents of the [db/schema.sql](db/schema.sql) file and execute it in MySQL. You can also execute the SQL query through the MySQL CLI. To do this, run the command `mysql -u {USER_NAME} -p < db/db.sql`. You need to provide your MySQL login and password.
-6. Apply similar steps as in **step 5**, but use the data file [db/data.sql](db/data.sql).
+   For testers, you need to create `.env.test` based on the `.env.test.example` files.
+4. Configure the migrations config by copying [migration_config.json.example](db/migration_config.json.example) to new file `db/migration_config.json`. After that put your MySQL credentials to `dev` part.
+   ```json
+   {
+       "dev": {
+          "driver": "mysql",
+          "host": "localhost",
+          "database": "Calendula",
+          "user": "root",
+          "password": "root",
+          "port": 3306,
+          "multipleStatements": true
+     }
+   }
+   ```
+5. Run migration for create database `Calendula`
+   ```shell
+   npm run migrate:db:create:dev -- Calendula
+   ```
+
+6. Run migration for create tables in database `Calendula`
+   ```shell
+   npm run migrate:up:dev
+   ```
+
+If you encounter problems, try the command that will delete all tables and create them again.
+   ```shell
+   npm run migrate:refresh:dev
+   ```
+
 7. Start the server.
    ```bash
-   npm run start
+   npm run start:dev
    ```
-   
+8. In new console you can run task scheduler. It's not necessary.
+   ```bash
+   npm run scheduler:<env>
+   ```
 
 
 ## Mailing Service
 [Ethereal](https://ethereal.email/) is a fake SMTP service, mostly aimed at Nodemailer and EmailEngine users (but not limited to). It's a completely free anti-transactional email service where messages never get delivered.
-To view the letter that the user will receive, you need to log in to this service using a test login and password.
+To view the letter that the user will receive, you need to log in to this service using a test login and password. Default credentials you can find in [.env.development.example](.env.development.example) 
 
-```text
-login: ricky43@ethereal.email
-password: 4e1zbM2nxsMu2d823E
-```
-
+![ethereal.png](docs/ethereal.png)
 
 
 ## REST API documentation
 The documentation of all available endpoints can be found [http://localhost:8080/api-docs/](http://localhost:8080/api-docs/). The [Swagger](https://swagger.io/) library is used.
 
-![](docs/swagger.png)
-
+![swagger.png](docs/swagger.png)
 
 
 ## API Testing
@@ -149,17 +183,16 @@ Run tests for a specific component:
 npx playwright test tests/api/<file_name>.test.js --project=chromium --debug
 ```
 
+## Creative features
+- Attendance status for events: Yes, No, Maybe
+- Birthdays calendar
+- Events search
+- Notify before event start
+- Event category
 
 
-## Additional Features
-- ...
-
-
-
-## Full Documentation
-- ...
-
-
+## Deployment Diagram
+![deployment_diagram.png](docs/deployment_diagram.png)
 
 ## Fake Data
 To fill the database with demo data of users, calendars and events, run the command:

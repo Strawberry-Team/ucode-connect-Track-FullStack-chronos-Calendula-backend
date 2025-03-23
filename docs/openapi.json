@@ -2,8 +2,8 @@
   "openapi": "3.0.0",
   "info": {
     "title": "Calendula",
-    "version": "1.0.0",
-    "description": "TODO"
+    "version": "1.3.8",
+    "description": "Calendula is a service for managing meetings and tasks within a company.\nYou can invite colleagues to participate in the implementation of your tasks and discuss them.\nAll participants will be notified of the upcoming event."
   },
   "servers": [
     {
