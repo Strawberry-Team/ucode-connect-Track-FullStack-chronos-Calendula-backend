@@ -146,7 +146,6 @@ class EventUserModel extends Model {
 
             if (!participantMainCalendar) {
                 participantMainCalendar = await (new CalendarModel()).createMainCalendar(userId);
-                // throw new Error('Participant must have a main calendar.');
             }
 
             if (strategy === 'attach') {
@@ -156,6 +155,8 @@ class EventUserModel extends Model {
             } else {
                 throw new Error('Unknown strategy.');
             }
+        } else {
+
         }
     }
 }

@@ -363,9 +363,16 @@ class EventController extends Controller {
      */
     async updateDate(req, res, next) {
         try {
-            let event = await this._getEntityByIdAndAccessFilter(req);
+            const event = await this.model.getEntityById(req.params.id);
             if (!event) {
                 return this._returnNotFound(res);
+            }
+
+            if (event[this.model._creationByRelationFieldName] !== req.user.id) {
+                return this._returnAccessDenied(
+                    res, 403, {},
+                    "Only event creators can update the date of an event."
+                );
             }
 
             event.startAt = req.body.startAt;

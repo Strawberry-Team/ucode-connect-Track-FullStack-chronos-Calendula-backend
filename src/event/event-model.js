@@ -134,6 +134,8 @@ class EventModel extends Model {
 
             await this.syncEventParticipants(event.id, [{ userId: user.id }]);
 
+            await calendar.attachEvent(event.id);
+
             events.push(event);
 
             currentYear += 1;
