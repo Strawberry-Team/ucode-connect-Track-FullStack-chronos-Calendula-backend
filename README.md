@@ -30,13 +30,11 @@ Before starting, ensure the required technologies are installed.
    DATABASE_PASSWORD=root
    ```
    For testers, you need to create `.env.test` based on the `.env.test.example` files.
-4. Configure the migrations config by copying [migration_config.json.example](db/migration_config.json.example) to new file `db/migration_config.json`. After that put your MySQL credentials to `dev` part.
+4. Configure the migrations config by copying [migration_config.json.example](db/migration_config.json.example) to new file `db/migration_config.json`. After that put your MySQL credentials to `dev` part. ☝️ Don't add part about "database".
    ```json
    {
        "dev": {
           "driver": "mysql",
-          "host": "localhost",
-          "database": "Calendula",
           "user": "root",
           "password": "root",
           "port": 3306,
@@ -44,12 +42,28 @@ Before starting, ensure the required technologies are installed.
      }
    }
    ```
-5. Run migration for create database `Calendula`
+5. Run migration for create database `Calendula`.
    ```shell
    npm run migrate:db:create:dev -- Calendula
    ```
 
-6. Run migration for create tables in database `Calendula`
+   > If you get the error _“ifError got unwanted exception: Unknown database 'Calendula'”_, then delete the ‘database’ field in the configuration file `db/migration_config.json`. Then run the command again.
+
+6. Add the “database” field to `db/migration_config.json`. The `dev` environment configuration may look like this:
+   ```json
+   {
+       "dev": {
+          "driver": "mysql",
+          "user": "root",
+          "password": "root",
+          "port": 3306,
+          "multipleStatements": true,
+          "database": "Calendula"
+     }
+   }
+   ```
+
+6. Run migration for create tables in your database.
    ```shell
    npm run migrate:up:dev
    ```
@@ -70,7 +84,7 @@ Before starting, ensure the required technologies are installed.
 
 
 ## Database Migration
-Migrations are possible on such environments: `dev`, `test`, and `prod`. 
+Migrations are possible on such environments: `dev`, `test`, and `prod`.
 
 Environment settings are loaded from a `./db/migration_config.json` file. Create your `./db/migration_config.json` file and add the properties for the environments to it. To do this, copy `./db/migration_config.json.example` or to `./db/migration_config.json`. Then edit `./db/migration_config.json` if necessary (e.g. add a test database).
 
@@ -80,7 +94,7 @@ DROP DATABASE IF EXISTS Calendula;
 CREATE DATABASE Calendula;
 USE Calendula;
 ```
-or 
+or
 ```sql
 DROP DATABASE IF EXISTS Calendula_Test;
 CREATE DATABASE Calendula_Test;
@@ -99,11 +113,11 @@ To update the tables and test data in the database, run the following command (`
 npm run migrate:refresh:<env>
 ```
 Full list of commands:
-1. The `create` command creates a migration that loads sql file with the name `<migration-name>` in configured migrations directory `./db/migrations`. 
+1. The `create` command creates a migration that loads sql file with the name `<migration-name>` in configured migrations directory `./db/migrations`.
    ```bash
    npm run migrate:create:<env> -- <migration-name>
    ```
-  Where `<migration-name>` is the name of the migration you are creating, e.g., `update-events-categories`.
+Where `<migration-name>` is the name of the migration you are creating, e.g., `update-events-categories`.
 2. The `up` command executes the migrations of your currently configured migrations directory. More specific the `up` migrations are being called.
    ```bash
    npm run migrate:up:<env>
@@ -148,7 +162,7 @@ Environment variables are taken from `.env.development` file. You can start cont
 
 ## Mailing Service
 [Ethereal](https://ethereal.email/) is a fake SMTP service, mostly aimed at Nodemailer and EmailEngine users (but not limited to). It's a completely free anti-transactional email service where messages never get delivered.
-To view the letter that the user will receive, you need to log in to this service using a test login and password. Default credentials you can find in [.env.development.example](.env.development.example) 
+To view the letter that the user will receive, you need to log in to this service using a test login and password. Default credentials you can find in [.env.development.example](.env.development.example)
 
 ![ethereal.png](docs/ethereal.png)
 
@@ -207,8 +221,7 @@ User data for testing:
   ```text
   test.user@calendula.ua
   ```
-All users have a password: 
+All users have a password:
 ```text
 Password123!$
 ```
-

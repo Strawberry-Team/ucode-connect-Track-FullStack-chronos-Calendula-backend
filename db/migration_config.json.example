@@ -1,29 +1,26 @@
 {
   "dev": {
     "driver": "mysql",
-    "host": "localhost",
-    "database": "Calendula",
     "user": "root",
     "password": "root",
-    "port": 3307,
-    "multipleStatements": true
+    "port": 3306,
+    "multipleStatements": true,
+    "database": "Calendula"
   },
   "test": {
     "driver": "mysql",
-    "host": "localhost",
-    "database": "Calendula_Test",
     "user": "root",
     "password": "root",
-    "port": 3307,
-    "multipleStatements": true
+    "port": 3306,
+    "multipleStatements": true,
+    "database": "Calendula_Test"
   },
   "prod": {
     "driver": "mysql",
-    "host": "localhost",
-    "database": "Calendula",
     "user": "root",
     "password": "root",
-    "port": 3307,
-    "multipleStatements": true
+    "port": 3306,
+    "multipleStatements": true,
+    "database": "Calendula"
   }
 }
