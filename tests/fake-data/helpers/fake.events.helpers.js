@@ -2,23 +2,15 @@ import { faker } from "@faker-js/faker";
 import { format } from 'date-fns';
 import { generateDescription, generateTitle } from "./general.fake.helpers.js";
 
+/* Must be the first day of week - Monday */
+const DEMO_START_DATE = new Date(2025, 2, 24);
 /* Must be 7 days from Monday to Sunday inclusive */
-export const DEMO_DATES = {
-    year: 2025,
-    monthIndex: 2,
-    date: {
-        start: 17,
-        end: 23
-    }
-};
+export const DEMO_DATES = Array.from({ length: 7 }, (_, i) => {
+    const date = new Date(DEMO_START_DATE);
+    date.setDate(DEMO_START_DATE.getDate() + i);
+    return date;
+});
 export const EVENT_ATTENDANCE_STATUSES = ['yes', 'no', 'maybe'];
-export const COLORS = [
-    '#F4511E', '#EF6C00', '#F09300', '#F6BF26',
-    '#E4C441', '#C0CA33', '#7CB342', '#33B679',
-    '#0B8043', '#009688', '#039BE5', '#4285F4',
-    '#3F51B5', '#7986CB', '#B39DDB', '#9E69AF',
-    '#8E24AA', '#795548', '#616161', '#A79B8E'
-];
 export const EVENT_CATEGORIES = Object.freeze({
     WORK: 'work',
     HOME: 'home',
@@ -37,11 +29,13 @@ export const TIME_INTERVAL = Object.freeze({
 });
 
 export function generateWorkTime() {
+    const randomDay = faker.helpers.arrayElement(DEMO_DATES.slice(0, 5));
+
     return {
         startAt: new Date(
-            DEMO_DATES.year,
-            DEMO_DATES.monthIndex,
-            faker.number.int({min: DEMO_DATES.date.start, max: DEMO_DATES.date.end - 2}),
+            randomDay.getFullYear(),
+            randomDay.getMonth(),
+            randomDay.getDate(),
             faker.number.int({min: 8, max: 17}),
             faker.number.int({min: 0, max: 30, multipleOf: 30}),
             0,
@@ -51,12 +45,16 @@ export function generateWorkTime() {
     }
 }
 
-export function generateWorkDailyTime(day, hours) {
+export function generateWorkDailyTime(weekday, hours) {
+    const targetDay = weekday >= 0 && weekday <= 6
+        ? DEMO_DATES[weekday]
+        : DEMO_DATES[0];
+
     return {
         startAt: new Date(
-            DEMO_DATES.year,
-            DEMO_DATES.monthIndex,
-            day ?? DEMO_DATES.date.start,
+            targetDay.getFullYear(),
+            targetDay.getMonth(),
+            targetDay.getDate(),
             hours ?? 9,
             faker.number.int({min: 0, max: 30, multipleOf: 30}),
             0,
@@ -67,11 +65,13 @@ export function generateWorkDailyTime(day, hours) {
 }
 
 export function generateEveningTime() {
+    const randomDay = faker.helpers.arrayElement(DEMO_DATES.slice(0, 5));
+
     return {
         startAt: new Date(
-            DEMO_DATES.year,
-            DEMO_DATES.monthIndex,
-            faker.number.int({min: DEMO_DATES.date.start, max: DEMO_DATES.date.end - 2}),
+            randomDay.getFullYear(),
+            randomDay.getMonth(),
+            randomDay.getDate(),
             faker.number.int({min: 17, max: 20}),
             faker.number.int({min: 0, max: 30, multipleOf: 30}),
             0,
@@ -82,11 +82,13 @@ export function generateEveningTime() {
 }
 
 export function generateWeekendTime() {
+    const randomDay = faker.helpers.arrayElement(DEMO_DATES.slice(5, 7));
+
     return {
         startAt: new Date(
-            DEMO_DATES.year,
-            DEMO_DATES.monthIndex,
-            faker.number.int({min: DEMO_DATES.date.end - 1, max: DEMO_DATES.date.end}),
+            randomDay.getFullYear(),
+            randomDay.getMonth(),
+            randomDay.getDate(),
             faker.number.int({min: 10, max: 17}),
             faker.number.int({min: 0, max: 30, multipleOf: 30}),
             0,
@@ -96,20 +98,25 @@ export function generateWeekendTime() {
     };
 }
 
-export function generateEventDateTime(time = {}) {
+export function generateEventDateTime(time = {}, eventType) {
     const eventTime = {
         [TIME_INTERVAL.WORK]: generateWorkTime(),
-        [TIME_INTERVAL.WORK_DAILY]: generateWorkDailyTime(time.day, time.hours),
+        [TIME_INTERVAL.WORK_DAILY]: generateWorkDailyTime(time.weekday, time.hours),
         [TIME_INTERVAL.EVENING]: generateEveningTime(),
         [TIME_INTERVAL.WEEKEND]: generateWeekendTime()
     }[time.interval] || generateWorkTime();
 
-    const startAt = format(eventTime.startAt,
+    let startAt = format(eventTime.startAt,
         "yyyy-MM-dd HH:mm:ss"
     );
-    const endAt = format(new Date(eventTime.startAt.getTime() + eventTime.duration * 60 * 1000),
+    let endAt = format(new Date(eventTime.startAt.getTime() + eventTime.duration * 60 * 1000),
         "yyyy-MM-dd HH:mm:ss"
     );
+
+    if (eventType === EVENT_TYPES.REMINDER) {
+        startAt = startAt.split(' ')[0] + ' 00:00:00';
+        endAt = endAt.split(' ')[0] + ' 23:59:59';
+    }
 
     return {
         startAt,
@@ -119,14 +126,25 @@ export function generateEventDateTime(time = {}) {
 
 export function generateEvent(creationByUserId, calendarId, time = {}, category, type) {
     const event = {};
-    const dateTime = generateEventDateTime(time);
+
     event.creationByUserId = creationByUserId ?? faker.helpers.arrayElement(allUserIds);
     event.title = generateTitle();
     event.description = generateDescription();
     event.category = category ?? faker.helpers.arrayElement(
         [EVENT_CATEGORIES.WORK, EVENT_CATEGORIES.HOME, EVENT_CATEGORIES.HOBBY]);
-    event.type = type ?? faker.helpers.arrayElement(
-        [EVENT_TYPES.MEETING, EVENT_TYPES.REMINDER, EVENT_TYPES.TASK]);
+
+    if (type) {
+        event.type = type;
+    } else {
+        event.type = faker.helpers.weightedArrayElement([
+            { value: EVENT_TYPES.MEETING, weight: 60 },
+            { value: EVENT_TYPES.TASK, weight: 30 },
+            { value: EVENT_TYPES.REMINDER, weight: 10 }
+        ]);
+    }
+
+    const dateTime = generateEventDateTime(time, event.type);
+
     event.startAt = dateTime.startAt;
     event.endAt = dateTime.endAt;
     event.calendarId = calendarId;
@@ -139,12 +157,9 @@ export function generateEvent(creationByUserId, calendarId, time = {}, category,
     return event;
 }
 
-export function generateEventParticipant(participantId, color) {
+export function generateEventParticipant(participantId) {
     const participant = {};
     participant.userId = participantId;
-    participant.color = COLORS.includes(color)
-        ? color
-        : faker.helpers.arrayElement(COLORS);
     participant.attendanceStatus = null;
 
     return participant;

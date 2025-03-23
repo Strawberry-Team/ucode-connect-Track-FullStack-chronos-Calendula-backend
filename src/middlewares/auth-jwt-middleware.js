@@ -16,9 +16,9 @@ function invalidCredentials(req, res, message = "Invalid token.") {
  * @return {Promise<*>}
  */
 export async function setUserByJWT(req, res, next) {
-    // req.user = undefined;
-    // const model = new UserModel();
-    // req.user = await model.getEntityById(-1);
+    /*req.user = undefined;
+    const model = new UserModel();
+    req.user = await model.getEntityById(-1);*/
 
 
     const authTokenHeader = req.headers['authorization'];

@@ -5,6 +5,7 @@ import { expectResponseHeaders, generateHeaders } from "../api/helpers/general.h
 import { NUMBER_OF_USERS, USER_PASSWORD, generateUserAccessToken } from "./helpers/fake.users.helpers.js";
 import { EVENT_ATTENDANCE_STATUSES, EVENT_CATEGORIES, EVENT_TYPES, generateEvent, generateEventParticipant, TIME_INTERVAL }
         from "./helpers/fake.events.helpers.js";
+import { generateColor } from "./helpers/general.fake.helpers.js";
 import UserModel from "../../src/user/user-model.js";
 import CalendarModel from "../../src/calendar/calendar-model.js";
 import CalendarUserModel from "../../src/calendar/user/calendar-user-model.js";
@@ -118,9 +119,11 @@ test.describe(`Create events with participants`, async () => {
 
     test('WEEKEND EVENTS for main calendars', async ({request}) => {
         let possibleParticipants = [];
+        let weekendEvents = [];
 
+        /* Create weekend events */
         for (let i = 1; i <= NUMBER_OF_USERS; i++) {
-            for (let j = 1; j <= faker.number.int({min: 2, max: 4}); j++) {
+            for (let j = 1; j <= faker.number.int({min: 2, max: 3}); j++) {
                 let event = {};
 
                 await test.step(`Event ${j} for User ${i}`, async () => {
@@ -139,16 +142,18 @@ test.describe(`Create events with participants`, async () => {
                         }
                     );
 
-                    /* Generate participants for the event */
-                    possibleParticipants = allUserIds.filter(id => id !== ownerId);
+                    if (j === 1) {
+                        /* Generate participants for the event */
+                        possibleParticipants = allUserIds.filter(id => id !== ownerId);
 
-                    for (let k = 0; k <= faker.number.int({min: 0, max: 5}); k++) {
-                        const participant = generateEventParticipant(
-                            faker.helpers.arrayElement(possibleParticipants)
-                        );
+                        for (let k = 0; k <= faker.number.int({min: 1, max: 3}); k++) {
+                            const participant = generateEventParticipant(
+                                faker.helpers.arrayElement(possibleParticipants)
+                            );
 
-                        possibleParticipants = possibleParticipants.filter(id => id !== participant.userId);
-                        event.participants.push(participant);
+                            possibleParticipants = possibleParticipants.filter(id => id !== participant.userId);
+                            event.participants.push(participant);
+                        }
                     }
 
                     /* Send request to the API to create an event with participants */
@@ -172,6 +177,8 @@ test.describe(`Create events with participants`, async () => {
                     const responseBody = await response.json();
                     event.id = responseBody.data.id;
                     event.creationAt = responseBody.data.creationAt;
+
+                    weekendEvents.push(event);
 
                     /* Update the `attendanceStatus` status for event participants */
                     event.participants = event.participants
@@ -201,6 +208,25 @@ test.describe(`Create events with participants`, async () => {
                 });
             }
         }
+
+        /* Update the color of weekend events */
+        for (const event of weekendEvents) {
+            for (const participant of event.participants) {
+                await test.step(`Update Event ${event.id} color for User ${participant.userId}`,
+                    async () => {
+                        const response = await request.patch(`events/${event.id}/color`, {
+                            headers: generateHeaders(
+                                allUserObjects.find(user => user.id === participant.userId).accessToken
+                            ),
+                            data: {
+                                color: generateColor()
+                            }
+                        });
+
+                        expectResponseHeaders(response, 200);
+                    });
+            }
+        }
     });
 
     test('WORK EVENTS for shared calendars', async ({request}) => {
@@ -215,14 +241,14 @@ test.describe(`Create events with participants`, async () => {
 
             /* Generate DAILY WORK EVENTS */
             await test.step(`DAILY WORK EVENTS`, async () => {
-                for (let i = 7; i <= 11; i++) {
+                for (let i = 0; i <= 6; i++) {
                     /* Generate first level data for the event */
                     const event = generateEvent(
                         calendar.creationByUserId,
                         calendar.id,
                         {
                             interval: TIME_INTERVAL.WORK_DAILY,
-                            day: i,
+                            weekday: i,
                             hours: dailyEventStartHours
                         },
                         EVENT_CATEGORIES.WORK,

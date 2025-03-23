@@ -36,8 +36,6 @@ test.describe('Users', () => {
     });
 
     test("Update User", async ({request}) => {
-        // todo протестувати після реалізації функціоналу оновлення імені користувача
-        // userData.fullName = generateFullName().fullName;
         userData.password = "New" + userData.password;
         userData.password_confirm = userData.password;
 
@@ -50,26 +48,6 @@ test.describe('Users', () => {
 
         await expectUserResponse(response, userData);
     });
-
-    /*test("Update User Profile Picture", async ({request}) => {
-        const testAvatar = 'test_avatar.png';
-        userData.profilePicture = testAvatar;
-
-        const response = await request.patch(`users/${userData.id}`, {
-            headers,
-            multipart: {
-                user_id: userData.id,
-                avatar: {
-                    name: 'male_1.png',
-                    mimeType: 'image/png',
-                    // buffer: fs.readFileSync(path.join(process.cwd(), 'tests/api/fixtures', testAvatar))
-                    buffer: testAvatar
-                }
-            }
-        });
-
-        await expectUserResponse(response, userData);
-    });*/
 
     test.afterAll("Cleanup of test data", async ({request}) => {
         const userModel = new UserModel();

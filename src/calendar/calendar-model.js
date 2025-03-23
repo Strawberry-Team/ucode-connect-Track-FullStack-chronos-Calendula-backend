@@ -68,7 +68,7 @@ class CalendarModel extends Model {
         }
 
         calendar = this.createEntity({
-            title: user.fullName,
+            title: '📌 ' + user.fullName,
             description: user.fullName + '\'s main calendar',
             type: 'main',
             creationByUserId: user.id

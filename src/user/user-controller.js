@@ -28,7 +28,7 @@ class UserController extends Controller {
                 .withMessage('Allowed countries: Ukraine, Finland, Estonia.'),
 
             body('birthday')
-                .optional() // todo змінити на required
+                .notEmpty().withMessage('Birthday is required.')
                 .custom((value, {req}) => {
                     const birthday = parse(value, 'yyyy-MM-dd', new Date());
 

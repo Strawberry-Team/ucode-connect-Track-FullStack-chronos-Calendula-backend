@@ -1,11 +1,18 @@
 import { faker } from '@faker-js/faker';
 import { test } from '@playwright/test';
 import dotenv from "dotenv";
-import { expectResponseHeaders, generateHeaders} from "../api/helpers/general.helpers.js";
-import { NUMBER_OF_SHARED_CALENDARS, CALENDAR_TYPES, generateCalendar, generateSharedCalendarParticipant }
-        from "./helpers/fake.calendars.helpers.js";
+import { expectResponseHeaders, generateHeaders } from "../api/helpers/general.helpers.js";
+import {
+    NUMBER_OF_SHARED_CALENDARS,
+    CALENDAR_TYPES,
+    generateCalendar,
+    generateSharedCalendarParticipant,
+}
+    from "./helpers/fake.calendars.helpers.js";
 import { USER_PASSWORD, generateUserAccessToken } from "./helpers/fake.users.helpers.js";
+import { generateColor } from "./helpers/general.fake.helpers.js";
 import UserModel from "../../src/user/user-model.js";
+import CalendarUserModel from "../../src/calendar/user/calendar-user-model.js";
 
 dotenv.config({path: '.env.test', debug: true});
 
@@ -72,12 +79,12 @@ test.describe(`Create ${NUMBER_OF_SHARED_CALENDARS} shared calendars with partic
             calendar.id = responseBody.data.id;
             calendar.creationAt = responseBody.data.creationAt;
 
-            /* Update the `isConfirmed` status for calendar participants  */
             calendar.participants = calendar.participants.filter(p => p.isConfirmed === false);
 
             for (const p of calendar.participants) {
                 const participant = allUserObjects.find(user => user.id === p.userId);
 
+                /* Update the `isConfirmed` status for calendar participants  */
                 await test.step(`Update join status for participant ${participant.id} in Calendar ${calendar.id}`,
                     async () => {
                         const response = await request.patch(`calendars/${calendar.id}/join`, {
@@ -89,4 +96,24 @@ test.describe(`Create ${NUMBER_OF_SHARED_CALENDARS} shared calendars with partic
             }
         });
     }
+
+    test(`Update colour for all user calendars`, async ({request}) => {
+        for (const user of allUserObjects) {
+            const calendars = await (new CalendarUserModel()).getCalendarsByUserId(user.id);
+
+            for (const calendar of calendars) {
+                await test.step(`Update Calendar ${calendar.calendarId} color for User ${calendar.userId}`,
+                    async () => {
+                    const response = await request.patch(`calendars/${calendar.calendarId}/color`, {
+                        headers: generateHeaders(user.accessToken),
+                        data: {
+                            color: generateColor()
+                        }
+                    });
+
+                    expectResponseHeaders(response, 200);
+                });
+            }
+        }
+    });
 });
