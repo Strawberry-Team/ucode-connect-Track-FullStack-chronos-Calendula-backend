@@ -5,6 +5,7 @@ Calendula is a service for managing meetings and tasks within a company.
 You can invite colleagues to participate in the implementation of your tasks and discuss them.
 All participants will be notified of the upcoming event.
 
+
 ## Requirements and Dependencies
 Before starting, ensure the required technologies are installed.
 - **Node.JS** >= v22
@@ -21,15 +22,14 @@ Before starting, ensure the required technologies are installed.
    ```bash
    npm install
    ```
-3. Configure the database connection by copying [.env.development.example](.env.development.example) to new file `.env.development`. After that put your MySQL credentials.
+3. Configure the database connection by copying [.env.development.example](.env.development.example) to new file `.env.development`. After that put your MySQL credentials.  Example:
    ```
-   # Example
    DATABASE_HOST=localhost
    DATABASE_PORT=3306
    DATABASE_USER=root
    DATABASE_PASSWORD=root
    ```
-   For testers, you need to create `.env.test` based on the `.env.test.example` files.
+   For test purposes you need to use `test` env. For this create `.env.test` based on the `.env.test.example` file.
 4. Configure the migrations config by copying [migration_config.json.example](db/migration_config.json.example) to new file `db/migration_config.json`. After that put your MySQL credentials to `dev` part. ☝️ Don't add part about "database".
    ```json
    {
@@ -46,9 +46,7 @@ Before starting, ensure the required technologies are installed.
    ```shell
    npm run migrate:db:create:dev -- Calendula
    ```
-
    > If you get the error _“ifError got unwanted exception: Unknown database 'Calendula'”_, then delete the ‘database’ field in the configuration file `db/migration_config.json`. Then run the command again.
-
 6. Add the “database” field to `db/migration_config.json`. The `dev` environment configuration may look like this:
    ```json
    {
@@ -62,22 +60,19 @@ Before starting, ensure the required technologies are installed.
      }
    }
    ```
-
-6. Run migration for create tables in your database.
+7. Run migration for create tables in your database.
    ```shell
    npm run migrate:up:dev
    ```
-
    If you encounter problems, try the command that will delete all tables and create them again.
    ```shell
    npm run migrate:refresh:dev
    ```
-
-7. Start the server.
+8. Start the server.
    ```bash
    npm run start:dev
    ```
-8. In new console you can run task scheduler. It's not necessary.
+9. In new console you can run task scheduler. It's not necessary.
    ```bash
    npm run scheduler:<env>
    ```
@@ -100,15 +95,17 @@ DROP DATABASE IF EXISTS Calendula_Test;
 CREATE DATABASE Calendula_Test;
 USE Calendula_Test;
 ```
-Or use commands: `migrate:db:create:<env>` and `migrate:db:drop:<env>`.
+Or use commands:
+```bash
+migrate:db:drop:<env> && migrate:db:create:<env>
+```
+In the examples of all commands in the text `<env>` is the name of the environment to perform the migration, e.g. `dev`, `test` or `prod`.
 
-In the examples of all commands below in the text `<env>` is the name of the environment to perform the migration, e.g. `dev`, `test` or `prod`.
-
-**To create tables and test data in the database, execute the command:**
+**To create tables in the database, execute the command:**
 ```bash
 npm run migrate:up:<env>
 ```
-To update the tables and test data in the database, run the following command (`reset` and `up`):
+To update the tables in the database, run the following command:
 ```bash
 npm run migrate:refresh:<env>
 ```
@@ -145,20 +142,22 @@ Where `<migration-name>` is the name of the migration you are creating, e.g., `u
 
 Answers to other questions can be found in the official [db-migrate](https://db-migrate.readthedocs.io/en/latest/) documentation.
 
-## Task Scheduler
 
+## Task Scheduler
 Our service can process tasks in the background. Currently, we use it to send email notifications about upcoming events.
-Scheduler are possible on such environments: `dev`, `test`, and `prod`.
+Scheduler is available on such environments: `dev`, `test`, and `prod`.
 To start the service, you need to run the command.
    ```bash
    npm run scheduler:<env>
    ```
+
 
 ## Docker
 Environment variables are taken from `.env.development` file. You can start containers with the command:
    ```bash
    docker-compose --env-file .env.development up -d
    ```
+
 
 ## Mailing Service
 [Ethereal](https://ethereal.email/) is a fake SMTP service, mostly aimed at Nodemailer and EmailEngine users (but not limited to). It's a completely free anti-transactional email service where messages never get delivered.
@@ -176,41 +175,47 @@ The documentation of all available endpoints can be found [http://localhost:8080
 ## API Testing
 Create an `.env.test` file and add the variables for the test environment to it. To do this, copy `.env.test.example` or to `.env.test`. Then edit `.env.test` if necessary (e.g. add a test database).
 
+In the examples of all commands below in the text `<env>` is the name of the environment to perform the command, e.g. `dev`, `test` or `prod`.
+
 Start the server with the command:
 ```bash
-npm run start:test
+npm run start:<env>
 ```
 Once the dependencies are installed and the backend is running, you can run the tests. To do this, use the command:
 Running all tests:
 ```bash
-npm run test
+npm run test:api:<env>
 ```
 Run all tests and create a report on the results:
 ```bash
-npm run test:report
+npm run test:api:report:<env>
 ```
 Run tests for a specific component:
 ```bash
-npx playwright test tests/api/<file_name>.test.js --project=chromium --debug
+ENV=<env> npx playwright test tests/api/<file_name>.test.js --debug
 ```
 
+
 ## Creative features
-- Attendance status for events: Yes, No, Maybe
-- Birthdays calendar
-- Events search
-- Notify before event start
-- Event category
+- Attendance status for events: `Yes`, `No`, `Maybe`.
+- Birthdays calendar.
+- Events search.
+- Notify before event start.
+- Event category.
 
 
 ## Deployment Diagram
 ![deployment_diagram.png](docs/deployment_diagram.png)
 
+
 ## Fake Data
+In the examples of all commands below in the text `<env>` is the name of the environment to perform the command, e.g. `dev`, `test` or `prod`.
+
 To fill the database with demo data of users, calendars and events, run the command:
 ```bash
-npm run test:seed
+npm run test:seed:<env>
 ```
-Here is the fake data for presentations.
+Here is the fake data for presentations. 
 
 User data for testing:
 * full name:
