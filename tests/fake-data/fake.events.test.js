@@ -347,6 +347,7 @@ test.describe(`Create events with participants`, async () => {
                             && p.userId !== event.creationByUserId);
 
                     for (const p of event.participants) {
+                        if (faker.datatype.boolean({probability: 0.1})) { continue; }
                         const participant = allUserObjects.find(user => user.id === p.userId);
 
                         await test.step(`Update attendance status for participant ${participant.id} in Event ${event.id}`,
