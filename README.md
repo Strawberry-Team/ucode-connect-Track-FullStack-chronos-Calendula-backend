@@ -1,19 +1,44 @@
-# 🌼 Calendula API
+<p align="center">
+    <img src="./public/app/logo_favicon.png" width="100" />
+    <h1 align="center">Calendula</h1>
+</p>
 
-## Short Description
+## 🗓️ Overview
 Calendula is a service for managing meetings and tasks within a company.
 You can invite colleagues to participate in the implementation of your tasks and discuss them.
 All participants will be notified of the upcoming event.
 
 
-## Requirements and Dependencies
+## 🌈 Creative features
+- Attendance status for events: `Yes`, `No`, `Maybe`.
+- Birthdays calendar.
+- Events search.
+- Notify before event start.
+- Event category.
+
+## 🤖 Technologies
+<p align="center">
+	<img src="https://img.shields.io/badge/Node.js-339933.svg?style=flat&logo=Node.js&logoColor=white" alt="Node.js">
+	<img src="https://img.shields.io/badge/Express-000000.svg?style=flat&logo=Express&logoColor=white" alt="Express">
+	<img src="https://img.shields.io/badge/MySQL-4479A1.svg?style=flat&logo=MySQL&logoColor=white" alt="MySQL">
+	<img src="https://img.shields.io/badge/Playwright-45BA4B.svg?style=flat&logo=Playwright&logoColor=white" alt="Playwright">
+	<img src="https://img.shields.io/badge/Nodemon-76D04B.svg?style=flat&logo=Nodemon&logoColor=white" alt="Nodemon">
+	<img src="https://img.shields.io/badge/JSON_Web_Token-000000.svg?style=flat&logo=JSON-Web-Token&logoColor=white" alt="JSON Web Token">
+	<img src="https://img.shields.io/badge/Argon2-5A29E4.svg?style=flat" alt="Argon2">
+	<img src="https://img.shields.io/badge/Date_fns-FF5733.svg?style=flat" alt="Date-fns">
+	<img src="https://img.shields.io/badge/Nodemailer-0095FF.svg?style=flat&logo=Nodemailer&logoColor=white" alt="Nodemailer">
+	<img src="https://img.shields.io/badge/Swagger-85EA2D.svg?style=flat&logo=Swagger&logoColor=white" alt="Swagger">
+</p>
+
+
+## ⚙️ Requirements and Dependencies
 Before starting, ensure the required technologies are installed.
 - **Node.JS** >= v22
 - **NPM** >= v10
 - **MySQL** >= 8.0
 
 
-## How to Run the Solution
+## 🚀 How to Run the Solution
 1. Clone this repository and move to the project directory.
    ```bash
    git clone <repository-url>
@@ -78,7 +103,18 @@ Before starting, ensure the required technologies are installed.
    ```
 
 
-## Database Migration
+## 📊 Deployment Diagram
+![deployment_diagram.png](docs/deployment_diagram.png)
+
+
+## 🐋 Docker
+Environment variables are taken from `.env.development` file. You can start containers with the command:
+   ```bash
+   docker-compose --env-file .env.development up -d
+   ```
+
+
+## 📦 Database Migration
 Migrations are possible on such environments: `dev`, `test`, and `prod`.
 
 Environment settings are loaded from a `./db/migration_config.json` file. Create your `./db/migration_config.json` file and add the properties for the environments to it. To do this, copy `./db/migration_config.json.example` or to `./db/migration_config.json`. Then edit `./db/migration_config.json` if necessary (e.g. add a test database).
@@ -143,7 +179,7 @@ Where `<migration-name>` is the name of the migration you are creating, e.g., `u
 Answers to other questions can be found in the official [db-migrate](https://db-migrate.readthedocs.io/en/latest/) documentation.
 
 
-## Task Scheduler
+## ⏰ Task Scheduler
 Our service can process tasks in the background. Currently, we use it to send email notifications about upcoming events.
 Scheduler is available on such environments: `dev`, `test`, and `prod`.
 To start the service, you need to run the command.
@@ -152,27 +188,20 @@ To start the service, you need to run the command.
    ```
 
 
-## Docker
-Environment variables are taken from `.env.development` file. You can start containers with the command:
-   ```bash
-   docker-compose --env-file .env.development up -d
-   ```
-
-
-## Mailing Service
+## 📫 Mailing Service
 [Ethereal](https://ethereal.email/) is a fake SMTP service, mostly aimed at Nodemailer and EmailEngine users (but not limited to). It's a completely free anti-transactional email service where messages never get delivered.
 To view the letter that the user will receive, you need to log in to this service using a test login and password. Default credentials you can find in [.env.development.example](.env.development.example)
 
 ![ethereal.png](docs/ethereal.png)
 
 
-## REST API documentation
+## 🔁 REST API documentation
 The documentation of all available endpoints can be found [http://localhost:8080/api-docs/](http://localhost:8080/api-docs/). The [Swagger](https://swagger.io/) library is used.
 
 ![swagger.png](docs/swagger_.png)
 
 
-## API Testing
+## 🪲 API Testing
 Create an `.env.test` file and add the variables for the test environment to it. To do this, copy `.env.test.example` or to `.env.test`. Then edit `.env.test` if necessary (e.g. add a test database).
 
 In the examples of all commands below in the text `<env>` is the name of the environment to perform the command, e.g. `dev`, `test` or `prod`.
@@ -196,19 +225,7 @@ ENV=<env> npx playwright test tests/api/<file_name>.test.js --debug
 ```
 
 
-## Creative features
-- Attendance status for events: `Yes`, `No`, `Maybe`.
-- Birthdays calendar.
-- Events search.
-- Notify before event start.
-- Event category.
-
-
-## Deployment Diagram
-![deployment_diagram.png](docs/deployment_diagram.png)
-
-
-## Fake Data
+## 👤 Fake Data
 In the examples of all commands below in the text `<env>` is the name of the environment to perform the command, e.g. `dev`, `test` or `prod`.
 
 To fill the database with demo data of users, calendars and events, run the command:
