@@ -3,6 +3,14 @@ import UserModel from "../../../src/user/user-model.js";
 
 export const HEADERS = { 'Content-Type': 'application/json' };
 
+export function getEnv() {
+    return  {
+        ['dev']: 'development',
+        ['test']: 'test',
+        ['prod']: 'production'
+    }[process.env.ENV] || 'test';
+}
+
 export function generateHeaders(accessToken) {
     return {
         'Content-Type': 'application/json',

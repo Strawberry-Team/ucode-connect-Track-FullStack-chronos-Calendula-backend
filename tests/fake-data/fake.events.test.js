@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { test } from '@playwright/test';
 import dotenv from "dotenv";
-import { expectResponseHeaders, generateHeaders } from "../api/helpers/general.helpers.js";
+import { expectResponseHeaders, generateHeaders, getEnv } from "../api/helpers/general.helpers.js";
 import { NUMBER_OF_USERS, USER_PASSWORD, generateUserAccessToken } from "./helpers/fake.users.helpers.js";
 import { EVENT_ATTENDANCE_STATUSES, EVENT_CATEGORIES, EVENT_TYPES, generateEvent, generateEventParticipant, TIME_INTERVAL }
         from "./helpers/fake.events.helpers.js";
@@ -10,7 +10,8 @@ import UserModel from "../../src/user/user-model.js";
 import CalendarModel from "../../src/calendar/calendar-model.js";
 import CalendarUserModel from "../../src/calendar/user/calendar-user-model.js";
 
-dotenv.config({path: '.env.test', debug: true});
+const env = getEnv();
+dotenv.config({path: `.env.${env}`, debug: env === 'test'});
 
 test.describe(`Create events with participants`, async () => {
     test.describe.configure({mode: 'serial', retries: 0, timeout: 10 * 60 * 1000});

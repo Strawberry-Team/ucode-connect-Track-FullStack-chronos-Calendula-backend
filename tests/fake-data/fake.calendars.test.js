@@ -1,20 +1,16 @@
 import { faker } from '@faker-js/faker';
 import { test } from '@playwright/test';
 import dotenv from "dotenv";
-import { expectResponseHeaders, generateHeaders } from "../api/helpers/general.helpers.js";
-import {
-    NUMBER_OF_SHARED_CALENDARS,
-    CALENDAR_TYPES,
-    generateCalendar,
-    generateSharedCalendarParticipant,
-}
-    from "./helpers/fake.calendars.helpers.js";
+import { expectResponseHeaders, generateHeaders, getEnv } from "../api/helpers/general.helpers.js";
+import { NUMBER_OF_SHARED_CALENDARS, CALENDAR_TYPES, generateCalendar, generateSharedCalendarParticipant }
+        from "./helpers/fake.calendars.helpers.js";
 import { USER_PASSWORD, generateUserAccessToken } from "./helpers/fake.users.helpers.js";
 import { generateColor } from "./helpers/general.fake.helpers.js";
 import UserModel from "../../src/user/user-model.js";
 import CalendarUserModel from "../../src/calendar/user/calendar-user-model.js";
 
-dotenv.config({path: '.env.test', debug: true});
+const env = getEnv();
+dotenv.config({path: `.env.${env}`, debug: env === 'test'});
 
 test.describe(`Create ${NUMBER_OF_SHARED_CALENDARS} shared calendars with participants`, async () => {
     test.describe.configure({mode: 'serial', retries: 0, timeout: 10 * 60 * 1000});

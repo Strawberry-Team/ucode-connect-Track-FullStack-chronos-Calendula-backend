@@ -1,11 +1,12 @@
 import { test } from '@playwright/test';
 import dotenv from 'dotenv';
-import { generateHeaders } from "./helpers/general.helpers.js";
+import { generateHeaders, getEnv } from "./helpers/general.helpers.js";
 import { createAndLoginUser, generateUserData, expectUserResponse, expectAllUsersResponse }
         from "./helpers/users.helpers.js";
 import UserModel from "../../src/user/user-model.js";
 
-dotenv.config({ path: '.env.test', debug: true });
+const env = getEnv();
+dotenv.config({path: `.env.${env}`, debug: env === 'test'});
 
 test.describe('Users', () => {
     test.describe.configure({ mode: 'serial', timeout: 2000 });

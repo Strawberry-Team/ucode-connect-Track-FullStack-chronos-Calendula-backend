@@ -1,10 +1,11 @@
 import { test, expect } from '@playwright/test';
 import dotenv from 'dotenv';
-import { HEADERS, expectResponseHeaders } from "./helpers/general.helpers.js";
+import { HEADERS, expectResponseHeaders, getEnv } from "./helpers/general.helpers.js";
 import { registerUser, confirmUserEmail, loginUser, generateUserData } from "./helpers/users.helpers.js";
 import UserModel from "../../src/user/user-model.js";
 
-dotenv.config({ path: '.env.test', debug: true });
+const env = getEnv();
+dotenv.config({path: `.env.${env}`, debug: env === 'test'});
 
 const userModel = new UserModel();
 

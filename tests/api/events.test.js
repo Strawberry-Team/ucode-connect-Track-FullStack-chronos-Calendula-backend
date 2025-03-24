@@ -1,11 +1,12 @@
 import { test } from '@playwright/test';
 import dotenv from 'dotenv';
-import {expectResponseHeaders, generateHeaders} from "./helpers/general.helpers.js";
-import {cleanUpUser, createAndLoginUser, generateUserData} from "./helpers/users.helpers.js";
+import { expectResponseHeaders, generateHeaders, getEnv } from "./helpers/general.helpers.js";
+import { cleanUpUser, createAndLoginUser, generateUserData } from "./helpers/users.helpers.js";
 import { generateEventData, expectEventResponse, getMainCalendarByUserId,
         generateParticipants, expectParticipantsDataToMatch } from "./helpers/events.helpers.js"
 
-dotenv.config({ path: '.env.test', debug: true });
+const env = getEnv();
+dotenv.config({path: `.env.${env}`, debug: env === 'test'});
 
 test.describe('Events', () => {
     test.describe.configure({mode: 'serial', timeout: 2000});

@@ -15,13 +15,24 @@
     "scheduler:dev": "node --env-file=.env.development ./src/services/scheduler/scheduler-service.js",
     "scheduler:test": "node --env-file=.env.test ./src/services/scheduler/scheduler-service.js",
 
-    "test": "npm run setReportFolder -- npx playwright test tests/api/*.test.js",
-    "test:report": "rimraf playwright-report/* && npm run test --debug && npm run openReport",
+    "test:api:dev": "npm run setReportFolder -- ENV=dev npx playwright test tests/api/*.test.js",
+    "test:api:report:dev": "rimraf playwright-report/* && npm run test:api:dev --debug && npm run openReport",
 
-    "test:seed:users": "npm run setReportFolder -- npx playwright test --workers=1 tests/fake-data/fake.users.test.js",
-    "test:seed:calendars": "npm run setReportFolder -- npx playwright test --workers=1 tests/fake-data/fake.calendars.test.js",
-    "test:seed:events": "npm run setReportFolder -- npx playwright test --workers=1 tests/fake-data/fake.events.test.js",
-    "test:seed": "rimraf playwright-report/* && npm run migrate:refresh:test && (npm run test:seed:users && npm run test:seed:calendars && npm run test:seed:events) && npm run openReport",
+    "test:api:test": "npm run setReportFolder -- ENV=test npx playwright test tests/api/*.test.js",
+    "test:api:report:test": "rimraf playwright-report/* && npm run test:api:test --debug && npm run openReport",
+
+    "test:seed:users:dev": "npm run setReportFolder -- ENV=dev npx playwright test --workers=1 tests/fake-data/fake.users.test.js",
+    "test:seed:calendars:dev": "npm run setReportFolder -- ENV=dev npx playwright test --workers=1 tests/fake-data/fake.calendars.test.js",
+    "test:seed:events:dev": "npm run setReportFolder -- ENV=dev npx playwright test --workers=1 tests/fake-data/fake.events.test.js",
+    "test:seed:dev": "rimraf playwright-report/* && npm run migrate:refresh:dev && npm run test:seed:users:dev && npm run test:seed:calendars:dev && npm run test:seed:events:dev && npm run openReport",
+
+    "test:seed:users:test": "npm run setReportFolder -- ENV=test npx playwright test --workers=1 tests/fake-data/fake.users.test.js",
+    "test:seed:calendars:test": "npm run setReportFolder -- ENV=test npx playwright test --workers=1 tests/fake-data/fake.calendars.test.js",
+    "test:seed:events:test": "npm run setReportFolder -- ENV=test npx playwright test --workers=1 tests/fake-data/fake.events.test.js",
+    "test:seed:test": "rimraf playwright-report/* && npm run migrate:refresh:test && npm run test:seed:users:test && npm run test:seed:calendars:test && npm run test:seed:events:test && npm run openReport",
+
+    "test:seed:dev:shell": "npm run migrate:refresh:dev && set ENV=dev && npx playwright test --workers=1 tests/fake-data/fake.users.test.js && set ENV=dev && npx playwright test --workers=1 tests/fake-data/fake.calendars.test.js && set ENV=dev && npx playwright test --workers=1 tests/fake-data/fake.events.test.js",
+    "test:seed:test:shell": "npm run migrate:refresh:test && set ENV=test && npx playwright test --workers=1 tests/fake-data/fake.users.test.js && set ENV=test && npx playwright test --workers=1 tests/fake-data/fake.calendars.test.js && set ENV=test && npx playwright test --workers=1 tests/fake-data/fake.events.test.js",
 
     "migrate:db:create:dev": "db-migrate db:create --env dev",
     "migrate:db:create:test": "db-migrate db:create --env test",
