@@ -9,6 +9,35 @@ You can invite colleagues to participate in the implementation of your tasks and
 All participants will be notified of the upcoming event.
 
 
+## 🎯 Basic features
+* User
+	* Registration and email confirmation
+	* Authorisation
+	* Password recovery via email
+	* Has its own default Main user calendar
+	* Has the 'National holidays' calendar for the user's country
+ * Calendars
+ 	* Contains title, description, color, participants
+    	* Invite calendar participants via email
+  	* Create calendars via a pop-up window
+   	* Calendars can be hidden to filter events 
+	* Users can change the colour of any calendar for themselves
+	* Roles of Participants in Calendars
+ 		* Owner can perform all CRUD operations (unlike the main calendar) with the invitation of other registerd users
+   		* Member can view the calendar and its events; CRUD operations on own events in this calendar with the invitation of other registerd users
+     		* Viewer can view the calendar and its events
+       * All calendars are clickable and contain information for preview
+* Events
+	* Contains title, start date and time, end date and time, associated calendar, type ('meeting', 'reminder', 'task'), description, color, participants
+ 	* Invite event participants via email
+ 	* Create events by clicking on the blank space on the calendar itself via a pop-up window, as well as by clicking a 'Create' button and redirecting to a separate page
+    	* Edit events by clicking; delete via a special button
+  	* By default, colour events based on the colour of the associated calendar
+	* Users can change the colour of any event for themselves
+        * All events are clickable and contain information for preview
+      	* Display all events in accordance with their duration
+
+
 ## 🌈 Creative features
 * User
 	* View user's personal data
@@ -28,6 +57,7 @@ All participants will be notified of the upcoming event.
 	* Search for users to participate by full name or email
   	* Searchable drop-down list of users to participate in
    	* 'All day' event duration
+	* Default duration for events is 1 hour
 	* Categories: 'work', 'home', 'hobby'
 	* Notifications before: '10 min', '30 min', '1 h', '1 d' 
 	* Attendance statuses: 'yes', 'no', 'maybe'
@@ -35,7 +65,7 @@ All participants will be notified of the upcoming event.
 * Home page
 	* Jump to today via the 'Today' button
 	* Search for events by title and description
-	* View events by month, weeek, day
+	* Different representation of the calendar: month, weeek, day
 	* Monthly calendar in the sidebar
 	* Synchronise between the monthly calendar in the sidebar and main event view
 	* Show the current day and time on the calendar
