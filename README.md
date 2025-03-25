@@ -12,14 +12,14 @@ All participants will be notified of the upcoming event.
 ## 🌈 Creative features
 * User
 	* View user's personal data
-* Calendar
+* Calendars
 	* Grouping calendars into team and system calendars
 	* Calendar 'Birthdays' of company employees
 	* Unsubscribing from the calendar via the ‘Unsubscribe’ button
 	* Calendar owner's mark
 	* Search for users to participate by full name or email
   	* Searchable drop-down list of users to participate in
-* Event
+* Events
 	* Preview of the event type in the title
 	* Displaying the attendance status of participants
 	* Drag and drop to change the date or time of event
