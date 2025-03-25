@@ -10,11 +10,36 @@ All participants will be notified of the upcoming event.
 
 
 ## 🌈 Creative features
-- Attendance status for events: `Yes`, `No`, `Maybe`.
-- Birthdays calendar.
-- Events search.
-- Notify before event start.
-- Event category.
+* User
+	* View user's personal data
+* Calendars
+	* Grouping calendars into team and system calendars
+	* Calendar 'Birthdays' of company employees
+	* Unsubscribing from the calendar via the ‘Unsubscribe’ button
+	* Calendar owner's mark
+	* Search for users to participate by full name or email
+  	* Searchable drop-down list of users to participate in
+* Events
+	* Preview of the event type in the title
+	* Displaying the attendance status of participants
+	* Drag and drop to change the date or time of event
+	* Resize to change the event duration
+	* Event owner's mark
+	* Search for users to participate by full name or email
+  	* Searchable drop-down list of users to participate in
+   	* 'All day' event duration
+	* Categories: 'work', 'home', 'hobby'
+	* Notifications before: '10 min', '30 min', '1 h', '1 d' 
+	* Attendance statuses: 'yes', 'no', 'maybe'
+   	* Changing the event design depending on the user's attendance status
+* Home page
+	* Jump to today via the 'Today' button
+	* Search for events by title and description
+	* View events by month, weeek, day
+	* Monthly calendar in the sidebar
+	* Synchronise between the monthly calendar in the sidebar and main event view
+	* Show the current day and time on the calendar
+
 
 ## 🤖 Technologies
 <p align="center">
