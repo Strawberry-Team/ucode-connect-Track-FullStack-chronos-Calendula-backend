@@ -178,10 +178,11 @@ class UserController extends Controller {
             await newUser.save();
 
             const calendarModel = new CalendarModel();
-            await calendarModel.createMainCalendar(newUser.id);
-            await calendarModel.addUserToHolidaysCalendar(newUser.id);
-            await calendarModel.addUserToBirthdayCalendar(newUser.id);
-            await (new EventModel()).createBirthdayEvents(newUser.id);
+
+            calendarModel.createMainCalendar(newUser.id).catch(e => console.error(e));
+            calendarModel.addUserToHolidaysCalendar(newUser.id).catch(e => console.error(e));
+            calendarModel.addUserToBirthdayCalendar(newUser.id).catch(e => console.error(e));
+            (new EventModel()).createBirthdayEvents(newUser.id).catch(e => console.error(e));
 
             req.confirmToken = newUser?.confirmToken;
             req.newUser = newUser.toJSON();
