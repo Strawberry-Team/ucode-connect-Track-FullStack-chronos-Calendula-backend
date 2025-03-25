@@ -2,6 +2,18 @@
     <img src="./public/app/logo_favicon.png" width="100" />
     <h1 align="center">Calendula</h1>
 </p>
+<p align="center">
+	<img src="https://img.shields.io/badge/Node.js-339933.svg?style=flat&logo=Node.js&logoColor=white" alt="Node.js">
+	<img src="https://img.shields.io/badge/Express-000000.svg?style=flat&logo=Express&logoColor=white" alt="Express">
+	<img src="https://img.shields.io/badge/MySQL-4479A1.svg?style=flat&logo=MySQL&logoColor=white" alt="MySQL">
+	<img src="https://img.shields.io/badge/Playwright-45BA4B.svg?style=flat&logo=Playwright&logoColor=white" alt="Playwright">
+	<img src="https://img.shields.io/badge/Nodemon-76D04B.svg?style=flat&logo=Nodemon&logoColor=white" alt="Nodemon">
+	<img src="https://img.shields.io/badge/JSON_Web_Token-000000.svg?style=flat&logo=JSON-Web-Token&logoColor=white" alt="JSON Web Token">
+	<img src="https://img.shields.io/badge/Argon2-5A29E4.svg?style=flat" alt="Argon2">
+	<img src="https://img.shields.io/badge/Date_fns-FF5733.svg?style=flat" alt="Date-fns">
+	<img src="https://img.shields.io/badge/Nodemailer-0095FF.svg?style=flat&logo=Nodemailer&logoColor=white" alt="Nodemailer">
+	<img src="https://img.shields.io/badge/Swagger-85EA2D.svg?style=flat&logo=Swagger&logoColor=white" alt="Swagger">
+</p>
 
 ## 🗓️ Overview
 Calendula is a service for managing meetings and tasks within a company.
@@ -70,20 +82,6 @@ All participants will be notified of the upcoming event.
 	* Synchronise between the monthly calendar in the sidebar and main event view
 	* Show the current day and time on the calendar
 
-
-## 🤖 Technologies
-<p align="center">
-	<img src="https://img.shields.io/badge/Node.js-339933.svg?style=flat&logo=Node.js&logoColor=white" alt="Node.js">
-	<img src="https://img.shields.io/badge/Express-000000.svg?style=flat&logo=Express&logoColor=white" alt="Express">
-	<img src="https://img.shields.io/badge/MySQL-4479A1.svg?style=flat&logo=MySQL&logoColor=white" alt="MySQL">
-	<img src="https://img.shields.io/badge/Playwright-45BA4B.svg?style=flat&logo=Playwright&logoColor=white" alt="Playwright">
-	<img src="https://img.shields.io/badge/Nodemon-76D04B.svg?style=flat&logo=Nodemon&logoColor=white" alt="Nodemon">
-	<img src="https://img.shields.io/badge/JSON_Web_Token-000000.svg?style=flat&logo=JSON-Web-Token&logoColor=white" alt="JSON Web Token">
-	<img src="https://img.shields.io/badge/Argon2-5A29E4.svg?style=flat" alt="Argon2">
-	<img src="https://img.shields.io/badge/Date_fns-FF5733.svg?style=flat" alt="Date-fns">
-	<img src="https://img.shields.io/badge/Nodemailer-0095FF.svg?style=flat&logo=Nodemailer&logoColor=white" alt="Nodemailer">
-	<img src="https://img.shields.io/badge/Swagger-85EA2D.svg?style=flat&logo=Swagger&logoColor=white" alt="Swagger">
-</p>
 
 
 ## ⚙️ Requirements and Dependencies
@@ -158,9 +156,12 @@ Before starting, ensure the required technologies are installed.
    ```
 
 
-## 📊 Deployment Diagram
+## 🚚 Deployment Diagram
 ![deployment_diagram.png](docs/deployment_diagram.png)
 
+## 🤓 Database Diagram
+A free database visualiser at [dbdiagram.io](https://dbdiagram.io/). Import [database.dbml](docs/database.dbml).
+![database_diagram.png](docs/database_diagram.png)
 
 ## 🐋 Docker
 Environment variables are taken from `.env.development` file. You can start containers with the command:
