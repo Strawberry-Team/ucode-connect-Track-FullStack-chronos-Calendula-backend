@@ -1,0 +1,115 @@
+Table "calendars" {
+  "id" int [pk, not null, increment]
+  "creationByUserId" int [not null]
+  "title" varchar(50) [not null]
+  "description" varchar(250) [default: NULL]
+  "type" enum("main", "shared", "holidays", "birthdays") [not null, default: 'shared']
+  "creationAt" timestamp [default: `CURRENT_TIMESTAMP`]
+
+  Indexes {
+    creationByUserId [name: "calendars_creationByUserId_i"]
+  }
+}
+
+Table "calendars_events" {
+  "id" int [pk, not null, increment]
+  "calendarId" int [not null]
+  "eventId" int [not null]
+  "creationAt" timestamp [default: `CURRENT_TIMESTAMP`]
+  Indexes {
+    (eventId, calendarId) [unique, name: "user_event"]
+    eventId [name: "calendars_events_eventId_i"]
+    calendarId [name: "calendars_events_calendarId_i"]
+  }
+}
+
+Table "calendars_users" {
+  "id" int [pk, not null, increment]
+  "userId" int [not null]
+  "calendarId" int [not null]
+  "color" varchar(7) [default: '']
+  "role" enum("owner", "member", "viewer") [not null, default: 'viewer']
+  "isConfirmed" bool [default: true]
+  "creationAt" timestamp [default: `CURRENT_TIMESTAMP`]
+
+  Indexes {
+    (calendarId, userId) [unique, name: "user_calendar"]
+    calendarId [name: "calendars_users_calendarId_i"]
+    userId [name: "calendars_users_userId_i"]
+  }
+}
+
+Table "events" {
+  "id" int [pk, not null, increment]
+  "creationByUserId" int [not null]
+  "calendarId" int [not null]
+  "title" varchar(50) [not null]
+  "description" varchar(250) [default: NULL]
+  "category" enum("work", "home", "hobby") [not null, default: 'work']
+  "type" enum("meeting", "reminder", "task") [not null, default: 'meeting']
+  "notifyBeforeMinutes" int [not null, default: '10']
+  "startAt" datetime [default: NULL]
+  "endAt" datetime [default: NULL]
+  "creationAt" timestamp [default: `CURRENT_TIMESTAMP`]
+  Indexes {
+    creationByUserId [name: "events_creationByUserId_i"]
+    calendarId [name: "fk_events_calendarId"]
+  }
+}
+
+Table "events_users" {
+  "id" int [pk, not null, increment]
+  "eventId" int [not null]
+  "userId" int [not null]
+  "color" varchar(7) [default: '']
+  "attendanceStatus" enum("yes", "no", "maybe") [default: NULL]
+  "creationAt" timestamp [default: `CURRENT_TIMESTAMP`]
+
+  Indexes {
+    (eventId, userId) [unique, name: "user_event"]
+    eventId [name: "events_users_eventId_i"]
+    userId [name: "events_users_userId_i"]
+  }
+}
+
+Table "migrations" {
+  "id" int [pk, not null, increment]
+  "name" varchar(255) [not null]
+  "run_on" datetime [not null]
+}
+
+Table "users" {
+  "id" int [pk, not null, increment]
+  "fullName" varchar(30) [default: NULL]
+  "password" varchar(100) [default: NULL]
+  "email" varchar(50) [not null]
+  "profilePicture" varchar(50) [default: 'default.png']
+  "country" enum("Ukraine", "Finland", "Estonia") [not null, default: 'Ukraine']
+  "role" enum('admin', 'user') [not null, default: 'user']
+  "birthday" date [default: NULL]
+  "isVerified" bool() [not null, default: '0']
+  "confirmToken" varchar(250) [default: NULL]
+  "passwordResetToken" varchar(250) [default: NULL]
+  "creationAt" timestamp [default: `CURRENT_TIMESTAMP`]
+  Indexes {
+    email [unique, name: "email"]
+  }
+}
+
+Ref "fk_calendars_creationByUserId":"users"."id" < "calendars"."creationByUserId" [delete: cascade]
+
+Ref "fk_calendars_events_calendarId":"calendars"."id" < "calendars_events"."calendarId" [delete: cascade]
+
+Ref "fk_calendars_events_eventId":"events"."id" < "calendars_events"."eventId" [delete: cascade]
+
+Ref "fk_calendars_users_calendarId":"calendars"."id" < "calendars_users"."calendarId" [delete: cascade]
+
+Ref "fk_calendars_users_userId":"users"."id" < "calendars_users"."userId" [delete: cascade]
+
+Ref "fk_comments_creationByUserId":"users"."id" < "events"."creationByUserId" [delete: cascade]
+
+Ref "fk_events_calendarId":"calendars"."id" < "events"."calendarId" [delete: cascade]
+
+Ref "fk_events_users_eventId":"events"."id" < "events_users"."eventId" [delete: cascade]
+
+Ref "fk_events_users_userId":"users"."id" < "events_users"."userId" [delete: cascade]
