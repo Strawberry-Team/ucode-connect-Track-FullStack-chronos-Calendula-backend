@@ -15,10 +15,53 @@
 	<img src="https://img.shields.io/badge/Swagger-85EA2D.svg?style=flat&logo=Swagger&logoColor=white" alt="Swagger">
 </p>
 
+
+
 ## 🗓️ Overview
 Calendula is a service for managing meetings and tasks within a company.
 You can invite colleagues to participate in the implementation of your tasks and discuss them.
 All participants will be notified of the upcoming event.
+
+
+
+## Table of Contents
+- [Overview](#overview)
+- [Team](#team)
+- [About "Calendula" calendar app](#about-calendula-calendar-app)
+- [Basic features](#basic-features)
+- [Creative features](#creative-features)
+- [State Management](#state-management)
+- [Calendar Views](#calendar-views)
+- [Event Management](#event-management)
+- [Responsive Design](#responsive-design)
+- [Screenshots](#screenshots)
+
+
+
+## 🧑‍💻 Team
+<div>
+    <ul>
+        <li>
+            <p>🧑🏼‍💻 <a href="https://github.com/laskevych">Andrew Laskevych</a></p>
+        </li>
+        <li>
+            <p>👩🏼‍💻 <a href="https://github.com/InessaRepeshko">Inessa Repeshko</a></p>
+        </li>
+        <li>
+            <p>🧑🏻‍💻 <a href="https://github.com/vzharyi">Vadym Zharyi</a></p>
+        </li>
+    </ul>
+</div>
+
+![CleanShot 2025-04-04 at 22 09 53@2x](https://github.com/user-attachments/assets/164d1a54-6b51-4dac-a764-08872aef4e72)
+
+
+# 🌼 About "Calendula" calendar app
+Calendula is an enterprise platform that transforms time management with flexible calendars, interactive events, and team sync.
+
+Organise your day, share ideas, and streamline your workflow with easy search, notifications, and a personalised design.
+
+![CleanShot 2025-04-04 at 22 08 48@2x](https://github.com/user-attachments/assets/d7ba631f-5a18-435d-aab4-922ec6139a56)
 
 
 ## 🎯 Basic features
@@ -81,6 +124,11 @@ All participants will be notified of the upcoming event.
 	* Monthly calendar in the sidebar
 	* Synchronise between the monthly calendar in the sidebar and main event view
 	* Show the current day and time on the calendar
+
+
+
+## 👤 Use case diagram
+ ![Use_Case_Diagram](https://github.com/user-attachments/assets/f3d36261-01ff-45aa-b711-fc5385f250f8)
 
 
 
