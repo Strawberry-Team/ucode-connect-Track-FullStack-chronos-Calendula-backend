@@ -47,7 +47,7 @@ Calendula is an enterprise platform that transforms time management with flexibl
 
 Organise your day, share ideas, and streamline your workflow with easy search, notifications, and a personalised design.
 
-Here is a [link](https://docs.google.com/presentation/d/1cx73MW6W2gJM0PKssESfrSjnQ0xaxIa3/edit?usp=sharing) to the presentation file.</p>
+Here is a [link](https://docs.google.com/presentation/d/1UFsV7MbyVHJA5UCWVKEkgtV1f3Buq-kT/edit?usp=sharing) to the presentation file.</p>
 
 ![CleanShot 2025-04-04 at 22 08 48@2x](https://github.com/user-attachments/assets/d7ba631f-5a18-435d-aab4-922ec6139a56)
 ![CleanShot 2025-04-04 at 22 24 50@2x](https://github.com/user-attachments/assets/af5899fb-ac8d-4152-ad79-d6b3a58a2fbd)
