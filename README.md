@@ -2,6 +2,7 @@
     <img src="./public/app/logo_favicon.png" width="100" />
     <h1 align="center">Calendula</h1>
 </p>
+
 <p align="center">
 	<img src="https://img.shields.io/badge/Node.js-339933.svg?style=flat&logo=Node.js&logoColor=white" alt="Node.js">
 	<img src="https://img.shields.io/badge/Express-000000.svg?style=flat&logo=Express&logoColor=white" alt="Express">
